@@ -8,6 +8,10 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
 v1.2.2 (2026-04-10): Updated "Transformation" to "Ultimate Self-Refinement" (究極の自分磨き)
 v1.2.3 (2026-04-12): Updated journey header to emphasize inner change (“自分が変わる”)
 v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
+v1.2.5 (2026-04-18): Updated special tracks header to specify Psychology and Welfare
+v1.2.6 (2026-04-20): Added "Beyond Learning Psychology" section for psychology aspirants
+v1.2.7 (2026-04-22): Added "Beyond Learning Welfare" section for welfare aspirants (Twin Structure)
+v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
 -->
 <html lang="ja">
 <head>
@@ -79,10 +83,6 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
             border-color: #c27665;
             transform: scale(1.02);
         }
-        .guardian-card {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            will-change: transform;
-        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -90,6 +90,29 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
             -ms-overflow-style: none;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
+        }
+        .vs-divider {
+            position: relative;
+        }
+        .vs-divider::after {
+            content: 'VS';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #d97777;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 4px 10px rgba(217, 119, 119, 0.3);
+            z-index: 20;
+        }
+        @media (max-width: 767px) {
+            .vs-divider::after {
+                top: auto; bottom: -15px;
+            }
         }
     </style>
 </head>
@@ -101,12 +124,13 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                 🌸 <span data-i18n="navTitle">招待状</span>
             </div>
             <div class="flex items-center space-x-2 md:space-x-8">
-                <div class="hidden lg:flex space-x-6">
+                <div class="hidden lg:flex space-x-6 text-sm">
                     <a href="#journey" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navJourney">4年間の軌跡</a>
-                    <a href="#special" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navSpecial">選ばれる理由</a>
+                    <a href="#psych-deep" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navPsych">心理の真髄</a>
+                    <a href="#welf-deep" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navWelfare">福祉の真髄</a>
                     <a href="#guardians" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navGuardians">8人の守護神</a>
                 </div>
-                <button onclick="toggleLanguage()" class="bg-white hover:bg-warm-100 border border-warm-200 rounded-full px-3 md:px-5 py-1.5 text-xs font-bold text-warm-700 transition flex items-center gap-2 shadow-sm">
+                <button onclick="toggleLanguage()" class="bg-white hover:bg-warm-100 border border-warm-300 rounded-full px-3 md:px-5 py-1.5 text-xs font-bold text-warm-700 transition flex items-center gap-2 shadow-sm">
                     🌐 <span id="lang-btn-text">English</span>
                 </button>
             </div>
@@ -115,33 +139,30 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
 
     <header class="pt-24 md:pt-36 pb-12 md:pb-20 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden text-center">
         <div class="container mx-auto max-w-4xl relative z-10">
-            <h1 class="text-2xl md:text-5xl font-bold text-warm-900 leading-tight mb-6" data-i18n="heroTitle">
-                ウェルビーイングを創造する<br><span class="text-accent">「自立」</span>の物語
-            </h1>
-            <p class="text-base md:text-xl text-warm-700 mb-8 leading-relaxed px-2 md:px-0" data-i18n="heroSubtitle">
-                「誰かに守られる私」から、「世界を幸せにする私」へ。<br class="hidden md:block">
-                女子大という名の、すべての役割があなたの「出番」になる最高のステージで、<br class="hidden md:block">
-                8人のスペシャリストと共に、あなただけのサクセスストーリーを始めませんか？
-            </p>
+            <h1 class="text-2xl md:text-5xl font-bold text-warm-900 leading-tight mb-6" data-i18n="heroTitle"></h1>
+            <p class="text-base md:text-xl text-warm-700 mb-8 leading-relaxed px-2 md:px-0" data-i18n="heroSubtitle"></p>
             <div class="inline-block bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-warm-200 text-left max-w-2xl mx-auto">
-                <h3 class="font-bold text-warm-800 mb-2 flex items-center text-sm md:text-base">⚡️ <span data-i18n="aboutHeader">この招待状について</span></h3>
-                <p class="text-warm-600 text-xs md:text-sm leading-relaxed" data-i18n="aboutBody">
-                    このページは、あなたが本学の4年間でどのように「依存」を脱ぎ捨て、多角的な視点を持つリーダーへと進化するのかを体験できるインタラクティブなロードマップです。
-                </p>
+                <h3 class="font-bold text-warm-800 mb-2 flex items-center text-sm md:text-base">⚡️ <span data-i18n="aboutHeader"></span></h3>
+                <p class="text-warm-600 text-xs md:text-sm leading-relaxed" data-i18n="aboutBody"></p>
             </div>
         </div>
     </header>
 
-    <section id="journey" class="py-12 md:py-20 px-4 md:px-6">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-8 md:mb-16">
-                <h2 class="text-xl md:text-3xl font-bold text-warm-900 mb-6" data-i18n="journeyHeader">選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験</h2>
-                <div class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed space-y-2" data-i18n="journeySubtitle">
-                    <!-- Text injected via i18n -->
-                </div>
+    <!-- Persona Entry Point Section -->
+    <section id="personas" class="py-10 md:py-16 px-4 md:px-6">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" id="persona-grid">
+                <!-- Injected via JS -->
             </div>
+        </div>
+    </section>
 
-            <div class="flex flex-col lg:flex-row gap-6 md:gap-12 items-start">
+    <section id="journey" class="py-12 md:py-20 px-4 md:px-6">
+        <div class="container mx-auto max-w-6xl text-center">
+            <h2 class="text-xl md:text-3xl font-bold text-warm-900 mb-6" data-i18n="journeyHeader"></h2>
+            <div class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed space-y-2 mb-12" data-i18n="journeySubtitle"></div>
+
+            <div class="flex flex-col lg:flex-row gap-6 md:gap-12 items-start text-left">
                 <div id="year-btns" class="w-full lg:w-1/3 flex flex-row lg:flex-col gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-2 lg:pb-0 px-2 lg:px-0">
                     <button onclick="updateJourney(1)" id="btn-year-1" class="timeline-btn active flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold shadow-sm">
                         <span data-i18n="year1" class="text-sm">1年生</span><br><span class="text-[10px] md:text-xs font-normal opacity-90" data-i18n="stage1">マインドセット</span>
@@ -163,7 +184,7 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                         <h3 id="journey-title" class="text-xl md:text-2xl font-bold text-warm-900 mb-3"></h3>
                         <p id="journey-desc" class="text-warm-700 text-xs md:text-sm mb-6 min-h-[80px] leading-relaxed"></p>
                         <div class="bg-warm-50 p-4 rounded-lg border border-warm-100 shadow-inner">
-                            <strong class="text-warm-800 text-[10px] block mb-1 uppercase tracking-wider" data-i18n="mindTitle">到達するマインド</strong>
+                            <strong class="text-warm-800 text-[10px] block mb-1 uppercase tracking-wider" data-i18n="mindTitle"></strong>
                             <span id="journey-mind" class="text-accent font-bold text-base md:text-lg tracking-wider"></span>
                         </div>
                     </div>
@@ -177,103 +198,143 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
         </div>
     </section>
 
-    <section id="special" class="py-16 md:py-24 px-4 md:px-6 bg-warm-900 text-white relative overflow-hidden">
+    <!-- Deep Dive Sections (Psychology, Welfare) -->
+    <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="psychDeepHeader"></h2>
+                <p class="text-accent font-bold text-base md:text-lg italic mb-2" data-i18n="psychDeepSubtitle"></p>
+                <p class="text-warm-600 text-sm md:text-base font-medium" data-i18n="psychDeepQuestion"></p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch">
+                <div class="bg-warm-50 p-8 rounded-t-3xl md:rounded-3xl border border-warm-100">
+                    <h3 class="text-warm-700 font-bold text-lg mb-4 flex items-center gap-2">🏛 <span data-i18n="standardPsychTitle"></span></h3>
+                    <ul class="space-y-4 text-warm-600 text-sm md:text-base leading-relaxed">
+                        <li data-i18n="standardPsychList1"></li><li data-i18n="standardPsychList2"></li><li data-i18n="standardPsychList3"></li>
+                        <li class="pt-4 text-warm-400 italic text-xs md:text-sm" data-i18n="standardPsychDoubt"></li>
+                    </ul>
+                </div>
+                <div class="bg-warm-800 text-white p-8 rounded-b-3xl md:rounded-3xl shadow-xl transform md:scale-105 z-10">
+                    <h3 class="text-accent font-bold text-lg mb-4 flex items-center gap-2">🌟 <span data-i18n="ourPsychTitle"></span></h3>
+                    <ul class="space-y-4 text-warm-100 text-sm md:text-base leading-relaxed">
+                        <li data-i18n="ourPsychList1"></li><li data-i18n="ourPsychList2"></li><li data-i18n="ourPsychList3"></li>
+                        <li class="pt-4 font-bold text-accent" data-i18n="ourPsychFeature"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50">
+        <div class="container mx-auto max-w-5xl text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="welfDeepHeader"></h2>
+            <p class="text-warm-500 font-bold text-base md:text-lg italic mb-2" data-i18n="welfDeepSubtitle"></p>
+            <p class="text-warm-600 text-sm md:text-base font-medium mb-12" data-i18n="welfDeepQuestion"></p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch text-left">
+                <div class="bg-white p-8 rounded-t-3xl md:rounded-3xl border border-warm-100">
+                    <h3 class="text-warm-700 font-bold text-lg mb-4 flex items-center gap-2">🏛 <span data-i18n="standardWelfTitle"></span></h3>
+                    <ul class="space-y-4 text-warm-600 text-sm md:text-base leading-relaxed">
+                        <li data-i18n="standardWelfList1"></li><li data-i18n="standardWelfList2"></li><li data-i18n="standardWelfList3"></li>
+                        <li class="pt-4 text-warm-400 italic text-xs md:text-sm" data-i18n="standardWelfDoubt"></li>
+                    </ul>
+                </div>
+                <div class="bg-warm-900 text-white p-8 rounded-b-3xl md:rounded-3xl shadow-xl transform md:scale-105 z-10 border-r-4 border-gold">
+                    <h3 class="text-gold font-bold text-lg mb-4 flex items-center gap-2">🌍 <span data-i18n="ourWelfTitle"></span></h3>
+                    <ul class="space-y-4 text-warm-100 text-sm md:text-base leading-relaxed">
+                        <li data-i18n="ourWelfList1"></li><li data-i18n="ourWelfList2"></li><li data-i18n="ourWelfList3"></li>
+                        <li class="pt-4 font-bold text-gold" data-i18n="ourWelfFeature"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">👶 <span data-i18n="welfChildHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="welfChildBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🗝 <span data-i18n="welfLicenseHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="welfLicenseBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🤝 <span data-i18n="welfTargetHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="welfTargetBody"></p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Track Cards -->
+    <section id="special" class="py-16 md:py-24 px-4 md:px-6 bg-warm-900 text-white relative overflow-hidden text-center">
         <div class="container mx-auto max-w-6xl relative z-10">
-            <div class="text-center mb-12 md:mb-16">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" data-i18n="specialHeader">選ばれる理由：圧倒的な2つの専門コース</h2>
-                <p class="text-warm-200 text-sm md:text-base max-w-3xl mx-auto leading-relaxed" data-i18n="specialSubtitle">
-                    他大学にはない本専攻最大の特色。保育の学びに心理と福祉の専門性を掛け合わせ、唯一無二の価値を創出します。
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" data-i18n="specialHeader"></h2>
+            <p class="text-warm-200 text-sm md:text-base max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16" data-i18n="specialSubtitle"></p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left">
                 <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-accent transition group shadow-lg">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="bg-accent p-3 rounded-2xl text-2xl">🧠</div>
-                        <span class="bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Psychology</span>
-                    </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-2" data-i18n="course1Title">デジタル・ハピネス・クリエイター</h3>
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="text-gold font-bold text-[10px] md:text-xs" data-i18n="licenseLabel">取得目標資格：</span>
-                        <span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold" data-i18n="license1">認定心理士</span>
-                    </div>
-                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6" data-i18n="course1Desc">
-                        心の理解と支援を学ぶ中で【ICT × 心理学】を実践。プログラミング的思考で教育現場をハックし、子どもの可能性をデータと直感で引き出します。
-                    </p>
-                    <div class="text-accent font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform">
-                        <span data-i18n="course1Tag">高度なプログラミング思考を装備する →</span>
-                    </div>
+                    <div class="flex justify-between items-start mb-6"><div class="bg-accent p-3 rounded-2xl text-2xl">🧠</div><span class="bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Psychology</span></div>
+                    <h3 class="text-xl md:text-2xl font-bold mb-2" data-i18n="course1Title"></h3>
+                    <div class="flex items-center gap-2 mb-4"><span class="text-gold font-bold text-[10px] md:text-xs" data-i18n="licenseLabel"></span><span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold" data-i18n="license1"></span></div>
+                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6" data-i18n="course1Desc"></p>
+                    <div class="text-accent font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform"><span data-i18n="course1Tag"></span></div>
                 </div>
-
                 <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-warm-400 transition group shadow-lg">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="bg-warm-600 p-3 rounded-2xl text-2xl">🌍</div>
-                        <span class="bg-warm-600/20 text-warm-200 border border-warm-600/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Welfare</span>
-                    </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-2" data-i18n="course2Title">ソーシャル・ウェルフェアー・プロデューサー</h3>
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="text-gold font-bold text-[10px] md:text-xs" data-i18n="licenseLabel">取得目標資格：</span>
-                        <span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold" data-i18n="license2">社会福祉士</span>
-                    </div>
-                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6" data-i18n="course2Desc">
-                        「誰も取り残さない仕組み」を自ら設計。制度を超え、地域全体をプロデュースする圧倒的な自信が、あなたのキャリアを強固にします。
-                    </p>
-                    <div class="text-warm-400 font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform">
-                        <span data-i18n="course2Tag">地域福祉のプロデューサーへ →</span>
-                    </div>
+                    <div class="flex justify-between items-start mb-6"><div class="bg-warm-600 p-3 rounded-2xl text-2xl">🌍</div><span class="bg-warm-600/20 text-warm-200 border border-warm-600/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Welfare</span></div>
+                    <h3 class="text-xl md:text-2xl font-bold mb-2" data-i18n="course2Title"></h3>
+                    <div class="flex items-center gap-2 mb-4"><span class="text-gold font-bold text-[10px] md:text-xs" data-i18n="licenseLabel"></span><span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold" data-i18n="license2"></span></div>
+                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6" data-i18n="course2Desc"></p>
+                    <div class="text-warm-400 font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform"><span data-i18n="course2Tag"></span></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="guardians" class="py-16 md:py-24 px-4 md:px-6 bg-warm-100">
-        <div class="container mx-auto max-w-6xl text-center">
-            <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-12 md:mb-16" data-i18n="guardiansHeader">選ばれる理由：あなたを支える「8人の守護神」と3つの武器</h2>
-            <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
-                <!-- Data populated via JS -->
-            </div>
+    <section id="guardians" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-12 md:mb-16" data-i18n="guardiansHeader"></h2>
+            <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left"></div>
         </div>
     </section>
 
-    <section id="future" class="py-20 md:py-32 px-6 bg-white relative overflow-hidden text-center">
+    <section id="future" class="py-20 md:py-32 px-6 bg-warm-50 relative overflow-hidden text-center">
         <div class="container mx-auto max-w-4xl relative z-10">
-            <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-8" data-i18n="futureHeader">未来のあなた：<br class="md:hidden">「ウェルビーイング・リーダー」</h2>
+            <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-8" data-i18n="futureHeader"></h2>
             <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-10" id="future-body"></p>
-            <div class="bg-warm-50 p-8 rounded-3xl border border-warm-100 mb-12 shadow-inner">
+            <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm">
                 <div class="text-4xl mb-4">✨</div>
-                <h3 class="text-lg md:text-xl font-bold text-warm-900 mb-4" data-i18n="wowHeader">私たちが約束する「輝き」の正体</h3>
-                <p class="text-warm-600 text-xs md:text-sm" data-i18n="wowBody">
-                    それは、誰かに守られた華奢なキラキラではなく、すべてをやり遂げた自信から溢れ出す、ダイヤモンドのような強靭な輝きです。
-                </p>
+                <h3 class="text-lg md:text-xl font-bold text-warm-900 mb-4" data-i18n="wowHeader"></h3>
+                <p class="text-warm-600 text-xs md:text-sm" data-i18n="wowBody"></p>
             </div>
-            <h3 class="text-lg md:text-2xl font-bold text-accent mb-10" data-i18n="finalPunch">
-                「すべての主役が、あなたになる。だからこそ、あなたは無敵になれる。」
-            </h3>
+            <h3 class="text-lg md:text-2xl font-bold text-accent mb-10" data-i18n="finalPunch"></h3>
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-warm-700 hover:bg-warm-800 text-white font-bold py-4 px-10 rounded-full shadow-xl transition transform active:scale-95">
-                <span data-i18n="cta">あなただけのサクセスストーリーを始める</span>
+                <span data-i18n="cta"></span>
             </button>
         </div>
     </section>
 
     <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs">
-        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.2.4</p>
+        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.2.8</p>
         <p>&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
     </footer>
 
     <script>
         const i18n = {
             ja: {
-                navTitle: "招待状", navJourney: "4年間の軌跡", navSpecial: "選ばれる理由", navGuardians: "8人の守護神",
+                navTitle: "招待状", navJourney: "4年間の軌跡", navPsych: "心理の真髄", navWelfare: "福祉の真髄", navSpecial: "選ばれる理由", navGuardians: "8人の守護神",
                 heroTitle: "ウェルビーイングを創造する<br><span class='text-accent'>「自立」</span>の物語",
                 heroSubtitle: "「誰かに守られる私」から、「世界を幸せにする私」へ。女子大という名の、すべての役割があなたの「出番」になる最高のステージで、8人のスペシャリストと共に、あなただけのサクセスストーリーを始めませんか？",
                 aboutHeader: "この招待状について",
                 aboutBody: "このページは、あなたが本学の4年間でどのように「依存」を脱ぎ捨て、多角的な視点を持つリーダーへと進化するのかを体験できるインタラクティブなロードマップです。",
                 journeyHeader: "選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験",
                 journeySubtitle: "「ただの保育者」では終わらせない。ここでの学びは、マインドセット（考え方）、スキルセット（できること）、フレームセット（物事の捉え方）、そしてリーダーシップへとつながる、4段階の成長プロセスです。保育を学ぶ中で、あなたの価値観は揺さぶられ、自分で考え、人と関わり、行動できる力が身についていきます。子どもと向き合う経験は、自分自身と向き合う経験でもある。こうした変化の積み重ねによって、あなたの可能性は大きく広がっていきます。これこそが、私たちが考える「人としてのトランスフォーメーション」です。",
-                year1: "1年生", year2: "2年生", year3: "3年生", year4: "4年生",
-                stage1: "マインドセット", stage2: "スキルセット", stage3: "フレームセット", stage4: "リーダーシップ",
                 mindTitle: "到達するマインド",
-                specialHeader: "選ばれる理由：圧倒的な2つの専門コース",
+                psychDeepHeader: "選ばれる理由：心理を学ぶだけで終わらせない",
+                psychDeepSubtitle: "心理志望者のあなたへ ― 心理を「学ぶ」だけで終わらせないために ―",
+                psychDeepQuestion: "「心理を知ること」と「心理を使えること」は、同じでしょうか？",
+                standardPsychTitle: "一般的心理学科", standardPsychList1: "・心理学の理論や歴史の体系的な学習", standardPsychList2: "・実験室での実験・調査・データ分析", standardPsychList3: "・レポートと研究を通した理解の深化",
+                standardPsychDoubt: "「学んだけれど、現場でどう使えばいいんだろう？」<br>「人と関わる仕事で、本当に役立つのかな？」",
+                ourPsychTitle: "本専攻の心理コース", ourPsychList1: "・発達・教育・臨床心理を理論×現場で学ぶ", ourPsychList2: "・保育現場でリアルな行動・感情を観察する", ourPsychList3: "・どう関われば人は安心し動けるかを実践する",
+                ourPsychFeature: "分析や研究室の中に閉じない。<br>現場で“使える心理”を身につける。",
+                welfDeepHeader: "選ばれる理由：福祉を学ぶだけで終わらせない",
+                welfDeepSubtitle: "福祉志望者のあなたへ ― 制度を覚えるだけで、終わらせないために ―",
+                welfDeepQuestion: "「福祉を知ること」と「福祉で人を支えられること」は、同じでしょうか？",
+                standardWelfTitle: "一般的福祉学科", standardWelfList1: "・社会保障制度や法律の理解", standardWelfList2: "・高齢者・障害者福祉中心の理論学習", standardWelfList3: "・国家試験対策の知識の積み上げ",
+                standardWelfDoubt: "「制度は覚えたけれど、目の前の子どもや家族にどう関わればいいかわからない」",
+                ourWelfTitle: "本専攻の福祉コース", ourWelfList1: "・社会福祉士合格実績に裏打ちされた基礎", ourWelfList2: "・子ども・家庭・保育・制度を統合して学ぶ", ourWelfList3: "・「誰をどう支えるか」を起点に制度を考える",
+                ourWelfFeature: "試験対策で終わらない。<br>子ども・家庭・地域をつなぐ視点を持つ。",
+                welfChildHeader: "子どものソーシャルワーク", welfChildBody: "家庭事情、貧困、孤立など複雑に絡み合う課題を、子どもを起点に社会全体を支える力に変えます。",
+                welfLicenseHeader: "資格とその先へ", welfLicenseBody: "社会福祉士はゴールではありません。保育・教育×福祉の連携コーディネーターとして実践の幅が広がります。",
+                welfTargetHeader: "こんな人に来てほしい", welfTargetBody: "試験合格だけが目的ではなく、福祉を「人の力」に変え、社会を本気で変えたい人のためのコースです。",
+                specialHeader: "選ばれる理由：心理と福祉を学べる2つの専門コース",
                 specialSubtitle: "他大学にはない本専攻最大の特色。保育の学びに心理と福祉の専門性を掛け合わせ、唯一無二の価値を創出します。",
                 course1Title: "デジタル・ハピネス-クリエイター", course2Title: "ソーシャル・ウェルフェアー-プロデューサー",
                 course1Tag: "高度なプログラミング思考を装備する →", course2Tag: "地域福祉のプロデューサーへ →",
@@ -287,8 +348,14 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                 wowBody: "それは、誰かに守られた華奢なキラキラではなく、すべてをやり遂げた自信から溢れ出す、ダイヤモンドのような強靭な輝きです。",
                 finalPunch: "「すべての主役が、あなたになる。だからこそ、あなたは無敵になれる。」",
                 cta: "あなただけのサクセスストーリーを始める",
-                versionLabel: "バージョン",
-                chartLabels: ['マインド', '保育力', 'グローバル', '社会福祉', 'ICT活用'],
+                versionLabel: "バージョン", chartLabels: ['マインド', '保育力', 'グローバル', '社会福祉', 'ICT活用'],
+                personas: [
+                    { icon: "🧠", title: "心理を「学ぶ」だけで終わらせたくない。", sub: "人の心を、現場で使える力にしたいあなたへ。", link: "#psych-deep" },
+                    { icon: "🌍", title: "福祉を、制度で終わらせない。", sub: "「誰をどう支えるか」から考えたいあなたへ。", link: "#welf-deep" },
+                    { icon: "🌸", title: "「ただの保育者」では終わらせない。", sub: "子どもと学びながら、自分の可能性も広げたい。", link: "#journey" },
+                    { icon: "🌱", title: "まだ決めきれないあなたへ。", sub: "4年間で「自分の軸」を見つけたい人のために。", link: "#journey" },
+                    { icon: "🧩", title: "人を、専門にする。", sub: "心理・福祉・保育を横断して学びたいあなたへ。", link: "#guardians" }
+                ],
                 journey: {
                     1: { badge: "【心理】マインドセット", title: "心の軸を立てる。", desc: "心理学で自分を客観視し、依存心を「自立」へ。「私がやる」という心地よい責任感を知り、自立の目覚めを果たします。", mind: "「自立」の目覚め" },
                     2: { badge: "【保育】スキルセット", title: "現場と世界を繋ぐ。", desc: "日本の実習×北欧研修。本物の実践力を磨き、常識を捨てて幸せの形を自分の足で探します。", mind: "「本質」を問う視座" },
@@ -297,32 +364,53 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                 }
             },
             en: {
-                navTitle: "Invitation", navJourney: "Journey", navSpecial: "Why Us", navGuardians: "Guardians",
+                navTitle: "Invitation", navJourney: "Journey", navPsych: "Psychology", navWelfare: "Welfare", navSpecial: "Why Us", navGuardians: "Guardians",
                 heroTitle: "A Story of <span class='text-accent'>Independence</span><br>for Well-being",
                 heroSubtitle: "From 'someone protected' to 'someone making the world happy.' Start your success story with 8 specialists in a place where every role is yours.",
                 aboutHeader: "About this roadmap",
                 aboutBody: "This page shows your 4-year journey of self-refinement and growth through our unique curriculum.",
                 journeyHeader: "Why Us: Changing Yourself through Learning Nursery Education",
-                journeySubtitle: "We don't stop at being 'just a nursery teacher.' Learning here is a 4-stage growth process that leads to Mindset (how you think), Skillset (what you can do), Frameset (how you perceive things), and Leadership. Through this study, your values will be challenged, and you will acquire the power to think, interact, and act. Facing children is facing yourself. This accumulation of change expands your potential. This is what we consider 'Human Transformation.'",
-                year1: "Year 1", year2: "Year 2", year3: "Year 3", year4: "Year 4",
-                stage1: "Mindset", stage2: "Skillset", stage3: "Frameset", stage4: "Leadership",
+                journeySubtitle: "We don't stop at being 'just a nursery teacher.' Learning here is a 4-stage growth process that leads to Mindset, Skillset, Frameset, and Leadership. Accumulating these changes expands your potential into 'Human Transformation.'",
                 mindTitle: "Mindset Attained",
+                psychDeepHeader: "Why Us: Beyond Just Studying Psychology",
+                psychDeepSubtitle: "For Psychology Aspirants — Don't stop at just 'learning' it.",
+                psychDeepQuestion: "Is 'knowing' psychology the same as 'using' it?",
+                standardPsychTitle: "Standard Psych Dept", standardPsychList1: "・Systematic study of theories and history", standardPsychList2: "・Lab experiments and data analysis", standardPsychList3: "・Deepening understanding via research",
+                standardPsychDoubt: "How do I use this in real life?<br>Will this actually help in social work?",
+                ourPsychTitle: "Our Psychology Track", ourPsychList1: "・Dev/Clinical psych in theory and field", ourPsychList2: "・Observe real emotions in nursery labs", ourPsychList3: "・Master how to make people feel safe",
+                ourPsychFeature: "Not confined to labs or analysis.<br>Acquire psychology that 'works' in the field.",
+                welfDeepHeader: "Why Us: Beyond Just Studying Welfare",
+                welfDeepSubtitle: "For Welfare Aspirants — Don't stop at just memorizing systems.",
+                welfDeepQuestion: "Is 'knowing' welfare the same as 'supporting' people with it?",
+                standardWelfTitle: "Standard Welfare Dept", standardWelfList1: "・Understanding social security and laws", standardWelfList2: "・Theory focused on elderly/disabled", standardWelfList3: "・Knowledge accumulation for national exams",
+                standardWelfDoubt: "I memorized the systems, but I don't know how to interact with children and families.",
+                ourWelfTitle: "Our Welfare Track", ourWelfList1: "・Foundation backed by high exam pass rates", ourWelfList2: "・Integrated study of Child, Family, and Systems", ourWelfList3: "・Designing systems starting from 'who to support'",
+                ourWelfFeature: "Not just exam prep.<br>Gaining a vision that connects home and society.",
+                welfChildHeader: "Child Social Work", welfChildBody: "Turn complex issues like family distress and isolation into power to support society starting from children.",
+                welfLicenseHeader: "Beyond the License", welfLicenseBody: "Social worker license is not the goal. Expand your practice as a coordinator between education and welfare.",
+                welfTargetHeader: "For You", welfTargetBody: "For those who want to change welfare into 'human power' and seriously change society.",
                 specialHeader: "Why Us: Two Specialized Tracks",
-                specialSubtitle: "Integrating nursery education with psychology and welfare to create unique value.",
+                specialSubtitle: "Unique integration of nursery education with psychology and welfare to create unique value.",
                 course1Title: "Digital Happiness Creator", course2Title: "Social Welfare Producer",
-                licenseLabel: "Licenses:", license1: "Cert. Psychologist", license2: "Social Worker",
-                course1Desc: "Practice [ICT x Psychology]. Hack educational settings with algorithmic thinking and unlock potential through data.",
-                course2Desc: "Design 'systems that leave no one behind.' Go beyond rules to produce community well-being with confidence.",
                 course1Tag: "Equipped with advanced thinking →", course2Tag: "Becoming a welfare producer →",
+                licenseLabel: "Licenses:", license1: "Cert. Psychologist", license2: "Social Worker",
+                course1Desc: "Practice [ICT x Psychology]. Hack educational settings with algorithmic thinking and data.",
+                course2Desc: "Design systems leaving no one behind. Gain confidence to produce community well-being.",
                 guardiansHeader: "Why Us: 8 Guardians Supporting You",
                 futureHeader: "The Future You: 'Well-being Leader'",
-                futureBody: "On graduation day, you are not that anxious girl.<br><br><strong class='text-warm-900'>Mindset</strong> as axis,<br><strong class='text-warm-900'>Skillset</strong> as power,<br><strong class='text-warm-900'>Frameset</strong> as vision.",
+                futureBody: "On graduation day, you are not that anxious girl.<br><br><strong class='text-warm-900'>Mindset</strong> as axis, <strong class='text-warm-900'>Skillset</strong> as power, <strong class='text-warm-900'>Frameset</strong> as vision.",
                 wowHeader: "The True 'Sparkle'",
                 wowBody: "It's not fragile glitter from others, but a diamond-like resilience from the confidence of doing it yourself.",
                 finalPunch: "You are the protagonist. That's why you are invincible.",
                 cta: "Start Your Success Story",
-                versionLabel: "Version",
-                chartLabels: ['Mindset', 'Practical', 'Global', 'Welfare', 'ICT'],
+                versionLabel: "Version", chartLabels: ['Mindset', 'Practical', 'Global', 'Welfare', 'ICT'],
+                personas: [
+                    { icon: "🧠", title: "Don't just 'learn' Psychology.", sub: "Turn the mind into practical power.", link: "#psych-deep" },
+                    { icon: "🌍", title: "Welfare is more than systems.", sub: "Think from 'how to support people'.", link: "#welf-deep" },
+                    { icon: "🌸", title: "More than 'just a teacher'.", sub: "Expand your potential with children.", link: "#journey" },
+                    { icon: "🌱", title: "Can't decide yet?", sub: "Find your 'inner axis' over 4 years.", link: "#journey" },
+                    { icon: "🧩", title: "Making Humans your Specialty.", sub: "Study across Psych, Welfare, Nursery.", link: "#guardians" }
+                ],
                 journey: {
                     1: { badge: "Mindset", title: "Building an inner axis.", desc: "Use psychology to turn dependence into independence. Learn the joy of responsibility.", mind: "Independence Awakened" },
                     2: { badge: "Skillset", title: "Field x World.", desc: "Japan practice x Nordic study. Refine skills and find the shape of happiness yourself.", mind: "Perspective of Inquiry" },
@@ -334,17 +422,17 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
 
         const guardiansData = [
             { icon: "🧠", jaTitle: "【心理：マインドセット】", enTitle: "[Psychology: Mindset]", jaSub: "自分を支えるしなやかな軸を授ける", enSub: "Providing an axis", items: [
-                { ja: ["教育心理（西浦先生）", "学びの喜びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Prof. Nishiura)", "Exploding the joy of learning"] },
-                { ja: ["発達心理（平川先生）", "子どもの「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Prof. Hirakawa)", "Scientific absolute evidence"] },
-                { ja: ["臨床心理（兪先生）", "誰かを救う前に自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Prof. Yu)", "True resilience"] }
+                { ja: ["教育心理（西浦）", "学びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Nishiura)", "Exploding the joy of learning"] },
+                { ja: ["発達心理（平川）", "「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Hirakawa)", "Scientific absolute evidence"] },
+                { ja: ["臨床心理（兪）", "自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Yu)", "True resilience"] }
             ]},
             { icon: "🎨", jaTitle: "【保育：スキルセット】", enTitle: "[Nursery: Skillset]", jaSub: "幸福な環境を自らの手で創り出す", enSub: "Creating environment", items: [
-                { ja: ["環境（伊藤先生）", "子どもの目が輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Prof. Ito)", "Wizard of Space"] },
-                { ja: ["健康（守先生）", "自分と子どものウェルビーイングを守り抜く「タフな愛」"], en: ["Health (Prof. Mori)", "Tough Love"] },
-                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Prof. Ishikawa)", "Weapon of Expression"] }
+                { ja: ["環境（伊藤）", "輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Ito)", "Wizard of Space"] },
+                { ja: ["健康（守）", "幸福を守り抜く「タフな愛」"], en: ["Health (Mori)", "Tough Love"] },
+                { ja: ["造形（石川）", "想いを形にする「表現という武器」"], en: ["Art (Ishikawa)", "Weapon of Expression"] }
             ]},
             { icon: "🌍", jaTitle: "【福祉：フレームセット】", enTitle: "[Welfare: Frameset]", jaSub: "幸せを社会に実装する", enSub: "Social Implementation", items: [
-                { ja: ["社会福祉（尾形先生・田中先生）", "制度と知恵を掛け合わせ、地域全体のウェルビーイングを構築する「社会の設計士」"], en: ["Social Welfare (Prof. Ogata & Tanaka)", "Architects of Society"] }
+                { ja: ["社会福祉（尾形・田中）", "地域全体を構築する「社会の設計士」"], en: ["Social Welfare (Ogata/Tanaka)", "Architects of Society"] }
             ]}
         ];
 
@@ -366,12 +454,29 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
             document.getElementById('lang-btn-text').innerText = currentLang === 'ja' ? 'English' : '日本語';
             document.getElementById('future-body').innerHTML = data.futureBody;
             
+            renderPersonas();
             updateJourney(currentYear);
             renderGuardians();
             if (growthChart) {
                 growthChart.data.labels = data.chartLabels;
                 growthChart.update();
             }
+        }
+
+        function renderPersonas() {
+            const container = document.getElementById('persona-grid');
+            container.innerHTML = i18n[currentLang].personas.map((p, i) => `
+                <a href="${p.link}" data-persona="${p.icon}"
+                   class="group block rounded-2xl bg-white border border-warm-200 p-6 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent/40">
+                    <div class="text-2xl mb-3 transition-transform duration-300 group-hover:scale-110">${p.icon}</div>
+                    <h3 class="font-bold text-warm-900 mb-2 text-sm md:text-base leading-snug">${p.title}</h3>
+                    <p class="text-warm-600 text-xs md:text-sm leading-relaxed">${p.sub}</p>
+                    <div class="mt-4 text-accent text-xs font-bold flex items-center gap-1 transition-transform duration-300 group-hover:translate-x-1">
+                        <span>${currentLang === 'ja' ? '詳しく見る' : 'Learn More'}</span>
+                        <span>→</span>
+                    </div>
+                </a>
+            `).join('');
         }
 
         function renderGuardians() {
@@ -385,10 +490,7 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                         ${g.items.map(item => `
                             <li class="flex items-start">
                                 <span class="text-accent mr-3 mt-1 text-xs">▪</span>
-                                <div>
-                                    <strong class="text-warm-800 text-[11px] block mb-0.5">${item[currentLang][0]}</strong>
-                                    <span class="text-warm-500 text-[10px] leading-tight block">${item[currentLang][1]}</span>
-                                </div>
+                                <div><strong class="text-warm-800 text-[11px] block mb-0.5">${item[currentLang][0]}</strong><span class="text-warm-500 text-[10px] leading-tight block">${item[currentLang][1]}</span></div>
                             </li>
                         `).join('')}
                     </ul>
@@ -402,25 +504,19 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                 btn.classList.toggle('active', (idx + 1) === year);
                 btn.classList.toggle('bg-white', (idx + 1) !== year);
             });
-
             const data = i18n[currentLang].journey[year];
-            const badge = document.getElementById('journey-badge');
-            const title = document.getElementById('journey-title');
-            const desc = document.getElementById('journey-desc');
-            const mind = document.getElementById('journey-mind');
-
-            [badge, title, desc, mind].forEach(el => el.style.opacity = 0);
+            const elements = ['journey-badge', 'journey-title', 'journey-desc', 'journey-mind'];
+            elements.forEach(id => document.getElementById(id).style.opacity = 0);
             setTimeout(() => {
-                badge.innerText = data.badge;
-                title.innerText = data.title;
-                desc.innerHTML = data.desc;
-                mind.innerText = data.mind;
-                [badge, title, desc, mind].forEach(el => {
-                    el.style.transition = 'opacity 0.2s ease';
-                    el.style.opacity = 1;
+                document.getElementById('journey-badge').innerText = data.badge;
+                document.getElementById('journey-title').innerText = data.title;
+                document.getElementById('journey-desc').innerHTML = data.desc;
+                document.getElementById('journey-mind').innerText = data.mind;
+                elements.forEach(id => {
+                    document.getElementById(id).style.transition = 'opacity 0.2s ease';
+                    document.getElementById(id).style.opacity = 1;
                 });
             }, 100);
-
             const scores = { 1: [80,20,10,10,40], 2: [85,75,60,30,55], 3: [90,80,70,95,85], 4: [100,100,100,100,100] };
             if (growthChart) {
                 growthChart.data.datasets[0].data = scores[year];
@@ -437,18 +533,12 @@ v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
                     labels: i18n[currentLang].chartLabels,
                     datasets: [{
                         data: [80, 20, 10, 10, 40],
-                        backgroundColor: 'rgba(217, 119, 119, 0.4)', borderColor: '#c27665', borderWidth: 2,
-                        pointBackgroundColor: '#c27665'
+                        backgroundColor: 'rgba(217, 119, 119, 0.4)', borderColor: '#c27665', borderWidth: 2, pointBackgroundColor: '#c27665'
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    scales: { 
-                        r: { 
-                            ticks: { display: false }, min: 0, max: 100,
-                            pointLabels: { font: { size: isMobile ? 9 : 11 }, padding: 10 }
-                        } 
-                    },
+                    scales: { r: { ticks: { display: false }, min: 0, max: 100, pointLabels: { font: { size: isMobile ? 9 : 11 }, padding: 10 } } },
                     plugins: { legend: { display: false } }
                 }
             });
