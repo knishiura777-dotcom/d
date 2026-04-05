@@ -11,11 +11,12 @@
     <style>
         /* 共通設定 */
         body {
-            background-color: #e5e7eb;
+            background-color: #f3f4f6;
             font-family: 'Noto Sans JP', sans-serif;
-            color: #333;
+            color: #2d2d2d;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* 画面表示用の設定 */
@@ -29,15 +30,15 @@
         }
 
         .card-container {
-            perspective: 1000px;
+            perspective: 1200px;
         }
         .card {
             width: 55mm;
             height: 91mm;
-            transition: transform 0.8s;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
         }
         .card.is-flipped {
             transform: rotateY(180deg);
@@ -51,9 +52,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
-            border-radius: 4px;
-            background: #fdfdfd;
+            padding: 1.5rem;
+            border-radius: 2px;
+            background: #ffffff;
             box-sizing: border-box;
             border: 1px solid #f0f0f0;
         }
@@ -63,71 +64,66 @@
         .serif {
             font-family: 'Shippori Mincho', serif;
         }
-        .tracking-ultra-wide {
-            letter-spacing: 0.3em;
+        
+        /* 縦書き設定 */
+        .writing-vertical {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
         }
+
         .qr-placeholder {
-            width: 48px;
-            height: 48px;
-            background: #eee;
+            width: 38px;
+            height: 38px;
+            background: #fdfdfd;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #ddd;
+            border: 0.5px solid #eee;
         }
 
         /* 印刷用設定 (Ctrl+P) */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 20mm;
+                margin: 0;
             }
-            /* 画面表示用のコンテナを無効化 */
             html, body {
                 background: white !important;
-                height: auto !important;
-                min-height: auto !important;
-                overflow: visible !important;
+                width: 210mm;
+                height: 297mm;
             }
             .screen-only-flex {
                 display: block !important;
-                min-height: auto !important;
-                padding: 0 !important;
+                padding: 20mm !important;
             }
             .no-print {
                 display: none !important;
             }
-            
-            /* カードの配置をリセット */
             .card-container {
                 perspective: none !important;
-                width: 100% !important;
-                display: block !important;
             }
             .card {
                 position: relative !important;
                 display: flex !important;
                 flex-direction: row !important;
-                width: 100% !important;
+                width: auto !important;
                 height: auto !important;
                 transform: none !important;
                 box-shadow: none !important;
-                gap: 10mm;
+                gap: 15mm;
             }
             .card-face {
-                position: relative !important; /* 絶対配置を解除 */
+                position: relative !important;
                 width: 55mm !important;
                 height: 91mm !important;
-                border: 0.1mm solid #ddd !important; /* 薄いガイド線 */
+                border: 0.1mm solid #ddd !important;
                 transform: none !important;
                 backface-visibility: visible !important;
                 display: flex !important;
                 visibility: visible !important;
-                float: left; /* 要素が途切れないように並べる */
             }
             .card-back {
                 transform: none !important;
-                left: 0 !important;
             }
         }
     </style>
@@ -135,54 +131,62 @@
 <body>
 
     <div class="screen-only-flex">
-        <div class="mb-8 text-center no-print">
-            <h1 class="text-xl font-light text-gray-600 mb-2 tracking-widest">招待状：名刺サイズ・栞デザイン</h1>
-            <p class="text-xs text-gray-400 mb-6">クリックで裏面を確認。印刷設定(Ctrl+P)で表面・裏面が並びます。</p>
+        <div class="mb-12 text-center no-print">
+            <h1 class="text-lg font-light text-gray-500 mb-2 tracking-widest">招待状：名刺サイズ・栞</h1>
+            <p class="text-[10px] text-gray-400 mb-6 tracking-wider">カードをクリックして裏面のレイアウトを確認</p>
             
-            <div class="flex gap-4 justify-center">
-                <button onclick="window.print()" class="px-6 py-2 bg-slate-800 text-white rounded-full text-xs hover:bg-slate-700 transition-all shadow-lg">
-                    印刷プレビューを開く
-                </button>
-            </div>
+            <button onclick="window.print()" class="px-8 py-2.5 bg-gray-800 text-white rounded-full text-[10px] tracking-widest hover:bg-gray-700 transition-all shadow-md active:scale-95">
+                PRINT LAYOUT
+            </button>
         </div>
 
         <div class="card-container">
             <div id="card" class="card relative">
                 
-                <!-- [表面] -->
+                <!-- [表面] 静かな入り口 -->
                 <div class="card-face">
-                    <div class="flex-grow flex flex-col items-center justify-center space-y-8">
-                        <p class="text-[10px] tracking-ultra-wide text-gray-400 font-light leading-relaxed text-center">
-                            ウェルビーイングを創造する
+                    <div class="flex-grow flex flex-col items-center justify-center text-center">
+                        <p class="text-[9px] tracking-[0.4em] text-gray-400 font-light mb-10 leading-loose">
+                            ウェルビーイングを<br>創造する
                         </p>
-                        <h2 class="text-lg serif tracking-[0.4em] font-medium text-gray-800 ml-[0.4em]">
-                            「自立」の物語
-                        </h2>
+                        
+                        <div class="space-y-1 mb-12">
+                            <h2 class="text-xl serif tracking-[0.5em] font-medium text-gray-800 translate-x-[0.25em]">
+                                「自立」
+                            </h2>
+                            <p class="text-sm serif tracking-[0.4em] text-gray-600 translate-x-[0.2em]">
+                                の物語
+                            </p>
+                        </div>
                     </div>
-                    <div class="w-full text-center mt-auto">
-                        <p class="text-[8px] tracking-widest text-gray-300 font-light">
+                    
+                    <div class="w-full text-center pb-2">
+                        <p class="text-[7px] tracking-[0.2em] text-gray-300 font-light italic">
                             これは、履修案内ではありません。
                         </p>
                     </div>
                 </div>
 
-                <!-- [裏面] -->
-                <div class="card-face card-back">
-                    <div class="flex-grow flex flex-col items-center justify-center w-full px-2">
-                        <p class="text-[12px] serif leading-loose tracking-[0.15em] text-gray-700 text-center">
+                <!-- [裏面] 縦書きの栞レイアウト（改行位置の最適化） -->
+                <div class="card-face card-back items-start flex-row-reverse px-10 pt-10 pb-32">
+                    <!-- メインコピー（縦書きでリズムを整える） -->
+                    <div class="writing-vertical h-full flex flex-col justify-start">
+                        <p class="text-[12px] serif leading-[3] tracking-[0.28em] text-gray-700">
                             心理を理解する前に、<br>
-                            人とどう向き合うかを学んだ。
+                            人とどう向き合うかを<br>
+                            学んだ。
                         </p>
                     </div>
                     
-                    <div class="w-full flex flex-col items-center mt-auto space-y-4">
-                        <div class="flex flex-col items-center space-y-2">
-                            <p class="text-[8px] tracking-widest text-gray-400 font-light">続きは、こちらから。</p>
+                    <!-- フッター導線（下部に固定） -->
+                    <div class="absolute bottom-5 left-0 w-full flex flex-col items-center space-y-3">
+                        <div class="flex flex-col items-center space-y-1.5">
                             <div class="qr-placeholder">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><line x1="7" y1="7" x2="7.01" y2="7"></line><line x1="17" y1="7" x2="17.01" y2="7"></line><line x1="17" y1="17" x2="17.01" y2="17"></line><line x1="7" y1="17" x2="7.01" y2="17"></line></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><path d="M7 7h.01M17 7h.01M17 17h.01M7 17h.01"></path></svg>
                             </div>
+                            <p class="text-[7px] tracking-[0.2em] text-gray-400 font-light scale-90">続きは、こちらから。</p>
                         </div>
-                        <p class="text-[6px] tracking-tighter text-gray-300 uppercase">
+                        <p class="text-[5px] tracking-[0.4em] text-gray-200 uppercase font-light">
                             Designed for Autonomy
                         </p>
                     </div>
@@ -191,17 +195,11 @@
             </div>
         </div>
 
-        <div class="mt-12 max-w-sm w-full no-print">
-            <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-xs font-bold text-gray-600 mb-3 flex items-center">
-                    <span class="mr-2">🖨️</span> 印刷が途切れる場合の確認
-                </h3>
-                <ul class="text-[10px] text-gray-500 space-y-2 leading-relaxed">
-                    <li>・<strong>用紙サイズ：</strong>「A4」になっているか確認してください。</li>
-                    <li>・<strong>倍率：</strong>「100%」または「実際のサイズ」を選択してください。</li>
-                    <li>・<strong>背景のグラフィック：</strong>チェックを付けると、カードの背景色や線が正しく出ます。</li>
-                </ul>
-            </div>
+        <!-- Spec -->
+        <div class="mt-16 max-w-xs w-full no-print text-center">
+            <p class="text-[9px] text-gray-400 font-light tracking-widest">
+                3行目を独立させ、言葉に余韻を持たせました
+            </p>
         </div>
     </div>
 
