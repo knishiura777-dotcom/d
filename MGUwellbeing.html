@@ -12,6 +12,8 @@ v1.2.5 (2026-04-18): Updated special tracks header to specify Psychology and Wel
 v1.2.6 (2026-04-20): Added "Beyond Learning Psychology" section for psychology aspirants
 v1.2.7 (2026-04-22): Added "Beyond Learning Welfare" section for welfare aspirants (Twin Structure)
 v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
+v1.2.9 (2026-04-28): Harmonized Psych deep-dive with the 3-column summary cards
+v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to the Nursery section
 -->
 <html lang="ja">
 <head>
@@ -195,18 +197,25 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                     </div>
                 </div>
             </div>
+
+            <!-- New Nursery Summary Cards (Matching Twin Structure) -->
+            <div class="mt-12 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">👶 <span data-i18n="nurLabHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurLabBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🗝 <span data-i18n="nurCareerHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurCareerBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🤝 <span data-i18n="nurTargetHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurTargetBody"></p></div>
+            </div>
         </div>
     </section>
 
     <!-- Deep Dive Sections (Psychology, Welfare) -->
     <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white">
-        <div class="container mx-auto max-w-5xl">
-            <div class="text-center mb-12">
+        <div class="container mx-auto max-w-5xl text-center">
+            <div class="mb-12">
                 <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="psychDeepHeader"></h2>
                 <p class="text-accent font-bold text-base md:text-lg italic mb-2" data-i18n="psychDeepSubtitle"></p>
                 <p class="text-warm-600 text-sm md:text-base font-medium" data-i18n="psychDeepQuestion"></p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch text-left">
                 <div class="bg-warm-50 p-8 rounded-t-3xl md:rounded-3xl border border-warm-100">
                     <h3 class="text-warm-700 font-bold text-lg mb-4 flex items-center gap-2">🏛 <span data-i18n="standardPsychTitle"></span></h3>
                     <ul class="space-y-4 text-warm-600 text-sm md:text-base leading-relaxed">
@@ -222,11 +231,16 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                     </ul>
                 </div>
             </div>
+            <div class="mt-16 bg-warm-50 rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">👶 <span data-i18n="psychLabHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="psychLabBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🗝 <span data-i18n="psychCareerHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="psychCareerBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🤝 <span data-i18n="psychTargetHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="psychTargetBody"></p></div>
+            </div>
         </div>
     </section>
 
-    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50">
-        <div class="container mx-auto max-w-5xl text-center">
+    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50 text-center">
+        <div class="container mx-auto max-w-5xl">
             <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="welfDeepHeader"></h2>
             <p class="text-warm-500 font-bold text-base md:text-lg italic mb-2" data-i18n="welfDeepSubtitle"></p>
             <p class="text-warm-600 text-sm md:text-base font-medium mb-12" data-i18n="welfDeepQuestion"></p>
@@ -289,7 +303,7 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
         <div class="container mx-auto max-w-4xl relative z-10">
             <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-8" data-i18n="futureHeader"></h2>
             <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-10" id="future-body"></p>
-            <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm">
+            <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm text-center">
                 <div class="text-4xl mb-4">✨</div>
                 <h3 class="text-lg md:text-xl font-bold text-warm-900 mb-4" data-i18n="wowHeader"></h3>
                 <p class="text-warm-600 text-xs md:text-sm" data-i18n="wowBody"></p>
@@ -302,7 +316,7 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
     </section>
 
     <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs">
-        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.2.8</p>
+        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.3.0</p>
         <p>&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
     </footer>
 
@@ -317,6 +331,12 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                 journeyHeader: "選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験",
                 journeySubtitle: "「ただの保育者」では終わらせない。ここでの学びは、マインドセット（考え方）、スキルセット（できること）、フレームセット（物事の捉え方）、そしてリーダーシップへとつながる、4段階の成長プロセスです。保育を学ぶ中で、あなたの価値観は揺さぶられ、自分で考え、人と関わり、行動できる力が身についていきます。子どもと向き合う経験は、自分自身と向き合う経験でもある。こうした変化の積み重ねによって、あなたの可能性は大きく広がっていきます。これこそが、私たちが考える「人としてのトランスフォーメーション」です。",
                 mindTitle: "到達するマインド",
+                nurLabHeader: "国内×北欧の実践",
+                nurLabBody: "日本の現場で汗をかき、北欧で常識を捨てる。多様な「幸せ」を体感し、どんな現場でも通用する生きた保育スキルを磨き抜きます。",
+                nurCareerHeader: "資格とその先へ",
+                nurCareerBody: "免許取得はもちろん、心理・福祉の視座を持つことで、選ばれる保育者、そして現場のリーダーへの道が確実に拓かれます。",
+                nurTargetHeader: "こんな人に来てほしい",
+                nurTargetBody: "ピアノや技術の習得だけが目的ではなく、子どもと共に自分をアップデートし、主体的に未来を創りたい人のための場所です。",
                 psychDeepHeader: "選ばれる理由：心理を学ぶだけで終わらせない",
                 psychDeepSubtitle: "心理志望者のあなたへ ― 心理を「学ぶ」だけで終わらせないために ―",
                 psychDeepQuestion: "「心理を知ること」と「心理を使えること」は、同じでしょうか？",
@@ -324,6 +344,12 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                 standardPsychDoubt: "「学んだけれど、現場でどう使えばいいんだろう？」<br>「人と関わる仕事で、本当に役立つのかな？」",
                 ourPsychTitle: "本専攻の心理コース", ourPsychList1: "・発達・教育・臨床心理を理論×現場で学ぶ", ourPsychList2: "・保育現場でリアルな行動・感情を観察する", ourPsychList3: "・どう関われば人は安心し動けるかを実践する",
                 ourPsychFeature: "分析や研究室の中に閉じない。<br>現場で“使える心理”を身につける。",
+                psychLabHeader: "「保育」は最高のラボ",
+                psychLabBody: "感情が行動に直結する保育現場こそ、心理と行動の関係を体感し、生きた知識に変えられる最高のラボです。",
+                psychCareerHeader: "資格とその先へ",
+                psychCareerBody: "認定心理士の取得を入り口に、保育・教育現場から福祉、組織まで、「人に関わる全領域」で活躍する道が拓かれています。",
+                psychTargetHeader: "こんな人に来てほしい",
+                psychTargetBody: "心理学を「研究」だけで終わらせず、誰かを支える「武器」に変え、社会に変化を生みたい人のためのコースです。",
                 welfDeepHeader: "選ばれる理由：福祉を学ぶだけで終わらせない",
                 welfDeepSubtitle: "福祉志望者のあなたへ ― 制度を覚えるだけで、終わらせないために ―",
                 welfDeepQuestion: "「福祉を知ること」と「福祉で人を支えられること」は、同じでしょうか？",
@@ -372,6 +398,12 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                 journeyHeader: "Why Us: Changing Yourself through Learning Nursery Education",
                 journeySubtitle: "We don't stop at being 'just a nursery teacher.' Learning here is a 4-stage growth process that leads to Mindset, Skillset, Frameset, and Leadership. Accumulating these changes expands your potential into 'Human Transformation.'",
                 mindTitle: "Mindset Attained",
+                nurLabHeader: "Domestic x Nordic Practice",
+                nurLabBody: "Sweat in Japanese fields and discard common sense in Nordic settings. Refine professional skills that work in any environment.",
+                nurCareerHeader: "Beyond the License",
+                nurCareerBody: "Acquiring licenses is just the start. With psychology and welfare perspectives, you'll open paths as a preferred educator and leader.",
+                nurTargetHeader: "Who We Want",
+                nurTargetBody: "It's not just about mastering piano; it's a place for those who want to update themselves alongside children and proactively create the future.",
                 psychDeepHeader: "Why Us: Beyond Just Studying Psychology",
                 psychDeepSubtitle: "For Psychology Aspirants — Don't stop at just 'learning' it.",
                 psychDeepQuestion: "Is 'knowing' psychology the same as 'using' it?",
@@ -379,6 +411,12 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                 standardPsychDoubt: "How do I use this in real life?<br>Will this actually help in social work?",
                 ourPsychTitle: "Our Psychology Track", ourPsychList1: "・Dev/Clinical psych in theory and field", ourPsychList2: "・Observe real emotions in nursery labs", ourPsychList3: "・Master how to make people feel safe",
                 ourPsychFeature: "Not confined to labs or analysis.<br>Acquire psychology that 'works' in the field.",
+                psychLabHeader: "Nursery as the Best Lab",
+                psychLabBody: "The nursery field, where emotions directly lead to action, is the ultimate lab to experience psychology and turn it into living knowledge.",
+                psychCareerHeader: "Beyond the License",
+                psychCareerBody: "Build a foundation with a license and open doors to all human-centered fields from education to organizations.",
+                psychTargetHeader: "Who We Are Looking For",
+                psychTargetBody: "For those who want to use psychology as a 'weapon' to support others and create positive change in society.",
                 welfDeepHeader: "Why Us: Beyond Just Studying Welfare",
                 welfDeepSubtitle: "For Welfare Aspirants — Don't stop at just memorizing systems.",
                 welfDeepQuestion: "Is 'knowing' welfare the same as 'supporting' people with it?",
@@ -392,10 +430,10 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
                 specialHeader: "Why Us: Two Specialized Tracks",
                 specialSubtitle: "Unique integration of nursery education with psychology and welfare to create unique value.",
                 course1Title: "Digital Happiness Creator", course2Title: "Social Welfare Producer",
-                course1Tag: "Equipped with advanced thinking →", course2Tag: "Becoming a welfare producer →",
                 licenseLabel: "Licenses:", license1: "Cert. Psychologist", license2: "Social Worker",
                 course1Desc: "Practice [ICT x Psychology]. Hack educational settings with algorithmic thinking and data.",
                 course2Desc: "Design systems leaving no one behind. Gain confidence to produce community well-being.",
+                course1Tag: "Equipped with advanced thinking →", course2Tag: "Becoming a welfare producer →",
                 guardiansHeader: "Why Us: 8 Guardians Supporting You",
                 futureHeader: "The Future You: 'Well-being Leader'",
                 futureBody: "On graduation day, you are not that anxious girl.<br><br><strong class='text-warm-900'>Mindset</strong> as axis, <strong class='text-warm-900'>Skillset</strong> as power, <strong class='text-warm-900'>Frameset</strong> as vision.",
@@ -422,17 +460,17 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
 
         const guardiansData = [
             { icon: "🧠", jaTitle: "【心理：マインドセット】", enTitle: "[Psychology: Mindset]", jaSub: "自分を支えるしなやかな軸を授ける", enSub: "Providing an axis", items: [
-                { ja: ["教育心理（西浦）", "学びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Nishiura)", "Exploding the joy of learning"] },
-                { ja: ["発達心理（平川）", "「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Hirakawa)", "Scientific absolute evidence"] },
-                { ja: ["臨床心理（兪）", "自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Yu)", "True resilience"] }
+                { ja: ["教育心理（西浦先生）", "学びの喜びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Prof. Nishiura)", "Exploding the joy of learning"] },
+                { ja: ["発達心理（平川先生）", "子どもの「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Prof. Hirakawa)", "Scientific absolute evidence"] },
+                { ja: ["臨床心理（兪先生）", "自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Prof. Yu)", "True resilience"] }
             ]},
             { icon: "🎨", jaTitle: "【保育：スキルセット】", enTitle: "[Nursery: Skillset]", jaSub: "幸福な環境を自らの手で創り出す", enSub: "Creating environment", items: [
-                { ja: ["環境（伊藤）", "輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Ito)", "Wizard of Space"] },
-                { ja: ["健康（守）", "幸福を守り抜く「タフな愛」"], en: ["Health (Mori)", "Tough Love"] },
-                { ja: ["造形（石川）", "想いを形にする「表現という武器」"], en: ["Art (Ishikawa)", "Weapon of Expression"] }
+                { ja: ["環境（伊藤先生）", "輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Prof. Ito)", "Wizard of Space"] },
+                { ja: ["健康（守先生）", "自分と子どものウェルビーイングを守り抜く「タフな愛」"], en: ["Health (Prof. Mori)", "Tough Love"] },
+                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Prof. Ishikawa)", "Weapon of Expression"] }
             ]},
             { icon: "🌍", jaTitle: "【福祉：フレームセット】", enTitle: "[Welfare: Frameset]", jaSub: "幸せを社会に実装する", enSub: "Social Implementation", items: [
-                { ja: ["社会福祉（尾形・田中）", "地域全体を構築する「社会の設計士」"], en: ["Social Welfare (Ogata/Tanaka)", "Architects of Society"] }
+                { ja: ["社会福祉（尾形先生・田中先生）", "制度と知恵を掛け合わせ、地域全体のウェルビーイングを構築する「社会の設計士」"], en: ["Social Welfare (Ogata/Tanaka)", "Architects of Society"] }
             ]}
         ];
 
