@@ -15,6 +15,7 @@ v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
 v1.2.9 (2026-04-28): Harmonized Psych deep-dive with the 3-column summary cards
 v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to the Nursery section
 v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional practical skills
+v1.3.2 (2026-05-10): Added "5 Transformation Voices" to the Future You section
 -->
 <html lang="ja">
 <head>
@@ -117,6 +118,13 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
                 top: auto; bottom: -15px;
             }
         }
+        .voice-card {
+            transition: all 0.3s ease;
+        }
+        .voice-card:hover {
+            border-color: #d97777;
+            background: white;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -140,8 +148,8 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
         </div>
     </nav>
 
-    <header class="pt-24 md:pt-36 pb-12 md:pb-20 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden text-center">
-        <div class="container mx-auto max-w-4xl relative z-10">
+    <header class="pt-24 md:pt-36 pb-12 md:pb-20 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden text-center text-center">
+        <div class="container mx-auto max-w-4xl relative z-10 text-center">
             <h1 class="text-2xl md:text-5xl font-bold text-warm-900 leading-tight mb-6" data-i18n="heroTitle"></h1>
             <p class="text-base md:text-xl text-warm-700 mb-8 leading-relaxed px-2 md:px-0" data-i18n="heroSubtitle"></p>
             <div class="inline-block bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-warm-200 text-left max-w-2xl mx-auto">
@@ -209,7 +217,7 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
     </section>
 
     <!-- Deep Dive Sections (Psychology, Welfare) -->
-    <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center">
+    <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center text-center">
         <div class="container mx-auto max-w-5xl">
             <div class="mb-12">
                 <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="psychDeepHeader"></h2>
@@ -240,7 +248,7 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
         </div>
     </section>
 
-    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50 text-center">
+    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50 text-center text-center">
         <div class="container mx-auto max-w-5xl">
             <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="welfDeepHeader"></h2>
             <p class="text-warm-500 font-bold text-base md:text-lg italic mb-2" data-i18n="welfDeepSubtitle"></p>
@@ -261,7 +269,7 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
                     </ul>
                 </div>
             </div>
-            <div class="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div class="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-left">
                 <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">👶 <span data-i18n="welfChildHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="welfChildBody"></p></div>
                 <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🗝 <span data-i18n="welfLicenseHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="welfLicenseBody"></p></div>
                 <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🤝 <span data-i18n="welfTargetHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="welfTargetBody"></p></div>
@@ -270,11 +278,11 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
     </section>
 
     <!-- Track Cards -->
-    <section id="special" class="py-16 md:py-24 px-4 md:px-6 bg-warm-900 text-white relative overflow-hidden text-center">
+    <section id="special" class="py-16 md:py-24 px-4 md:px-6 bg-warm-900 text-white relative overflow-hidden text-center text-center">
         <div class="container mx-auto max-w-6xl relative z-10">
             <h2 class="text-2xl md:text-3xl font-bold mb-4" data-i18n="specialHeader"></h2>
             <p class="text-warm-200 text-sm md:text-base max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16" data-i18n="specialSubtitle"></p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left text-left">
                 <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-accent transition group shadow-lg">
                     <div class="flex justify-between items-start mb-6"><div class="bg-accent p-3 rounded-2xl text-2xl">🧠</div><span class="bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Psychology</span></div>
                     <h3 class="text-xl md:text-2xl font-bold mb-2" data-i18n="course1Title"></h3>
@@ -300,16 +308,26 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
         </div>
     </section>
 
-    <section id="future" class="py-20 md:py-32 px-6 bg-warm-50 relative overflow-hidden text-center text-center">
-        <div class="container mx-auto max-w-4xl relative z-10 text-center">
-            <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-8" data-i18n="futureHeader"></h2>
-            <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-10" id="future-body"></p>
+    <!-- Future Section with Transformation Voices -->
+    <section id="future" class="py-20 md:py-32 px-4 md:px-6 bg-warm-50 text-center">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-12" data-i18n="futureHeader"></h2>
+            
+            <!-- Impactful Transformation Voices -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-16 text-left" id="voice-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-12" id="future-body"></p>
+            
             <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm text-center">
                 <div class="text-4xl mb-4">✨</div>
                 <h3 class="text-lg md:text-xl font-bold text-warm-900 mb-4" data-i18n="wowHeader"></h3>
                 <p class="text-warm-600 text-xs md:text-sm" data-i18n="wowBody"></p>
             </div>
-            <h3 class="text-lg md:text-2xl font-bold text-accent mb-10" data-i18n="finalPunch"></h3>
+            
+            <h3 class="text-lg md:text-2xl font-bold text-accent mb-12" data-i18n="finalPunch"></h3>
+            
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-warm-700 hover:bg-warm-800 text-white font-bold py-4 px-10 rounded-full shadow-xl transition transform active:scale-95">
                 <span data-i18n="cta"></span>
             </button>
@@ -317,7 +335,7 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
     </section>
 
     <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs">
-        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.3.1</p>
+        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.3.2</p>
         <p>&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
     </footer>
 
@@ -382,6 +400,13 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
                     { icon: "🌸", title: "「ただの保育者」では終わらせない。", sub: "子どもと学びながら、自分の可能性も広げたい。", link: "#journey" },
                     { icon: "🌱", title: "まだ決めきれないあなたへ。", sub: "4年間で「自分の軸」を見つけたい人のために。", link: "#journey" },
                     { icon: "🧩", title: "人を、専門にする。", sub: "心理・福祉・保育を横断して学びたいあなたへ。", link: "#guardians" }
+                ],
+                voices: [
+                    { icon: "🌸", title: "保育", text: "子どもを育てるつもりが、気づけば自分が育てられていた。" },
+                    { icon: "🧠", title: "心理", text: "心理を理解するより先に、人とどう在るかを学んだ。" },
+                    { icon: "🌍", title: "福祉", text: "制度を覚える前に、誰を支えるのかを考え始めた。" },
+                    { icon: "🌊", title: "被災地研修", text: "過去を学びに行き、自分の未来を問われて帰った。" },
+                    { icon: "❄️", title: "北欧研修", text: "「正しさ」より「幸せ」を基準にする社会を知った。" }
                 ],
                 journey: {
                     1: { badge: "【心理】マインドセット", title: "心の軸を立てる。", desc: "心理学で自分を客観視し、依存心を「自立」へ。「私がやる」という心地よい責任感を知り、自立の目覚めを果たします。", mind: "「自立」の目覚め" },
@@ -450,6 +475,13 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
                     { icon: "🌱", title: "Can't decide yet?", sub: "Find your 'inner axis' over 4 years.", link: "#journey" },
                     { icon: "🧩", title: "Making Humans your Specialty.", sub: "Study across Psych, Welfare, Nursery.", link: "#guardians" }
                 ],
+                voices: [
+                    { icon: "🌸", title: "Nursery", text: "Intending to raise children, I found myself being raised." },
+                    { icon: "🧠", title: "Psychology", text: "Before understanding the mind, I learned how to be with people." },
+                    { icon: "🌍", title: "Welfare", text: "Before memorizing systems, I started thinking about who to support." },
+                    { icon: "🌊", title: "Fieldwork", text: "Went to learn about the past, returned being asked about my future." },
+                    { icon: "❄️", title: "Nordic", text: "Discovered a society that prioritizes 'happiness' over 'correctness'." }
+                ],
                 journey: {
                     1: { badge: "Mindset", title: "Building an inner axis.", desc: "Use psychology to turn dependence into independence. Learn the joy of responsibility.", mind: "Independence Awakened" },
                     2: { badge: "Skillset", title: "Field x World.", desc: "Japan practice x Nordic study. Refine skills and find the shape of happiness yourself.", mind: "Perspective of Inquiry" },
@@ -463,15 +495,15 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
             { icon: "🧠", jaTitle: "【心理：マインドセット】", enTitle: "[Psychology: Mindset]", jaSub: "自分を支えるしなやかな軸を授ける", enSub: "Providing an axis", items: [
                 { ja: ["教育心理（西浦先生）", "学びの喜びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Prof. Nishiura)", "Exploding the joy of learning"] },
                 { ja: ["発達心理（平川先生）", "子どもの「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Prof. Hirakawa)", "Scientific absolute evidence"] },
-                { ja: ["臨床心理（兪先生）", "自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Prof. Yu)", "True resilience"] }
+                { ja: ["臨床心理（兪先生）", "誰かを救う前に自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Prof. Yu)", "True resilience"] }
             ]},
             { icon: "🎨", jaTitle: "【保育：スキルセット】", enTitle: "[Nursery: Skillset]", jaSub: "幸福な環境を自らの手で創り出す", enSub: "Creating environment", items: [
-                { ja: ["環境（伊藤先生）", "輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Prof. Ito)", "Wizard of Space"] },
+                { ja: ["環境（伊藤先生）", "子どもの目が輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Prof. Ito)", "Wizard of Space"] },
                 { ja: ["健康（守先生）", "自分と子どものウェルビーイングを守り抜く「タフな愛」"], en: ["Health (Prof. Mori)", "Tough Love"] },
-                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Ishikawa)", "Weapon of Expression"] }
+                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Prof. Ishikawa)", "Weapon of Expression"] }
             ]},
             { icon: "🌍", jaTitle: "【福祉：フレームセット】", enTitle: "[Welfare: Frameset]", jaSub: "幸せを社会に実装する", enSub: "Social Implementation", items: [
-                { ja: ["社会福祉（尾形先生・田中先生）", "制度と知恵を掛け合わせ、地域全体のウェルビーイングを構築する「社会の設計士」"], en: ["Social Welfare (Ogata/Tanaka)", "Architects of Society"] }
+                { ja: ["社会福祉（尾形先生・田中先生）", "制度と知恵を掛け合わせ、地域全体のウェルビーイングを構築する「社会の設計士」"], en: ["Social Welfare (Ogata & Tanaka)", "Architects of Society"] }
             ]}
         ];
 
@@ -494,6 +526,7 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
             document.getElementById('future-body').innerHTML = data.futureBody;
             
             renderPersonas();
+            renderVoices();
             updateJourney(currentYear);
             renderGuardians();
             if (growthChart) {
@@ -515,6 +548,19 @@ v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional prac
                         <span>→</span>
                     </div>
                 </a>
+            `).join('');
+        }
+
+        function renderVoices() {
+            const container = document.getElementById('voice-grid');
+            container.innerHTML = i18n[currentLang].voices.map(v => `
+                <div class="voice-card glass-card rounded-2xl p-5 border-l-4 border-accent shadow-sm">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xl">${v.icon}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-warm-400">${v.title}</span>
+                    </div>
+                    <p class="text-warm-900 font-bold text-sm leading-relaxed">${v.text}</p>
+                </div>
             `).join('');
         }
 
