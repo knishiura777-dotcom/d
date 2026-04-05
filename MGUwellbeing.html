@@ -14,6 +14,7 @@ v1.2.7 (2026-04-22): Added "Beyond Learning Welfare" section for welfare aspiran
 v1.2.8 (2026-04-25): Added "5 Persona Entry Cards" for personalized navigation
 v1.2.9 (2026-04-28): Harmonized Psych deep-dive with the 3-column summary cards
 v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to the Nursery section
+v1.3.1 (2026-05-05): Refined Nursery summary text to emphasize professional practical skills
 -->
 <html lang="ja">
 <head>
@@ -198,7 +199,7 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
                 </div>
             </div>
 
-            <!-- New Nursery Summary Cards (Matching Twin Structure) -->
+            <!-- Nursery Summary Cards -->
             <div class="mt-12 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
                 <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">👶 <span data-i18n="nurLabHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurLabBody"></p></div>
                 <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🗝 <span data-i18n="nurCareerHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurCareerBody"></p></div>
@@ -208,8 +209,8 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
     </section>
 
     <!-- Deep Dive Sections (Psychology, Welfare) -->
-    <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white">
-        <div class="container mx-auto max-w-5xl text-center">
+    <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center">
+        <div class="container mx-auto max-w-5xl">
             <div class="mb-12">
                 <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="psychDeepHeader"></h2>
                 <p class="text-accent font-bold text-base md:text-lg italic mb-2" data-i18n="psychDeepSubtitle"></p>
@@ -293,14 +294,14 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
     </section>
 
     <section id="guardians" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center">
-        <div class="container mx-auto max-w-6xl">
+        <div class="container mx-auto max-w-6xl text-center">
             <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-12 md:mb-16" data-i18n="guardiansHeader"></h2>
             <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left"></div>
         </div>
     </section>
 
-    <section id="future" class="py-20 md:py-32 px-6 bg-warm-50 relative overflow-hidden text-center">
-        <div class="container mx-auto max-w-4xl relative z-10">
+    <section id="future" class="py-20 md:py-32 px-6 bg-warm-50 relative overflow-hidden text-center text-center">
+        <div class="container mx-auto max-w-4xl relative z-10 text-center">
             <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-8" data-i18n="futureHeader"></h2>
             <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-10" id="future-body"></p>
             <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm text-center">
@@ -316,7 +317,7 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
     </section>
 
     <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs">
-        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.3.0</p>
+        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.3.1</p>
         <p>&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
     </footer>
 
@@ -331,8 +332,8 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
                 journeyHeader: "選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験",
                 journeySubtitle: "「ただの保育者」では終わらせない。ここでの学びは、マインドセット（考え方）、スキルセット（できること）、フレームセット（物事の捉え方）、そしてリーダーシップへとつながる、4段階の成長プロセスです。保育を学ぶ中で、あなたの価値観は揺さぶられ、自分で考え、人と関わり、行動できる力が身についていきます。子どもと向き合う経験は、自分自身と向き合う経験でもある。こうした変化の積み重ねによって、あなたの可能性は大きく広がっていきます。これこそが、私たちが考える「人としてのトランスフォーメーション」です。",
                 mindTitle: "到達するマインド",
-                nurLabHeader: "国内×北欧の実践",
-                nurLabBody: "日本の現場で汗をかき、北欧で常識を捨てる。多様な「幸せ」を体感し、どんな現場でも通用する生きた保育スキルを磨き抜きます。",
+                nurLabHeader: "国内保育×北欧研修の実践",
+                nurLabBody: "日本の保育現場で汗をかき、北欧研修で常識をアップデートする。多様な「幸せ」を体感し、どんな現場でも社会人として通用する生きた実践的スキルを磨き抜きます。",
                 nurCareerHeader: "資格とその先へ",
                 nurCareerBody: "免許取得はもちろん、心理・福祉の視座を持つことで、選ばれる保育者、そして現場のリーダーへの道が確実に拓かれます。",
                 nurTargetHeader: "こんな人に来てほしい",
@@ -399,7 +400,7 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
                 journeySubtitle: "We don't stop at being 'just a nursery teacher.' Learning here is a 4-stage growth process that leads to Mindset, Skillset, Frameset, and Leadership. Accumulating these changes expands your potential into 'Human Transformation.'",
                 mindTitle: "Mindset Attained",
                 nurLabHeader: "Domestic x Nordic Practice",
-                nurLabBody: "Sweat in Japanese fields and discard common sense in Nordic settings. Refine professional skills that work in any environment.",
+                nurLabBody: "Sweat in Japanese nursery fields and update your common sense through Nordic training. Experience diverse 'happiness' and refine live practical skills that work in any professional setting.",
                 nurCareerHeader: "Beyond the License",
                 nurCareerBody: "Acquiring licenses is just the start. With psychology and welfare perspectives, you'll open paths as a preferred educator and leader.",
                 nurTargetHeader: "Who We Want",
@@ -467,7 +468,7 @@ v1.3.0 (2026-05-01): Completed the "Triple Summary" by adding summary cards to t
             { icon: "🎨", jaTitle: "【保育：スキルセット】", enTitle: "[Nursery: Skillset]", jaSub: "幸福な環境を自らの手で創り出す", enSub: "Creating environment", items: [
                 { ja: ["環境（伊藤先生）", "輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Prof. Ito)", "Wizard of Space"] },
                 { ja: ["健康（守先生）", "自分と子どものウェルビーイングを守り抜く「タフな愛」"], en: ["Health (Prof. Mori)", "Tough Love"] },
-                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Prof. Ishikawa)", "Weapon of Expression"] }
+                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Ishikawa)", "Weapon of Expression"] }
             ]},
             { icon: "🌍", jaTitle: "【福祉：フレームセット】", enTitle: "[Welfare: Frameset]", jaSub: "幸せを社会に実装する", enSub: "Social Implementation", items: [
                 { ja: ["社会福祉（尾形先生・田中先生）", "制度と知恵を掛け合わせ、地域全体のウェルビーイングを構築する「社会の設計士」"], en: ["Social Welfare (Ogata/Tanaka)", "Architects of Society"] }
