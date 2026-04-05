@@ -5,6 +5,9 @@ v1.0.0 (2026-03-20): Initial Interactive SPA Release
 v1.1.0 (2026-03-25): Added detailed faculty "weapon" descriptions and track renaming
 v1.2.0 (2026-04-01): Implemented bilingual (JP/EN) support and mobile optimization
 v1.2.1 (2026-04-05): Added version info display and internal management tags
+v1.2.2 (2026-04-10): Updated "Transformation" to "Ultimate Self-Refinement" (究極の自分磨き)
+v1.2.3 (2026-04-12): Updated journey header to emphasize inner change (“自分が変わる”)
+v1.2.4 (2026-04-15): Refined journey subtitle to focus on "Human Transformation"
 -->
 <html lang="ja">
 <head>
@@ -52,7 +55,7 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
-            height: 250px; /* Reduced for mobile */
+            height: 250px;
         }
         @media (min-width: 768px) {
             .chart-container {
@@ -80,10 +83,6 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             will-change: transform;
         }
-        .guardian-card:active {
-            transform: scale(0.98);
-        }
-        /* Mobile horizontal scroll support */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -91,11 +90,6 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
             -ms-overflow-style: none;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
-        }
-        /* Sticky Mobile Nav Hint */
-        .mobile-nav-active {
-            color: #d97777 !important;
-            border-bottom: 2px solid #d97777;
         }
     </style>
 </head>
@@ -119,8 +113,8 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
         </div>
     </nav>
 
-    <header class="pt-24 md:pt-36 pb-12 md:pb-20 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden">
-        <div class="container mx-auto max-w-4xl text-center relative z-10">
+    <header class="pt-24 md:pt-36 pb-12 md:pb-20 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden text-center">
+        <div class="container mx-auto max-w-4xl relative z-10">
             <h1 class="text-2xl md:text-5xl font-bold text-warm-900 leading-tight mb-6" data-i18n="heroTitle">
                 ウェルビーイングを創造する<br><span class="text-accent">「自立」</span>の物語
             </h1>
@@ -141,10 +135,10 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
     <section id="journey" class="py-12 md:py-20 px-4 md:px-6">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-8 md:mb-16">
-                <h2 class="text-xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="journeyHeader">選ばれる理由：保育×ICTを学ぶことで得られるトランスフォーメーション</h2>
-                <p class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed" data-i18n="journeySubtitle">
-                    「ただの保育者」では終わらせない。マインドセット、スキルセット、フレームセット、そしてリーダーシップ。ここでの学びは、あなたの可能性を極限までアップデートする4段階の進化です。
-                </p>
+                <h2 class="text-xl md:text-3xl font-bold text-warm-900 mb-6" data-i18n="journeyHeader">選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験</h2>
+                <div class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed space-y-2" data-i18n="journeySubtitle">
+                    <!-- Text injected via i18n -->
+                </div>
             </div>
 
             <div class="flex flex-col lg:flex-row gap-6 md:gap-12 items-start">
@@ -233,15 +227,9 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
     </section>
 
     <section id="guardians" class="py-16 md:py-24 px-4 md:px-6 bg-warm-100">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-12 md:mb-16">
-                <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4" data-i18n="guardiansHeader">選ばれる理由：あなたを支える「8人の守護神」と3つの武器</h2>
-                <p class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed" data-i18n="guardiansSubtitle">
-                    各分野のエッジの効いたスペシャリストが、あなたの才能を極限まで引き出します。カテゴリーごとの専門教員が授ける「武器」を確認してください。
-                </p>
-            </div>
-
-            <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div class="container mx-auto max-w-6xl text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-12 md:mb-16" data-i18n="guardiansHeader">選ばれる理由：あなたを支える「8人の守護神」と3つの武器</h2>
+            <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
                 <!-- Data populated via JS -->
             </div>
         </div>
@@ -268,7 +256,7 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
     </section>
 
     <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs">
-        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.2.1</p>
+        <p class="mb-2 opacity-50"><span data-i18n="versionLabel">バージョン</span> v1.2.4</p>
         <p>&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
     </footer>
 
@@ -280,21 +268,20 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
                 heroSubtitle: "「誰かに守られる私」から、「世界を幸せにする私」へ。女子大という名の、すべての役割があなたの「出番」になる最高のステージで、8人のスペシャリストと共に、あなただけのサクセスストーリーを始めませんか？",
                 aboutHeader: "この招待状について",
                 aboutBody: "このページは、あなたが本学の4年間でどのように「依存」を脱ぎ捨て、多角的な視点を持つリーダーへと進化するのかを体験できるインタラクティブなロードマップです。",
-                journeyHeader: "選ばれる理由：保育×ICTを学ぶことで得られるトランスフォーメーション",
-                journeySubtitle: "「ただの保育者」では終わらせない。マインドセット、スキルセット、フレームセット、そしてリーダーシップ。ここでの学びは、あなたの可能性を極限までアップデートする4段階の進化です。",
+                journeyHeader: "選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験",
+                journeySubtitle: "「ただの保育者」では終わらせない。ここでの学びは、マインドセット（考え方）、スキルセット（できること）、フレームセット（物事の捉え方）、そしてリーダーシップへとつながる、4段階の成長プロセスです。保育を学ぶ中で、あなたの価値観は揺さぶられ、自分で考え、人と関わり、行動できる力が身についていきます。子どもと向き合う経験は、自分自身と向き合う経験でもある。こうした変化の積み重ねによって、あなたの可能性は大きく広がっていきます。これこそが、私たちが考える「人としてのトランスフォーメーション」です。",
                 year1: "1年生", year2: "2年生", year3: "3年生", year4: "4年生",
                 stage1: "マインドセット", stage2: "スキルセット", stage3: "フレームセット", stage4: "リーダーシップ",
                 mindTitle: "到達するマインド",
                 specialHeader: "選ばれる理由：圧倒的な2つの専門コース",
                 specialSubtitle: "他大学にはない本専攻最大の特色。保育の学びに心理と福祉の専門性を掛け合わせ、唯一無二の価値を創出します。",
-                course1Title: "デジタル・ハピネス・クリエイター", course2Title: "ソーシャル・ウェルフェアー・プロデューサー",
+                course1Title: "デジタル・ハピネス-クリエイター", course2Title: "ソーシャル・ウェルフェアー-プロデューサー",
                 course1Tag: "高度なプログラミング思考を装備する →", course2Tag: "地域福祉のプロデューサーへ →",
                 licenseLabel: "取得目標資格：", license1: "認定心理士", license2: "社会福祉士",
                 course1Desc: "心の理解と支援を学ぶ中で【ICT × 心理学】を実践。プログラミング的思考で教育現場をハックし、子どもの可能性をデータと直感で引き出します。",
                 course2Desc: "「誰も取り残さない仕組み」を自ら設計。制度を超え、地域全体をプロデュースする圧倒的な自信が、あなたのキャリアを強固にします。",
                 guardiansHeader: "選ばれる理由：あなたを支える「8人の守護神」と3つの武器",
-                guardiansSubtitle: "各分野のエッジの効いたスペシャリストが、あなたの才能を極限まで引き出します。カテゴリーごとの専門教員が授ける「武器」を確認してください。",
-                futureHeader: "未来のあなた：「ウェルビーイング・リーダー」",
+                futureHeader: "未来のあなた：「ウェルビーイング-リーダー」",
                 futureBody: "卒業式の日、鏡の中に映るのは、かつての「不安な女子高生」ではありません。<br><br><strong class='text-warm-900'>心理（Mindset）</strong>という確かな軸を持ち。<br><strong class='text-warm-900'>保育（Skillset）</strong>という高度な実践力を備え。<br><strong class='text-warm-900'>福祉（Frameset）</strong>という広い視座で、世界をプロデュースする。",
                 wowHeader: "私たちが約束する「輝き」の正体",
                 wowBody: "それは、誰かに守られた華奢なキラキラではなく、すべてをやり遂げた自信から溢れ出す、ダイヤモンドのような強靭な輝きです。",
@@ -312,23 +299,22 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
             en: {
                 navTitle: "Invitation", navJourney: "Journey", navSpecial: "Why Us", navGuardians: "Guardians",
                 heroTitle: "A Story of <span class='text-accent'>Independence</span><br>for Well-being",
-                heroSubtitle: "From 'someone protected' to 'someone making the world happy.' Every role is your turn to shine. Start your success story with 8 specialists.",
+                heroSubtitle: "From 'someone protected' to 'someone making the world happy.' Start your success story with 8 specialists in a place where every role is yours.",
                 aboutHeader: "About this roadmap",
-                aboutBody: "This page shows your 4-year transformation into a leader by shedding dependence through our unique curriculum.",
-                journeyHeader: "Why Us: Transformation through Early Childhood Education x ICT",
-                journeySubtitle: "Beyond a simple teacher. Mindset, Skillset, Frameset, and Leadership. Update your potential to the extreme.",
+                aboutBody: "This page shows your 4-year journey of self-refinement and growth through our unique curriculum.",
+                journeyHeader: "Why Us: Changing Yourself through Learning Nursery Education",
+                journeySubtitle: "We don't stop at being 'just a nursery teacher.' Learning here is a 4-stage growth process that leads to Mindset (how you think), Skillset (what you can do), Frameset (how you perceive things), and Leadership. Through this study, your values will be challenged, and you will acquire the power to think, interact, and act. Facing children is facing yourself. This accumulation of change expands your potential. This is what we consider 'Human Transformation.'",
                 year1: "Year 1", year2: "Year 2", year3: "Year 3", year4: "Year 4",
                 stage1: "Mindset", stage2: "Skillset", stage3: "Frameset", stage4: "Leadership",
                 mindTitle: "Mindset Attained",
                 specialHeader: "Why Us: Two Specialized Tracks",
-                specialSubtitle: "We integrate nursery education with psychology and welfare to create unique value.",
+                specialSubtitle: "Integrating nursery education with psychology and welfare to create unique value.",
                 course1Title: "Digital Happiness Creator", course2Title: "Social Welfare Producer",
                 licenseLabel: "Licenses:", license1: "Cert. Psychologist", license2: "Social Worker",
                 course1Desc: "Practice [ICT x Psychology]. Hack educational settings with algorithmic thinking and unlock potential through data.",
                 course2Desc: "Design 'systems that leave no one behind.' Go beyond rules to produce community well-being with confidence.",
                 course1Tag: "Equipped with advanced thinking →", course2Tag: "Becoming a welfare producer →",
                 guardiansHeader: "Why Us: 8 Guardians Supporting You",
-                guardiansSubtitle: "Specialists draw out your potential with specific 'weapons' for the field.",
                 futureHeader: "The Future You: 'Well-being Leader'",
                 futureBody: "On graduation day, you are not that anxious girl.<br><br><strong class='text-warm-900'>Mindset</strong> as axis,<br><strong class='text-warm-900'>Skillset</strong> as power,<br><strong class='text-warm-900'>Frameset</strong> as vision.",
                 wowHeader: "The True 'Sparkle'",
@@ -348,17 +334,17 @@ v1.2.1 (2026-04-05): Added version info display and internal management tags
 
         const guardiansData = [
             { icon: "🧠", jaTitle: "【心理：マインドセット】", enTitle: "[Psychology: Mindset]", jaSub: "自分を支えるしなやかな軸を授ける", enSub: "Providing an axis", items: [
-                { ja: ["教育心理（西浦）", "学びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Nishiura)", "Drawing out possibilities"] },
-                { ja: ["発達心理（平川）", "「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Hirakawa)", "Affirming the 'now'"] },
-                { ja: ["臨床心理（兪）", "自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Yu)", "True resilience"] }
+                { ja: ["教育心理（西浦先生）", "学びの喜びを爆発させる「可能性の引き出し方」"], en: ["Ed. Psych (Prof. Nishiura)", "Exploding the joy of learning"] },
+                { ja: ["発達心理（平川先生）", "子どもの「今」を科学的に肯定する「絶対的な根拠」"], en: ["Dev. Psych (Prof. Hirakawa)", "Scientific absolute evidence"] },
+                { ja: ["臨床心理（兪先生）", "誰かを救う前に自分を整える「真のレジリエンス」"], en: ["Clinical Psych (Prof. Yu)", "True resilience"] }
             ]},
             { icon: "🎨", jaTitle: "【保育：スキルセット】", enTitle: "[Nursery: Skillset]", jaSub: "幸福な環境を自らの手で創り出す", enSub: "Creating environment", items: [
-                { ja: ["環境（伊藤）", "輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Ito)", "Wizard of Space"] },
-                { ja: ["健康（守）", "幸福を守り抜く「タフな愛」"], en: ["Health (Mori)", "Tough Love"] },
-                { ja: ["造形（石川）", "想いを形にする「表現という武器」"], en: ["Art (Ishikawa)", "Weapon of Expression"] }
+                { ja: ["環境（伊藤先生）", "子どもの目が輝く瞬間をデザインする「空間の魔術師」"], en: ["Env. (Prof. Ito)", "Wizard of Space"] },
+                { ja: ["健康（守先生）", "自分と子どものウェルビーイングを守り抜く「タフな愛」"], en: ["Health (Prof. Mori)", "Tough Love"] },
+                { ja: ["造形（石川先生）", "想いを形にし、世界を美しく彩る「表現という武器」"], en: ["Art (Prof. Ishikawa)", "Weapon of Expression"] }
             ]},
             { icon: "🌍", jaTitle: "【福祉：フレームセット】", enTitle: "[Welfare: Frameset]", jaSub: "幸せを社会に実装する", enSub: "Social Implementation", items: [
-                { ja: ["社会福祉（尾形・田中）", "地域全体を構築する「社会の設計士」"], en: ["Social Welfare (Ogata/Tanaka)", "Architects of Society"] }
+                { ja: ["社会福祉（尾形先生・田中先生）", "制度と知恵を掛け合わせ、地域全体のウェルビーイングを構築する「社会の設計士」"], en: ["Social Welfare (Prof. Ogata & Tanaka)", "Architects of Society"] }
             ]}
         ];
 
