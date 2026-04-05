@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名刺サイズ招待状（栞）デザイン</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 共通設定 */
+        body {
+            background-color: #e5e7eb;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 画面表示用の設定 */
+        .screen-only-flex {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .card-container {
+            perspective: 1000px;
+        }
+        .card {
+            width: 55mm;
+            height: 91mm;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            border-radius: 4px;
+            background: #fdfdfd;
+            box-sizing: border-box;
+            border: 1px solid #f0f0f0;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .serif {
+            font-family: 'Shippori Mincho', serif;
+        }
+        .tracking-ultra-wide {
+            letter-spacing: 0.3em;
+        }
+        .qr-placeholder {
+            width: 48px;
+            height: 48px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+        }
+
+        /* 印刷用設定 (Ctrl+P) */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 20mm;
+            }
+            /* 画面表示用のコンテナを無効化 */
+            html, body {
+                background: white !important;
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+            }
+            .screen-only-flex {
+                display: block !important;
+                min-height: auto !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            
+            /* カードの配置をリセット */
+            .card-container {
+                perspective: none !important;
+                width: 100% !important;
+                display: block !important;
+            }
+            .card {
+                position: relative !important;
+                display: flex !important;
+                flex-direction: row !important;
+                width: 100% !important;
+                height: auto !important;
+                transform: none !important;
+                box-shadow: none !important;
+                gap: 10mm;
+            }
+            .card-face {
+                position: relative !important; /* 絶対配置を解除 */
+                width: 55mm !important;
+                height: 91mm !important;
+                border: 0.1mm solid #ddd !important; /* 薄いガイド線 */
+                transform: none !important;
+                backface-visibility: visible !important;
+                display: flex !important;
+                visibility: visible !important;
+                float: left; /* 要素が途切れないように並べる */
+            }
+            .card-back {
+                transform: none !important;
+                left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="screen-only-flex">
+        <div class="mb-8 text-center no-print">
+            <h1 class="text-xl font-light text-gray-600 mb-2 tracking-widest">招待状：名刺サイズ・栞デザイン</h1>
+            <p class="text-xs text-gray-400 mb-6">クリックで裏面を確認。印刷設定(Ctrl+P)で表面・裏面が並びます。</p>
+            
+            <div class="flex gap-4 justify-center">
+                <button onclick="window.print()" class="px-6 py-2 bg-slate-800 text-white rounded-full text-xs hover:bg-slate-700 transition-all shadow-lg">
+                    印刷プレビューを開く
+                </button>
+            </div>
+        </div>
+
+        <div class="card-container">
+            <div id="card" class="card relative">
+                
+                <!-- [表面] -->
+                <div class="card-face">
+                    <div class="flex-grow flex flex-col items-center justify-center space-y-8">
+                        <p class="text-[10px] tracking-ultra-wide text-gray-400 font-light leading-relaxed text-center">
+                            ウェルビーイングを創造する
+                        </p>
+                        <h2 class="text-lg serif tracking-[0.4em] font-medium text-gray-800 ml-[0.4em]">
+                            「自立」の物語
+                        </h2>
+                    </div>
+                    <div class="w-full text-center mt-auto">
+                        <p class="text-[8px] tracking-widest text-gray-300 font-light">
+                            これは、履修案内ではありません。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- [裏面] -->
+                <div class="card-face card-back">
+                    <div class="flex-grow flex flex-col items-center justify-center w-full px-2">
+                        <p class="text-[12px] serif leading-loose tracking-[0.15em] text-gray-700 text-center">
+                            心理を理解する前に、<br>
+                            人とどう向き合うかを学んだ。
+                        </p>
+                    </div>
+                    
+                    <div class="w-full flex flex-col items-center mt-auto space-y-4">
+                        <div class="flex flex-col items-center space-y-2">
+                            <p class="text-[8px] tracking-widest text-gray-400 font-light">続きは、こちらから。</p>
+                            <div class="qr-placeholder">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><line x1="7" y1="7" x2="7.01" y2="7"></line><line x1="17" y1="7" x2="17.01" y2="7"></line><line x1="17" y1="17" x2="17.01" y2="17"></line><line x1="7" y1="17" x2="7.01" y2="17"></line></svg>
+                            </div>
+                        </div>
+                        <p class="text-[6px] tracking-tighter text-gray-300 uppercase">
+                            Designed for Autonomy
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mt-12 max-w-sm w-full no-print">
+            <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-xs font-bold text-gray-600 mb-3 flex items-center">
+                    <span class="mr-2">🖨️</span> 印刷が途切れる場合の確認
+                </h3>
+                <ul class="text-[10px] text-gray-500 space-y-2 leading-relaxed">
+                    <li>・<strong>用紙サイズ：</strong>「A4」になっているか確認してください。</li>
+                    <li>・<strong>倍率：</strong>「100%」または「実際のサイズ」を選択してください。</li>
+                    <li>・<strong>背景のグラフィック：</strong>チェックを付けると、カードの背景色や線が正しく出ます。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const card = document.getElementById('card');
+        card.addEventListener('click', () => {
+            card.classList.toggle('is-flipped');
+        });
+    </script>
+</body>
+</html>
