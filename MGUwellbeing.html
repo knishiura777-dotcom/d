@@ -3,9 +3,9 @@
 Version Management History:
 v1.0.0 (2026-03-20): Initial Release
 ...
-v1.3.8 (2026-05-25): Refined Persona Card title
 v1.3.9 (2026-05-28): Updated Persona 5 title for clarity
-v1.4.0 (2026-06-01): Simplified Track Titles for high schoolers and integrated pro labels into descriptions
+v1.4.0 (2026-06-01): Simplified Track Titles for high schoolers
+v1.4.1 (2026-06-05): Updated Hero Title and Introduction text to focus on SDGs and Well-being context
 -->
 <html lang="ja" id="html-root">
 <head>
@@ -52,11 +52,11 @@ v1.4.0 (2026-06-01): Simplified Track Titles for high schoolers and integrated p
 
     <nav class="fixed top-0 w-full z-50 glass-card py-3 md:py-4 px-4 md:px-6">
         <div class="container mx-auto flex justify-between items-center">
-            <div class="text-lg md:text-xl font-bold text-warm-800 tracking-wider flex items-center gap-2">
+            <div class="text-lg md:text-xl font-bold text-warm-800 tracking-wider flex items-center gap-2 text-left">
                 🌸 <span data-i18n="navTitle"></span>
             </div>
-            <div class="flex items-center space-x-2 md:space-x-8 text-center text-center">
-                <div class="hidden lg:flex space-x-6 text-sm text-center text-center">
+            <div class="flex items-center space-x-2 md:space-x-8 text-center">
+                <div class="hidden lg:flex space-x-6 text-sm text-center">
                     <a href="#journey" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navJourney"></a>
                     <a href="#psych-deep" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navPsych"></a>
                     <a href="#welf-deep" class="text-warm-700 hover:text-accent font-medium transition" data-i18n="navWelfare"></a>
@@ -69,199 +69,200 @@ v1.4.0 (2026-06-01): Simplified Track Titles for high schoolers and integrated p
         </div>
     </nav>
 
-    <header class="pt-24 md:pt-36 pb-12 md:pb-20 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden text-center text-center text-center">
-        <div class="container mx-auto max-w-4xl relative z-10 text-center text-center text-center">
-            <h1 class="text-2xl md:text-5xl font-bold text-warm-900 leading-tight mb-6 text-center" data-i18n="heroTitle"></h1>
-            <p class="text-base md:text-xl text-warm-700 mb-8 leading-relaxed px-2 md:px-0 text-center" data-i18n="heroSubtitle"></p>
-            <div class="inline-block bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-warm-200 text-left max-w-2xl mx-auto text-left text-left">
+    <header class="pt-24 md:pt-40 pb-12 md:pb-24 px-6 bg-gradient-to-b from-warm-100 to-warm-50 overflow-hidden text-center">
+        <div class="container mx-auto max-w-4xl relative z-10 text-center">
+            <h1 class="text-2xl md:text-5xl font-bold text-warm-900 leading-tight mb-8 text-center" data-i18n="heroTitle"></h1>
+            <p class="text-sm md:text-xl text-warm-700 mb-10 md:mb-12 leading-loose md:leading-relaxed px-2 md:px-0 text-center opacity-90" data-i18n="heroSubtitle"></p>
+            <div class="inline-block bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-warm-200 text-left max-w-2xl mx-auto">
                 <h3 class="font-bold text-warm-800 mb-2 flex items-center text-sm md:text-base text-left">⚡️ <span data-i18n="aboutHeader"></span></h3>
                 <p class="text-warm-600 text-xs md:text-sm leading-relaxed text-left" data-i18n="aboutBody"></p>
             </div>
         </div>
     </header>
 
+    <!-- Persona Entry Point Section -->
     <section id="personas" class="py-10 md:py-16 px-4 md:px-6">
         <div class="container mx-auto max-w-7xl">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 text-left" id="persona-grid"></div>
         </div>
     </section>
 
-    <section id="journey" class="py-12 md:py-20 px-4 md:px-6 text-center text-center text-center text-center">
-        <div class="container mx-auto max-w-6xl text-center text-center text-center text-center text-center">
-            <div class="mb-8 md:mb-16 text-center text-center text-center text-center">
-                <h2 class="text-xl md:text-3xl font-bold text-warm-900 mb-6 text-center text-center" data-i18n="journeyHeader"></h2>
-                <div class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed space-y-2 mb-12 text-center text-center text-center text-center text-center" data-i18n="journeySubtitle"></div>
+    <section id="journey" class="py-12 md:py-20 px-4 md:px-6 text-center">
+        <div class="container mx-auto max-w-6xl text-center">
+            <div class="mb-8 md:mb-16 text-center">
+                <h2 class="text-xl md:text-3xl font-bold text-warm-900 mb-6 text-center" data-i18n="journeyHeader"></h2>
+                <div class="text-warm-700 text-sm md:text-base max-w-3xl mx-auto leading-relaxed space-y-2 mb-12 text-center" data-i18n="journeySubtitle"></div>
             </div>
 
-            <div class="flex flex-col lg:flex-row gap-6 md:gap-12 items-start text-left text-left">
-                <div id="year-btns" class="w-full lg:w-1/3 flex flex-row lg:flex-col gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-2 lg:pb-0 px-2 lg:px-0 text-left">
+            <div class="flex flex-col lg:flex-row gap-6 md:gap-12 items-start text-left">
+                <div id="year-btns" class="w-full lg:w-1/3 flex flex-row lg:flex-col gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-2 lg:pb-0 px-2 lg:px-0">
                     <button onclick="updateJourney(1)" id="btn-year-1" class="timeline-btn active flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold shadow-sm">
-                        <span data-i18n="year1" class="text-sm text-left"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90 text-left" data-i18n="stage1"></span>
+                        <span data-i18n="year1" class="text-sm"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90" data-i18n="stage1"></span>
                     </button>
-                    <button onclick="updateJourney(2)" id="btn-year-2" class="timeline-btn flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold text-warm-700 shadow-sm bg-white text-left">
-                        <span data-i18n="year2" class="text-sm text-left"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90 text-left" data-i18n="stage2"></span>
+                    <button onclick="updateJourney(2)" id="btn-year-2" class="timeline-btn flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold text-warm-700 shadow-sm bg-white">
+                        <span data-i18n="year2" class="text-sm"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90" data-i18n="stage2"></span>
                     </button>
-                    <button onclick="updateJourney(3)" id="btn-year-3" class="timeline-btn flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold text-warm-700 shadow-sm bg-white text-left">
-                        <span data-i18n="year3" class="text-sm text-left"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90 text-left" data-i18n="stage3"></span>
+                    <button onclick="updateJourney(3)" id="btn-year-3" class="timeline-btn flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold text-warm-700 shadow-sm bg-white">
+                        <span data-i18n="year3" class="text-sm"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90" data-i18n="stage3"></span>
                     </button>
-                    <button onclick="updateJourney(4)" id="btn-year-4" class="timeline-btn flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold text-warm-700 shadow-sm bg-white text-left">
-                        <span data-i18n="year4" class="text-sm text-left"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90 text-left" data-i18n="stage4"></span>
+                    <button onclick="updateJourney(4)" id="btn-year-4" class="timeline-btn flex-shrink-0 min-w-[120px] lg:w-full text-left px-5 py-4 rounded-xl border-2 border-warm-200 font-bold text-warm-700 shadow-sm bg-white">
+                        <span data-i18n="year4" class="text-sm"></span><br><span class="text-[10px] md:text-xs font-normal opacity-90" data-i18n="stage4"></span>
                     </button>
                 </div>
 
                 <div class="w-full lg:w-2/3 glass-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center min-h-[400px] text-left text-left">
-                    <div class="w-full md:w-1/2 text-left text-left text-left">
-                        <div id="journey-badge" class="inline-block bg-warm-200 text-warm-800 text-[10px] font-bold px-3 py-1 rounded-full mb-3 text-left text-left text-left"></div>
-                        <h3 id="journey-title" class="text-xl md:text-2xl font-bold text-warm-900 mb-3 text-left text-left text-left"></h3>
-                        <p id="journey-desc" class="text-warm-700 text-xs md:text-sm mb-6 min-h-[80px] leading-relaxed text-left text-left text-left"></p>
-                        <div class="bg-warm-50 p-4 rounded-lg border border-warm-100 shadow-inner text-left text-left text-left">
-                            <strong class="text-warm-800 text-[10px] block mb-1 uppercase tracking-wider text-left text-left text-left" data-i18n="mindTitle"></strong>
-                            <span id="journey-mind" class="text-accent font-bold text-base md:text-lg tracking-wider text-left text-left text-left"></span>
+                    <div class="w-full md:w-1/2 text-left">
+                        <div id="journey-badge" class="inline-block bg-warm-200 text-warm-800 text-[10px] font-bold px-3 py-1 rounded-full mb-3"></div>
+                        <h3 id="journey-title" class="text-xl md:text-2xl font-bold text-warm-900 mb-3"></h3>
+                        <p id="journey-desc" class="text-warm-700 text-xs md:text-sm mb-6 min-h-[80px] leading-relaxed"></p>
+                        <div class="bg-warm-50 p-4 rounded-lg border border-warm-100 shadow-inner">
+                            <strong class="text-warm-800 text-[10px] block mb-1 uppercase tracking-wider" data-i18n="mindTitle"></strong>
+                            <span id="journey-mind" class="text-accent font-bold text-base md:text-lg tracking-wider"></span>
                         </div>
                     </div>
-                    <div class="w-full md:w-1/2 flex justify-center text-center text-center">
-                        <div class="chart-container text-center text-center text-center">
+                    <div class="w-full md:w-1/2 flex justify-center text-center">
+                        <div class="chart-container">
                             <canvas id="growthChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-12 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-left text-left text-left">
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">👶 <span data-i18n="nurLabHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left" data-i18n="nurLabBody"></p></div>
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🗝 <span data-i18n="nurCareerHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left" data-i18n="nurCareerBody"></p></div>
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🤝 <span data-i18n="nurTargetHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left" data-i18n="nurTargetBody"></p></div>
+            <div class="mt-12 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">👶 <span data-i18n="nurLabHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurLabBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🗝 <span data-i18n="nurCareerHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurCareerBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2">🤝 <span data-i18n="nurTargetHeader"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed" data-i18n="nurTargetBody"></p></div>
             </div>
         </div>
     </section>
 
     <!-- Deep Dive Sections (Psychology, Welfare) -->
     <section id="psych-deep" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center text-center text-center text-center text-center text-center">
-        <div class="container mx-auto max-w-5xl text-center text-center text-center text-center">
+        <div class="container mx-auto max-w-5xl text-center text-center text-center text-center text-center">
             <div class="mb-12 text-center text-center text-center text-center text-center">
                 <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4 text-center text-center text-center" data-i18n="psychDeepHeader"></h2>
                 <p class="text-accent font-bold text-base md:text-lg italic mb-2 text-center text-center text-center" data-i18n="psychDeepSubtitle"></p>
                 <p class="text-warm-600 text-sm md:text-base font-medium text-center text-center text-center text-center" data-i18n="psychDeepQuestion"></p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch text-left text-left text-left text-left">
-                <div class="bg-warm-50 p-8 rounded-t-3xl md:rounded-3xl border border-warm-100 text-left text-left text-left text-left">
-                    <h3 class="text-warm-700 font-bold text-lg mb-4 flex items-center gap-2 text-left text-left text-left text-left">🏛 <span data-i18n="standardPsychTitle" class="text-left text-left text-left text-left text-left"></span></h3>
-                    <ul class="space-y-4 text-warm-600 text-sm md:text-base leading-relaxed text-left text-left text-left text-left">
-                        <li data-i18n="standardPsychList1" class="text-left text-left"></li><li data-i18n="standardPsychList2" class="text-left text-left text-left text-left"></li><li data-i18n="standardPsychList3" class="text-left text-left text-left text-left text-left"></li>
-                        <li class="pt-4 text-warm-400 italic text-xs md:text-sm text-left text-left text-left text-left text-left text-left" data-i18n="standardPsychDoubt"></li>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch text-left text-left text-left text-left text-left">
+                <div class="bg-warm-50 p-8 rounded-t-3xl md:rounded-3xl border border-warm-100 text-left">
+                    <h3 class="text-warm-700 font-bold text-lg mb-4 flex items-center gap-2 text-left">🏛 <span data-i18n="standardPsychTitle" class="text-left text-left"></span></h3>
+                    <ul class="space-y-4 text-warm-600 text-sm md:text-base leading-relaxed text-left text-left">
+                        <li data-i18n="standardPsychList1" class="text-left text-left text-left"></li><li data-i18n="standardPsychList2" class="text-left text-left text-left"></li><li data-i18n="standardPsychList3" class="text-left text-left text-left text-left"></li>
+                        <li class="pt-4 text-warm-400 italic text-xs md:text-sm text-left text-left text-left" data-i18n="standardPsychDoubt"></li>
                     </ul>
                 </div>
                 <div class="bg-warm-800 text-white p-8 rounded-b-3xl md:rounded-3xl shadow-xl transform md:scale-105 z-10 text-left text-left text-left text-left text-left">
-                    <h3 class="text-accent font-bold text-lg mb-4 flex items-center gap-2 text-left text-left text-left text-left text-left">🌟 <span data-i18n="ourPsychTitle" class="text-left text-left text-left text-left text-left text-left"></span></h3>
-                    <ul class="space-y-4 text-warm-100 text-sm md:text-base leading-relaxed text-left text-left text-left text-left text-left">
+                    <h3 class="text-accent font-bold text-lg mb-4 flex items-center gap-2 text-left text-left text-left text-left">🌟 <span data-i18n="ourPsychTitle" class="text-left text-left text-left"></span></h3>
+                    <ul class="space-y-4 text-warm-100 text-sm md:text-base leading-relaxed text-left text-left text-left text-left">
                         <li data-i18n="ourPsychList1" class="text-left text-left text-left text-left text-left"></li><li data-i18n="ourPsychList2" class="text-left text-left text-left text-left text-left"></li><li data-i18n="ourPsychList3" class="text-left text-left text-left text-left text-left"></li>
-                        <li class="pt-4 font-bold text-accent text-left text-left text-left text-left text-left text-left" data-i18n="ourPsychFeature"></li>
+                        <li class="pt-4 font-bold text-accent text-left text-left text-left text-left text-left" data-i18n="ourPsychFeature"></li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-16 bg-warm-50 rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-left text-left">
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">👶 <span data-i18n="psychLabHeader" class="text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left" data-i18n="psychLabBody"></p></div>
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🗝 <span data-i18n="psychCareerHeader" class="text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left" data-i18n="psychCareerBody"></p></div>
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🤝 <span data-i18n="psychTargetHeader" class="text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left" data-i18n="psychTargetBody"></p></div>
+            <div class="mt-16 bg-warm-50 rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">👶 <span data-i18n="psychLabHeader" class="text-left text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left text-left" data-i18n="psychLabBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🗝 <span data-i18n="psychCareerHeader" class="text-left text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left text-left" data-i18n="psychCareerBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🤝 <span data-i18n="psychTargetHeader" class="text-left text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left text-left" data-i18n="psychTargetBody"></p></div>
             </div>
         </div>
     </section>
 
-    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50 text-center text-center text-center text-center">
-        <div class="container mx-auto max-w-5xl text-center text-center text-center">
+    <section id="welf-deep" class="py-16 md:py-24 px-4 md:px-6 bg-warm-50 text-center text-center text-center text-center text-center">
+        <div class="container mx-auto max-w-5xl text-center text-center text-center text-center">
             <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-4 text-center text-center text-center text-center" data-i18n="welfDeepHeader"></h2>
             <p class="text-warm-500 font-bold text-base md:text-lg italic mb-2 text-center text-center text-center text-center text-center" data-i18n="welfDeepSubtitle"></p>
             <p class="text-warm-600 text-sm md:text-base font-medium mb-12 text-center text-center text-center text-center text-center text-center" data-i18n="welfDeepQuestion"></p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch text-left text-left text-left text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 vs-divider md:vs-divider-horizontal items-stretch text-left text-left text-left text-left text-left">
                 <div class="bg-white p-8 rounded-t-3xl md:rounded-3xl border border-warm-100 text-left text-left text-left text-left text-left">
                     <h3 class="text-warm-700 font-bold text-lg mb-4 flex items-center gap-2 text-left text-left text-left text-left text-left text-left">🏛 <span data-i18n="standardWelfTitle" class="text-left text-left text-left text-left text-left text-left"></span></h3>
                     <ul class="space-y-4 text-warm-600 text-sm md:text-base leading-relaxed text-left text-left text-left text-left text-left text-left">
-                        <li data-i18n="standardWelfList1" class="text-left text-left text-left"></li><li data-i18n="standardWelfList2" class="text-left text-left text-left text-left text-left"></li><li data-i18n="standardWelfList3" class="text-left text-left text-left text-left text-left text-left"></li>
+                        <li data-i18n="standardWelfList1" class="text-left text-left text-left text-left"></li><li data-i18n="standardWelfList2" class="text-left text-left text-left text-left text-left"></li><li data-i18n="standardWelfList3" class="text-left text-left text-left text-left text-left text-left"></li>
                         <li class="pt-4 text-warm-400 italic text-xs md:text-sm text-left text-left text-left text-left text-left text-left text-left" data-i18n="standardWelfDoubt"></li>
                     </ul>
                 </div>
                 <div class="bg-warm-900 text-white p-8 rounded-b-3xl md:rounded-3xl shadow-xl transform md:scale-105 z-10 border-r-4 border-gold text-left text-left text-left text-left text-left text-left text-left">
-                    <h3 class="text-gold font-bold text-lg mb-4 flex items-center gap-2 text-left text-left text-left text-left text-left text-left text-left text-left text-left">🌍 <span data-i18n="ourWelfTitle" class="text-left text-left text-left text-left text-left text-left text-left text-left text-left"></span></h3>
-                    <ul class="space-y-4 text-warm-100 text-sm md:text-base leading-relaxed text-left text-left text-left text-left text-left text-left text-left text-left text-left">
-                        <li data-i18n="ourWelfList1" class="text-left text-left text-left text-left text-left text-left text-left"></li><li data-i18n="ourWelfList2" class="text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></li><li data-i18n="ourWelfList3" class="text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></li>
+                    <h3 class="text-gold font-bold text-lg mb-4 flex items-center gap-2 text-left text-left text-left text-left text-left text-left text-left text-left text-left">🌍 <span data-i18n="ourWelfTitle" class="text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></span></h3>
+                    <ul class="space-y-4 text-warm-100 text-sm md:text-base leading-relaxed text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left">
+                        <li data-i18n="ourWelfList1" class="text-left text-left text-left text-left text-left text-left text-left text-left"></li><li data-i18n="ourWelfList2" class="text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></li><li data-i18n="ourWelfList3" class="text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></li>
                         <li class="pt-4 font-bold text-gold text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="ourWelfFeature"></li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-left text-left text-left text-left">
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">👶 <span data-i18n="welfChildHeader" class="text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left" data-i18n="welfChildBody"></p></div>
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🗝 <span data-i18n="welfLicenseHeader" class="text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left" data-i18n="welfLicenseBody"></p></div>
-                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🤝 <span data-i18n="welfTargetHeader" class="text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left" data-i18n="welfTargetBody"></p></div>
+            <div class="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-warm-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-left text-left text-left text-left text-left text-left">
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">👶 <span data-i18n="welfChildHeader" class="text-left text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left text-left" data-i18n="welfChildBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🗝 <span data-i18n="welfLicenseHeader" class="text-left text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left text-left" data-i18n="welfLicenseBody"></p></div>
+                <div><h4 class="font-bold text-warm-900 mb-3 flex items-center gap-2 text-left">🤝 <span data-i18n="welfTargetHeader" class="text-left text-left"></span></h4><p class="text-warm-700 text-xs md:text-sm leading-relaxed text-left text-left text-left" data-i18n="welfTargetBody"></p></div>
             </div>
         </div>
     </section>
 
     <!-- Track Cards -->
-    <section id="special" class="py-16 md:py-24 px-4 md:px-6 bg-warm-900 text-white relative overflow-hidden text-center text-center text-center text-center">
-        <div class="container mx-auto max-w-6xl relative z-10 text-center text-center text-center text-center text-center text-center">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center text-center text-center text-center text-center text-center text-center" data-i18n="specialHeader"></h2>
-            <p class="text-warm-200 text-sm md:text-base max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16 text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="specialSubtitle"></p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left text-left text-left">
-                <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-accent transition group shadow-lg text-left text-left text-left text-left text-left">
-                    <div class="flex justify-between items-start mb-6 text-left text-left text-left text-left text-left text-left">
-                        <div class="bg-accent p-3 rounded-2xl text-2xl text-left text-left text-left text-left text-left text-left text-left text-left">🧠</div>
-                        <span class="bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="badgePsych"></span>
+    <section id="special" class="py-16 md:py-24 px-4 md:px-6 bg-warm-900 text-white relative overflow-hidden text-center text-center text-center text-center text-center">
+        <div class="container mx-auto max-w-6xl relative z-10 text-center text-center text-center text-center text-center text-center text-center">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="specialHeader"></h2>
+            <p class="text-warm-200 text-sm md:text-base max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16 text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="specialSubtitle"></p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left text-left text-left text-left">
+                <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-accent transition group shadow-lg text-left text-left text-left text-left text-left text-left">
+                    <div class="flex justify-between items-start mb-6 text-left text-left text-left text-left text-left text-left text-left">
+                        <div class="bg-accent p-3 rounded-2xl text-2xl text-left text-left text-left text-left text-left text-left text-left text-left text-left">🧠</div>
+                        <span class="bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="badgePsych"></span>
                     </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-2 text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course1Title"></h3>
-                    <div class="flex items-center gap-2 mb-4 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span class="text-gold font-bold text-[10px] md:text-xs text-left" data-i18n="licenseLabel"></span><span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold text-left" data-i18n="license1"></span></div>
-                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6 text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course1Desc"></p>
-                    <div class="text-accent font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span data-i18n="course1Tag" class="text-left text-left text-left text-left text-left"></span></div>
+                    <h3 class="text-xl md:text-2xl font-bold mb-2 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course1Title"></h3>
+                    <div class="flex items-center gap-2 mb-4 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span class="text-gold font-bold text-[10px] md:text-xs text-left" data-i18n="licenseLabel"></span><span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold text-left" data-i18n="license1"></span></div>
+                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course1Desc"></p>
+                    <div class="text-accent font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span data-i18n="course1Tag" class="text-left text-left text-left text-left text-left text-left"></span></div>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-warm-400 transition group shadow-lg text-left text-left text-left text-left text-left text-left">
-                    <div class="flex justify-between items-start mb-6 text-left text-left text-left text-left text-left text-left text-left text-left">
-                        <div class="bg-warm-600 p-3 rounded-2xl text-2xl text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left">🌍</div>
-                        <span class="bg-warm-600/20 text-warm-200 border border-warm-600/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="badgeWelfare"></span>
+                <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 hover:border-warm-400 transition group shadow-lg text-left text-left text-left text-left text-left text-left text-left">
+                    <div class="flex justify-between items-start mb-6 text-left text-left text-left text-left text-left text-left text-left text-left text-left">
+                        <div class="bg-warm-600 p-3 rounded-2xl text-2xl text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left">🌍</div>
+                        <span class="bg-warm-600/20 text-warm-200 border border-warm-600/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="badgeWelfare"></span>
                     </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-2 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course2Title"></h3>
-                    <div class="flex items-center gap-2 mb-4 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span class="text-gold font-bold text-[10px] md:text-xs text-left" data-i18n="licenseLabel"></span><span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold text-left" data-i18n="license2"></span></div>
-                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course2Desc"></p>
-                    <div class="text-warm-400 font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span data-i18n="course2Tag" class="text-left text-left text-left text-left text-left text-left text-left"></span></div>
+                    <h3 class="text-xl md:text-2xl font-bold mb-2 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course2Title"></h3>
+                    <div class="flex items-center gap-2 mb-4 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span class="text-gold font-bold text-[10px] md:text-xs text-left" data-i18n="licenseLabel"></span><span class="bg-gold/20 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px] font-bold text-left" data-i18n="license2"></span></div>
+                    <p class="text-warm-100 text-xs md:text-sm leading-relaxed mb-6 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left" data-i18n="course2Desc"></p>
+                    <div class="text-warm-400 font-bold text-[10px] md:text-xs flex items-center group-hover:translate-x-2 transition-transform text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span data-i18n="course2Tag" class="text-left text-left text-left text-left text-left text-left text-left text-left"></span></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="guardians" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
-        <div class="container mx-auto max-w-6xl text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
-            <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-12 md:mb-16 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="guardiansHeader"></h2>
-            <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></div>
+    <section id="guardians" class="py-16 md:py-24 px-4 md:px-6 bg-white text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
+        <div class="container mx-auto max-w-6xl text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-warm-900 mb-12 md:mb-16 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="guardiansHeader"></h2>
+            <div id="guardian-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></div>
         </div>
     </section>
 
     <!-- Future Section -->
-    <section id="future" class="py-20 md:py-32 px-4 md:px-6 bg-warm-50 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
-        <div class="container mx-auto max-w-5xl text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
-            <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-12 text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="futureHeader"></h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-16 text-left text-left text-left text-left text-left text-left" id="voice-grid"></div>
-            <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-12 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" id="future-body"></p>
-            <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
-                <div class="text-4xl mb-4 text-center text-center text-center text-center text-center">✨</div>
-                <h3 class="text-lg md:text-xl font-bold text-warm-900 mb-4 text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="wowHeader"></h3>
-                <p class="text-warm-600 text-xs md:text-sm text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="wowBody"></p>
+    <section id="future" class="py-20 md:py-32 px-4 md:px-6 bg-warm-50 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
+        <div class="container mx-auto max-w-5xl text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
+            <h2 class="text-2xl md:text-4xl font-bold text-warm-900 mb-12 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="futureHeader"></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-16 text-left text-left text-left text-left text-left text-left text-left text-left" id="voice-grid"></div>
+            <p class="text-sm md:text-lg text-warm-700 leading-relaxed mb-12 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" id="future-body"></p>
+            <div class="bg-white p-8 rounded-3xl border border-warm-100 mb-12 shadow-sm text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
+                <div class="text-4xl mb-4 text-center text-center text-center text-center text-center text-center">✨</div>
+                <h3 class="text-lg md:text-xl font-bold text-warm-900 mb-4 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="wowHeader"></h3>
+                <p class="text-warm-600 text-xs md:text-sm text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="wowBody"></p>
             </div>
-            <h3 class="text-xl md:text-2xl font-bold text-accent mb-12 leading-relaxed text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="finalPunch"></h3>
-            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-warm-700 hover:bg-warm-800 text-white font-bold py-4 px-10 rounded-full shadow-xl transition transform active:scale-95 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
-                <span data-i18n="cta" class="text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center"></span>
+            <h3 class="text-xl md:text-2xl font-bold text-accent mb-12 leading-relaxed text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center" data-i18n="finalPunch"></h3>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-warm-700 hover:bg-warm-800 text-white font-bold py-4 px-10 rounded-full shadow-xl transition transform active:scale-95 text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center">
+                <span data-i18n="cta" class="text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center text-center"></span>
             </button>
         </div>
     </section>
 
-    <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs">
-        <p class="mb-2 opacity-50 text-center"><span data-i18n="versionLabel" class="text-center"></span> v1.4.0</p>
-        <p class="text-center">&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
+    <footer class="bg-warm-900 text-warm-200 py-10 text-center text-[10px] md:text-xs text-center text-center text-center">
+        <p class="mb-2 opacity-50 text-center text-center text-center"><span data-i18n="versionLabel" class="text-center text-center text-center"></span> v1.4.1</p>
+        <p class="text-center text-center text-center text-center">&copy; 2026 Women's University Success Story Project. All rights reserved.</p>
     </footer>
 
     <script>
         const i18n = {
             ja: {
                 navTitle: "招待状", navJourney: "4年間の軌跡", navPsych: "心理の真髄", navWelfare: "福祉の真髄", navSpecial: "選ばれる理由", navGuardians: "8人の守護神",
-                heroTitle: "ウェルビーイングを創造する<br><span class='text-accent'>「自立」</span>の物語",
-                heroSubtitle: "「誰かに守られる私」から、「世界を幸せにする私」へ。女子大という名の、すべての役割があなたの「出番」になる最高のステージで、8人のスペシャリストと共に、あなただけのサクセスストーリーを始めませんか？",
+                heroTitle: "幸せをつくる人になる。<br><span class='text-sm md:text-2xl block mt-2 opacity-80 font-normal'>── SDGsのその先へ、ウェルビーイングという学び。</span>",
+                heroSubtitle: "社会の「課題」を解決する時代（SDGs）から、<br class='hidden md:block'>一人ひとりの「幸せ」を創造する時代（ウェルビーイング）へ。<br><br>幼児教育は、未来を担う子どもたちの人生のスタート地点で、<br class='hidden md:block'>幸せ・学び・支え合いの土台をつくる専門職です。<br><br>宮城学院女子大学 幼児教育専攻には、同じ「幼児教育」を目指しながらも、<br class='hidden md:block'>少しずつ違う想いを持つ学生たちが集まっています。<br><br>あなたは、どこからこの物語に入りますか。",
                 aboutHeader: "この招待状について",
                 aboutBody: "このページは、あなたが本学の4年間でどのように「依存」を脱ぎ捨て、多角的な視点を持つリーダーへと進化するのかを体験できるインタラクティブなロードマップです。",
                 journeyHeader: "選ばれる理由：保育を学ぶことで得られる“自分が変わる”体験",
@@ -337,8 +338,8 @@ v1.4.0 (2026-06-01): Simplified Track Titles for high schoolers and integrated p
             },
             en: {
                 navTitle: "Invitation", navJourney: "Journey", navPsych: "Psychology Essentials", navWelfare: "Welfare Essentials", navSpecial: "Why Us", navGuardians: "8 Guardians",
-                heroTitle: "A Story of <span class='text-accent'>Independence</span><br>for Well-being",
-                heroSubtitle: "From 'someone protected' to 'someone making the world happy.' Every role is yours. Start your success story with 8 specialists.",
+                heroTitle: "Becoming Someone Who Creates Happiness.<br><span class='text-sm md:text-2xl block mt-2 opacity-80 font-normal'>-- Beyond SDGs, the study of Well-being.</span>",
+                heroSubtitle: "Moving from an era of solving social challenges (SDGs) to an era of creating individual happiness (Well-being).<br><br>Early childhood education builds the foundation for life, learning, and support at the very start. At MGU, students gather with shared goals but unique motivations. Where will you begin your journey in this story?",
                 aboutHeader: "About this Roadmap",
                 aboutBody: "Experience how you shed 'dependence' and evolve into a multi-faceted leader over four years.",
                 journeyHeader: "Why Us: Changing Yourself through Learning Nursery Education",
