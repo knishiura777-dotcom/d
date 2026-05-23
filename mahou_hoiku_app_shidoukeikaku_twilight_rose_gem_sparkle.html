@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>指導計画作成プログラム｜LOGOS Amulet UI整理版</title>
+<style>
+:root{
+  --bg:#120914;--bg2:#201126;--panel:#2a1830;--rose:#ff8fb8;--rose2:#ff6aa8;
+  --shell:#ffe1ec;--lav:#c9a7ff;--violet:#8f6dff;--cyan:#9cf8ff;--mint:#9fffd8;
+  --gold:#ffe29a;--line:rgba(255,255,255,.18);--txt:#fff8fb;--muted:#f5ccda;
+  --shadow:0 26px 90px rgba(0,0,0,.42);--radius:30px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--txt);
+  font-family:ui-rounded,"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  background:
+    radial-gradient(circle at 9% 6%,rgba(255,143,184,.36),transparent 29%),
+    radial-gradient(circle at 88% 11%,rgba(156,248,255,.20),transparent 26%),
+    radial-gradient(circle at 52% 94%,rgba(255,226,154,.14),transparent 32%),
+    linear-gradient(145deg,#0f0711,var(--bg),var(--bg2));
+  overflow-x:hidden;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:34px 34px;animation:stars 24s linear infinite}
+body:after{content:"";position:fixed;inset:auto 5% -220px auto;width:420px;height:420px;border-radius:50%;background:rgba(255,143,184,.13);filter:blur(30px);pointer-events:none}
+@keyframes stars{to{transform:translateY(34px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinR{to{transform:rotate(-360deg)}}
+@keyframes pulse{50%{transform:scale(1.08);filter:drop-shadow(0 0 42px var(--cyan))}}
+@keyframes float{50%{transform:translateY(-12px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes reveal{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes shimmer{to{background-position:200% center}}
+.hidden{display:none!important}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.045));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px)}
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px}
+.book{width:min(820px,100%);padding:34px 28px;text-align:center;position:relative;overflow:hidden}
+.book:after{content:"✦ ✧ ✦";position:absolute;top:18px;right:20px;letter-spacing:10px;color:var(--shell);opacity:.55}
+.logo,.sigil{background:radial-gradient(circle at 30% 25%,#fff,var(--shell) 28%,var(--rose) 58%,#7e62ff);box-shadow:0 0 60px rgba(255,143,184,.42)}
+.logo{width:96px;height:96px;margin:0 auto 14px;border-radius:30px;display:grid;place-items:center;font-size:46px;animation:float 4s ease-in-out infinite}
+h1{font-size:clamp(32px,7vw,54px);margin:.15em 0;letter-spacing:.02em}
+h2{font-size:clamp(22px,4vw,30px);margin:0 0 12px}
+h3{margin:0 0 8px;font-size:18px}
+.sub{line-height:1.85;color:#f9d5e3}.small{font-size:13px;color:var(--muted);line-height:1.7}.micro{font-size:12px;color:#ebc4d4;line-height:1.55}
+input,textarea,select{width:100%;border:0;outline:0;border-radius:20px;padding:15px 16px;font-size:16px;color:#3e2138;background:rgba(255,255,255,.95);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+textarea{min-height:156px;resize:vertical;line-height:1.8}
+.btn{border:0;cursor:pointer;color:white;font-weight:900;border-radius:999px;padding:14px 20px;margin:6px;background:linear-gradient(135deg,#ff78ae,#a879ff 55%,#66eaff);box-shadow:0 16px 34px rgba(255,126,179,.23);transition:.16s;letter-spacing:.01em}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.07)}
+.btn:active{transform:translateY(0) scale(.99)}
+.btn.ghost{background:rgba(255,255,255,.09);border:1px solid var(--line);box-shadow:none;color:#fff1f7}
+.type{white-space:pre-wrap;text-align:left;line-height:1.9;color:#ffeaf2;border-left:3px solid var(--rose);padding:18px 18px 18px 22px;min-height:180px;background:rgba(0,0,0,.18);border-radius:22px;border:1px solid rgba(255,255,255,.12);margin:18px 0}.missionType{min-height:320px;font-size:16px}.caret:after{content:"▋";color:var(--gold);animation:blink .85s steps(1) infinite}
+.missionCards,.lensGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin:14px 0}
+.missionCard,.lensCard,.card,.miniCard{animation:reveal .45s ease both;text-align:left;padding:14px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.15)}
+.missionCard b,.lensCard b{display:block;color:var(--gold);margin-bottom:6px}.lensCard .icon{font-size:24px;display:inline-block;margin-bottom:4px}.lensCard.active{outline:2px solid rgba(255,226,154,.74);box-shadow:0 0 28px rgba(255,226,154,.12)}
+.app{width:min(1180px,100%);margin:0 auto;padding:18px 16px 108px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.brand{display:flex;gap:12px;align-items:center}.sigil{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;font-size:26px}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:405px 1fr;gap:16px}.panel{padding:20px}.sideTitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.badge{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;border-radius:999px;background:rgba(255,226,154,.12);border:1px solid rgba(255,226,154,.24);color:#ffeec1;font-size:12px;font-weight:900}
+.crucible{position:relative;width:330px;height:330px;margin:4px auto 8px;display:grid;place-items:center}.ring{position:absolute;border-radius:50%;pointer-events:none}.outer{inset:6px;border:1px solid rgba(156,248,255,.66);animation:spin 28s linear infinite}.mid{inset:42px;border:1px solid rgba(255,225,236,.72);animation:spinR 16s linear infinite}.inner{inset:82px;border:1px dashed rgba(201,167,255,.72);animation:spin 11s linear infinite}.crucible.combo .outer{animation-duration:7s}.crucible.combo .mid{animation-duration:4s}.crucible.combo .inner{animation-duration:2.8s}.crystal{width:126px;height:166px;clip-path:polygon(50% 0,91% 22%,78% 86%,50% 100%,22% 86%,9% 22%);background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(127,255,212,.22),rgba(178,141,255,.33));display:grid;place-items:center;animation:float 4.2s ease-in-out infinite}.gem{width:66px;height:66px;background:radial-gradient(circle at 30% 25%,#fff,#ffe6a6 20%,#ff8fb8 48%,#8c64ff 78%);border-radius:45% 55% 50% 50%;animation:pulse 2.15s ease-in-out infinite}.barwrap{height:12px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold),var(--cyan),var(--mint));background-size:200% auto;animation:shimmer 4s linear infinite;transition:.35s}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab.active{background:linear-gradient(135deg,#ff78ae,#a879ff)}.tab{padding:12px 15px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.grow{flex:1}.q{font-size:19px;line-height:1.78;padding:18px;border-radius:24px;background:rgba(0,0,0,.19);border:1px solid rgba(255,255,255,.12);margin:14px 0}.questionLabel{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;margin-bottom:8px;border-radius:999px;background:rgba(156,248,255,.10);border:1px solid rgba(156,248,255,.22);color:#dffcff;font-size:12px;font-weight:900}.recordLead{display:inline-flex;margin:2px 0 10px;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);font-size:13px;font-weight:900;color:#ffe7f0}.choice{width:100%;text-align:left;margin:6px 0}.feedback{min-height:44px;color:#ffe7a8;font-weight:900;line-height:1.65}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.result{white-space:pre-wrap;text-align:left;line-height:1.82;background:rgba(0,0,0,.19);padding:16px;border-radius:20px;border:1px solid rgba(255,255,255,.12)}.result strong{color:#ffe8a8}.toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.hintBox{padding:13px 14px;border-radius:20px;background:rgba(156,248,255,.09);border:1px solid rgba(156,248,255,.18);line-height:1.7;color:#e6fbff}.reviewGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0 14px}.reviewPill{padding:12px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}.reviewPill b{color:#ffe6a6}.footerNote{margin-top:14px;padding:12px 14px;border-radius:18px;background:rgba(255,143,184,.09);border:1px solid rgba(255,143,184,.18)}
+
+/* === UI polish: 指導計画作成プログラム / Twilight Rose === */
+.projectStamp{display:inline-flex;align-items:center;gap:8px;margin:0 auto 12px;padding:8px 13px;border-radius:999px;background:rgba(255,226,154,.13);border:1px solid rgba(255,226,154,.30);color:#fff0c7;font-size:13px;font-weight:900;letter-spacing:.03em}
+.heroRibbon{display:inline-flex;gap:8px;align-items:center;justify-content:center;margin:4px auto 14px;padding:9px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(255,143,184,.18),rgba(201,167,255,.14));border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);color:#ffeaf4;font-weight:900;font-size:13px}
+.startLead{max-width:660px;margin:0 auto 20px;line-height:1.9;color:#f9d5e3}.startForm{width:min(460px,100%);margin:22px auto 8px;display:grid;gap:12px;justify-items:center}.startForm input{text-align:center;font-weight:800;letter-spacing:.03em}.startForm .btn{min-width:240px;margin:0}.startHint{margin-top:8px;color:#ebc4d4}.focusChips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px auto 4px}.focusChip{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);font-size:12px;color:#ffeaf4;font-weight:900}
+.featureGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:20px 0 18px;text-align:left}
+.featureCard{position:relative;overflow:hidden;padding:16px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.125),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.11)}
+.featureCard:after{content:"";position:absolute;right:-36px;bottom:-42px;width:112px;height:112px;border-radius:50%;background:rgba(255,143,184,.16);filter:blur(3px)}
+.featureIcon{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;margin-bottom:9px;background:linear-gradient(135deg,rgba(255,143,184,.34),rgba(201,167,255,.28));box-shadow:0 10px 28px rgba(255,143,184,.13);font-size:23px}
+.featureCard b{display:block;margin-bottom:6px;color:#ffe8a8;font-size:15px}.featureCard span{position:relative;z-index:1;display:block;color:#f9d6e3;font-size:13px;line-height:1.65}
+.appIntro{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;margin-bottom:14px;padding:14px;border-radius:26px;background:linear-gradient(135deg,rgba(255,143,184,.13),rgba(201,167,255,.08));border:1px solid rgba(255,255,255,.14)}
+.appIntro strong{color:#ffe9a9}.appIntro p{margin:0;line-height:1.75}.sparkleChips{display:flex;gap:8px;flex-wrap:wrap;align-content:center}.sparkleChip{padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:900;color:#ffeaf4}
+.amuletStage{margin:10px auto 8px;text-align:center;padding:10px 12px;border-radius:20px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.13);color:#ffeec8;font-weight:900;line-height:1.55}
+.amuletStage small{display:block;color:#f4cddd;font-weight:700}.gem{display:grid;place-items:center;font-size:36px;line-height:1;transition:clip-path .35s,border-radius .35s,filter .35s,background .35s;will-change:filter}
+.crucible.stage-heart .gem{clip-path:none;border-radius:54% 54% 48% 48%;background:radial-gradient(circle at 30% 25%,#fff,#ffd4e5 24%,#ff79ad 56%,#b776ff 88%);box-shadow:0 0 34px rgba(255,143,184,.42)}
+.crucible.stage-diamond .gem{border-radius:16px;clip-path:polygon(50% 0,96% 32%,50% 100%,4% 32%);background:linear-gradient(135deg,#fff6fb,#ffd3e4 28%,#cda7ff 58%,#7cecff);box-shadow:0 0 38px rgba(156,248,255,.36)}
+.crucible.stage-star .gem{border-radius:0;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 56%,79% 91%,50% 70%,21% 91%,32% 56%,2% 35%,39% 35%);background:linear-gradient(135deg,#fff,#ffe29a 30%,#ff8fb8 62%,#8f6dff);box-shadow:0 0 46px rgba(255,226,154,.42)}
+.crucible.stage-crown .gem{border-radius:18px 18px 12px 12px;clip-path:polygon(5% 34%,25% 58%,39% 22%,52% 58%,72% 20%,94% 58%,94% 100%,5% 100%);background:linear-gradient(135deg,#fff8df,#ffe29a 32%,#ffb86f 58%,#ff78ae 100%);box-shadow:0 0 52px rgba(255,226,154,.50)}
+.crucible.stage-crown .outer,.crucible.stage-star .outer{border-color:rgba(255,226,154,.82)}
+.crystal{position:relative;overflow:visible;cursor:pointer;touch-action:manipulation}
+.crystal:focus-visible{outline:2px solid rgba(255,226,154,.8);outline-offset:10px;border-radius:24px}
+.crystal:after{content:"";position:absolute;inset:-18px;border-radius:30px;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.35),rgba(255,255,255,0) 62%);transform:scale(.75)}
+.crystal.shimmer-active:after{animation:haloFlash 900ms ease-out}
+.gem.sparkle-active{animation:pulse 2.15s ease-in-out infinite,gemSparkle .95s ease-out 1;filter:drop-shadow(0 0 12px rgba(255,255,255,.9)) drop-shadow(0 0 28px rgba(255,226,154,.72)) drop-shadow(0 0 40px rgba(156,248,255,.42))}
+.sparkle-particle{position:absolute;left:50%;top:50%;width:var(--size,12px);height:var(--size,12px);margin-left:calc(var(--size,12px)/-2);margin-top:calc(var(--size,12px)/-2);pointer-events:none;opacity:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.98),rgba(255,226,154,.96) 35%,rgba(255,143,184,.78) 60%,rgba(255,255,255,0) 74%);clip-path:polygon(50% 0%,61% 36%,100% 50%,61% 64%,50% 100%,39% 64%,0% 50%,39% 36%);filter:drop-shadow(0 0 10px rgba(255,255,255,.66));animation:sparkleBurst var(--dur,920ms) cubic-bezier(.18,.7,.2,1) forwards}
+.sparkle-particle.ring{clip-path:circle(50% at 50% 50%);background:radial-gradient(circle,rgba(255,255,255,.95) 0 24%,rgba(156,248,255,.9) 25% 42%,rgba(255,255,255,0) 52%)}
+@keyframes gemSparkle{0%{transform:scale(1) rotate(0deg)}22%{transform:scale(1.16) rotate(-8deg)}48%{transform:scale(.98) rotate(8deg)}70%{transform:scale(1.11) rotate(-4deg)}100%{transform:scale(1) rotate(0deg)}}
+@keyframes haloFlash{0%{opacity:0;transform:scale(.72)}18%{opacity:.95}100%{opacity:0;transform:scale(1.38)}}
+@keyframes sparkleBurst{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.2)}18%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(160deg) scale(1.15)}}
+
+.cutePointStrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.cutePoint{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.55;color:#f6d5e1}.cutePoint b{color:#ffe8a8}.softDivider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}.noteNickname{display:inline-block;margin-left:4px;padding:3px 8px;border-radius:999px;background:rgba(255,143,184,.16);border:1px solid rgba(255,143,184,.24);font-size:12px;color:#ffeaf4}
+@media(max-width:740px){.appIntro{grid-template-columns:1fr}.featureGrid{grid-template-columns:1fr}.cutePointStrip{grid-template-columns:1fr}}
+
+@media(max-width:920px){.grid{grid-template-columns:1fr}.tabs{position:fixed;left:10px;right:10px;bottom:10px;z-index:10;background:rgba(25,13,24,.78);border:1px solid var(--line);border-radius:24px;padding:8px;backdrop-filter:blur(18px)}.tab{flex:1;font-size:12px;padding:11px 6px;margin:0}.app{padding:12px 12px 104px}.crucible{width:306px;height:306px}.missionType{min-height:350px}.toolbar{grid-template-columns:1fr}}
+@media(max-width:520px){.book{padding:28px 18px}.panel{padding:16px}.stats{font-size:13px}.crucible{width:270px;height:270px}.crystal{width:108px;height:145px}.tabs{gap:5px}.tab{font-size:11px}.q{font-size:17px}.lensGrid{grid-template-columns:1fr}.reviewGrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main id="gate" class="gate">
+  <section class="book glass">
+    <div class="projectStamp">指導計画作成プログラム</div>
+    <div class="logo">💎</div>
+    <h1>LOGOS Amulet</h1>
+    <p class="startLead">日誌を<strong>6つの観点</strong>で見直し、明日の環境構成・活動の流れ・保育者の支援につなげる練習アプリです。</p>
+    <div class="focusChips" aria-label="見直しの観点">
+      <span class="focusChip">子どもの姿</span>
+      <span class="focusChip">環境構成</span>
+      <span class="focusChip">関係性</span>
+      <span class="focusChip">活動の流れ</span>
+      <span class="focusChip">保育者の支援</span>
+      <span class="focusChip">子どもの育ちに関連した問題</span>
+    </div>
+    <div class="startForm">
+      <input id="nameInput" placeholder="名前を入力（例：みゆう / さくら）" maxlength="12" autocomplete="off">
+      <button id="startBtn" class="btn">はじめる ✨</button>
+    </div>
+    <p class="small startHint">名前を入力して Enter キーを押しても開始できます。</p>
+  </section>
+</main>
+
+<main id="missionGate" class="gate hidden">
+  <section class="book glass">
+    <div class="projectStamp">指導計画作成プログラム｜LOGOS契約画面</div>
+    <div class="logo">📜</div>
+    <div class="heroRibbon">🎀 指導計画作成プログラムを準備中</div>
+    <h1>魔導契約、成立</h1>
+    <p id="missionLead" class="sub"></p>
+    <div id="contractMissionText" class="type missionType"></div>
+    <button id="enterRoomBtn" class="btn hidden">まほうの保育室へ入る ✨</button>
+    <p class="small">文字が紡がれるあいだ、星屑のチャイムがそっと鳴ります。</p>
+  </section>
+</main>
+
+<main id="app" class="app hidden">
+  <header class="top">
+    <div class="brand">
+      <div class="sigil">💎</div>
+      <div><strong id="room">指導計画作成プログラム｜LOGOS Amulet</strong><div id="hello" class="small">今日も少しだけ進めば大丈夫☕️</div></div>
+    </div>
+    <div class="stats">
+      <div class="pill">🔥 連続 <b>1</b>日</div>
+      <div class="pill">👑 Lv.<b id="level">1</b></div>
+      <div class="pill">連続正答 <b id="combo">0</b></div>
+      <div class="pill">EXP <b id="exp">0</b></div>
+      <div class="pill">挑戦 <b id="count">0</b></div><div class="pill">各モード <b>600</b>問</div>
+    </div>
+  </header>
+
+  <section class="grid">
+    <aside class="panel glass">
+      <div class="sideTitle"><h3>LOGOS Amulet 錬成炉</h3><span class="badge">進化する魔宝石</span></div>
+      <div id="crucible" class="crucible">
+        <div class="ring outer"></div><div class="ring mid"></div><div class="ring inner"></div>
+        <div class="crystal" id="crystalTouch" tabindex="0" role="button" aria-label="魔法石に触れてきらめきを見る"><div id="gem" class="gem">💗</div></div>
+      </div>
+      <div id="amuletStage" class="amuletStage">💗 ハート型アミュレット<small>やさしく観察する力が芽生えています</small></div>
+      <p class="micro" style="margin:8px 0 10px;text-align:center;color:#ffe7f0">💫 魔法石に触れると、きらめきます</p>
+      <div class="barwrap"><div id="bar" class="bar"></div></div>
+      <p id="next" class="small"></p>
+      <div id="mission" class="type"></div>
+      <div class="cutePointStrip">
+        <div class="cutePoint"><b>UIテーマ</b><br>夜にも見やすいトワイライト・ロゼ。</div>
+        <div class="cutePoint"><b>復習導線</b><br>間違いはノートに自動保存。</div>
+      </div>
+      <div id="lensMini" class="lensGrid"></div>
+    </aside>
+
+    <section class="panel glass">
+      <div class="appIntro">
+        <p><strong>指導計画作成プログラム</strong><br>日誌のモヤモヤを、子どもの姿・環境構成・関係性・活動の流れ・保育者の支援・子どもの育ちに関連した問題へ分けて整理します。</p>
+        <div class="sparkleChips"><span class="sparkleChip">🌙 夜間にやさしい</span><span class="sparkleChip">💎 お守り進化</span><span class="sparkleChip">☕ 怒らない計画化</span><span class="sparkleChip">📓 自動復習</span></div>
+      </div>
+      <div class="tabs">
+        <button class="btn tab active" data-mode="fact">📌 事実/考察</button>
+        <button class="btn tab ghost" data-mode="lens">🔮 6観点</button>
+        <button class="btn tab ghost" data-mode="plan">✨ 指導案</button>
+        <button class="btn tab ghost" data-mode="remake">☕ モヤモヤ</button>
+        <button class="btn tab ghost" data-mode="note">📓 お助け</button>
+      </div>
+
+      <div id="quiz">
+        <div class="toolbar">
+          <select id="diff" class="grow">
+            <option value="1">初級：まずは見分ける</option>
+            <option value="2">中級：まぎらわしい表現</option>
+            <option value="3">上級：時系列・環境も読む</option>
+            <option value="4">最難関：実習記録レベル</option>
+          </select>
+          <button id="skip" class="btn ghost">今日はパス</button>
+        </div>
+        <div id="question" class="q"></div>
+        <div id="choices"></div>
+        <div id="feedback" class="feedback"></div>
+      </div>
+
+      <div id="remake" class="hidden">
+        <h2>☕ モヤモヤ・リメイクルーム</h2>
+        <p class="sub">「今日怒っちゃった…」「子どもが動いてくれなかった…」を、怒らずに解決する環境構成・動線計画へやさしくリライトします。</p>
+        <div class="reviewGrid" id="reviewGuide"></div>
+        <textarea id="diary" placeholder="例：片付けの時間に子どもたちが動かず、強く注意してしまった。友達同士で玩具の取り合いもあった。"></textarea>
+        <button id="remakeBtn" class="btn">6つの観点で日誌をリメイクする</button>
+        <div id="remakeResult" class="result hidden"></div>
+      </div>
+
+      <div id="note" class="hidden">
+        <h2>📓 しょんぼりお助けノート <span class="noteNickname">やらかし図鑑</span></h2>
+        <div class="hintBox">クイズでうっかり間違えた問題はここに自動ストック。苦手は「できない証拠」ではなく、赤ペン回避ポイントです。</div>
+        <div id="notes" class="cards" style="margin-top:12px"></div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<script>
+const QUESTION_LIMIT=600;
+const PER_DIFF=150;
+const people=['ゆい','さくら','みお','りん','ひな','あかり','こはる','めい','はる','そうた','れん','なお','みなと','つむぎ','あおい','えま','かい','そら','いろは','ゆうま','かな','りく','すず','まな'];
+const lenses=[
+  {id:'child',icon:'👀',title:'子どもの姿',short:'見えた行動・表情・発言を具体的に書く',q:'どの子が、どの場面で、何をした・言った・表したか。'},
+  {id:'env',icon:'🏡',title:'環境構成',short:'物・場所・表示・動線を見直す',q:'遊具や素材の量、置き方、見える表示、移動のしやすさはどうだったか。'},
+  {id:'rel',icon:'🤝',title:'関係性',short:'友達・保育者・集団との関わりを見る',q:'誰とどのように関わり、言葉や視線、貸し借り、仲立ちはどう生まれたか。'},
+  {id:'flow',icon:'🌀',title:'活動の流れ',short:'導入・展開・切り替え・終わりを整える',q:'始まりから終わりまで、見通しを持てる流れになっていたか。'},
+  {id:'support',icon:'🪄',title:'保育者の支援',short:'声かけ・見守り・仲立ちを具体化する',q:'保育者は何を見て、どのタイミングで、どんな支援をしたか。'},
+  {id:'growth',icon:'🌱',title:'子どもの育ちに関連した問題',short:'次の育ちにつながる問いを立てる',q:'この経験は何の育ちにつながり、次にどんな課題や可能性が見えるか。'}
+];
+const times=['登園後','午前の自由遊び','朝の会の前','戸外遊びの途中','給食前','午睡前','午睡明け','降園準備の時間','制作活動の導入','散歩から戻った後','手洗いの順番待ち','片付けの合図後'];
+const places=['保育室のままごとコーナー','積み木コーナー','絵本棚の前','園庭の砂場','水道の前','玄関の靴箱前','制作机の横','午睡室の入口','廊下の壁面前','テラスのプランター前','ホールのマット上','ブロック棚の近く'];
+const materials=['粘土','積み木','ブロック','色鉛筆','画用紙','電車のおもちゃ','スコップ','ままごとの皿','絵本','帽子','靴','カスタネット','葉っぱ','水筒','タオル','パズル'];
+const relationWords=['隣の友達','同じ机の友達','年下の子','保育者','近くにいた子','二人組の友達','順番を待つ子','泣いていた友達'];
+const objectiveDetails=['周囲には同じ素材が二組置かれていた。','床には待つ位置を示す丸い印があった。','保育者は子どもの斜め後ろに立っていた。','棚には写真ラベルが貼られていた。','机の上には使い終わった道具を入れる箱が置かれていた。','同じ活動に参加している子が四人いた。','次の活動を知らせるカードが壁に掲示されていた。','片付け用の箱は一つだけ机の中央にあった。','入口付近に子どもが集まり、通路が狭くなっていた。','保育者が「あと一つでおしまい」と声をかけた。'];
+const factFrames=[
+  '{time}、{place}で、{n}さんは{material}を{num}個選び、机の端に並べた。',
+  '{time}、{n}さんは{material}を手に持ち、{friend}の方を見て「どうぞ」と言った。',
+  '{place}で、{n}さんは{material}を箱から取り出し、{num}回入れ替えた。',
+  '{time}、保育者の声かけ後、{n}さんは{material}を棚の下段に戻した。',
+  '{n}さんは、{friend}が近づくと持っていた{material}を胸の前に抱えた。',
+  '{time}、{n}さんは「もう一回」と言って、同じ遊具の方へ歩いた。',
+  '{place}で、{n}さんは座ったまま{material}を左右に動かした。',
+  '{n}さんは、保育者が差し出した{material}を受け取り、隣の箱に入れた。',
+  '{time}、{n}さんは列の後ろに立ち、前の子の肩に触れずに待っていた。',
+  '{n}さんは{material}を{num}個重ねた後、崩れたものを自分で拾った。',
+  '{place}で、{n}さんは友達の言葉を聞いた後、保育者の顔を見た。',
+  '{time}、{n}さんは自分の椅子を両手で持ち、机の下に入れた。',
+  '{n}さんは「かして」と言い、{friend}の持つ{material}を指さした。',
+  '{place}で、{n}さんは床に落ちた{material}を拾い、透明のケースへ入れた。',
+  '{time}、{n}さんは活動カードを見てから、手洗い場へ向かった。',
+  '{n}さんは、歌が始まると手を止め、保育者の動きを見ていた。',
+  '{place}で、{n}さんは{material}を友達の前に置き、その後自分の席に戻った。',
+  '{time}、{n}さんは靴を片方履いた後、もう片方を手に持って座っていた。',
+  '{n}さんは、砂をバケツに{num}回入れた後、スコップを地面に置いた。',
+  '{time}、{n}さんは絵本を開き、同じページを{num}秒ほど見ていた。'
+];
+const thinkFrames=[
+  '{n}さんは{material}を離さなかったので、友達に意地悪をしていた。',
+  '{n}さんは活動の途中で立ち上がったため、制作に飽きていた。',
+  '{n}さんは保育者の近くに来たので、甘えたい気持ちが強かった。',
+  '{n}さんは返事をしなかったため、話を聞く気がなかった。',
+  '{n}さんは{friend}に{material}を渡したので、思いやりが育っている。',
+  '{n}さんは何度も同じ遊びをしたので、満足できていなかった。',
+  '{n}さんは片付けを始めなかったため、やる気がなかった。',
+  '{n}さんは列から離れたので、集団行動が苦手である。',
+  '{n}さんは泣いていたので、家庭で何か不安なことがあったのだろう。',
+  '{n}さんは友達の顔を見たので、一緒に遊びたいと思っていた。',
+  '{n}さんは{material}を選んだので、この活動が得意で自信を持っている。',
+  '{n}さんは保育者の手を握ったので、まだ自立できていない。',
+  '{n}さんは友達の後ろに隠れたので、発表したくない気持ちだった。',
+  '{n}さんは「いや」と言ったので、保育者に反抗していた。',
+  '{n}さんは道具を落としたので、注意力が不足していた。',
+  '{n}さんは笑っていたので、活動を十分に理解していた。',
+  '{n}さんは一人で遊んでいたので、友達関係に課題がある。',
+  '{n}さんは準備に時間がかかったので、生活習慣が身についていない。',
+  '{n}さんは保育者を見たので、助けてほしいと思っていた。',
+  '{n}さんは声が小さかったため、自信がないと考えられる。'
+];
+const interpretationTails=['この姿から、安心できる関係を求めていたと考えられる。','そのため、活動への意欲が十分ではなかったと思われる。','家庭での経験が影響している可能性がある。','集団の流れを理解できていないと考えられる。','友達に認められたい気持ちが表れていたと考えられる。','保育者の支援を必要としている様子だった。'];
+const planScenarios=[
+  {record:'片付けの時間になっても遊びを続ける子がいた。玩具の戻し場所が分からず、手に持ったまま立っている姿もあった。',good:'棚に写真ラベルを貼り、玩具ごとに戻す場所を見える化する。片付け前に「あと一つ入れたらおしまい」と終わりを知らせる。',wrongs:['急がせる','もっと頑張るように声をかける','保育者がすべて片付ける']},
+  {record:'友達と同じ電車のおもちゃを使いたがり、取り合いになった。周囲には同じ種類の玩具が一つしか出ていなかった。',good:'同じ種類の玩具を複数用意し、順番を待つ場所と交代の目印を置く。',wrongs:['全員に強く注意する','使いたい気持ちを我慢させる','取り合いになった玩具をすぐ片付ける']},
+  {record:'制作の途中で席を離れる子が多かった。材料の置き場が一か所に集まり、取りに行く動きが重なっていた。',good:'材料を机ごとに小分けに置き、手順カードで次にすることを見えるようにする。',wrongs:['席を離れないように繰り返し注意する','制作を早く終わらせる','保育者が材料を全部配って子どもは待つ']},
+  {record:'午睡前に室内を走る姿があった。布団に入るまでの流れが分かりにくく、移動する子が重なっていた。',good:'午睡前の動線を短くし、手遊びや絵本で活動の区切りをつくる。少人数ずつ布団へ向かう流れにする。',wrongs:['走らないように大きな声で注意する','全員が静かになるまで待つ','走った子だけ別の場所に座らせる']},
+  {record:'散歩の準備で靴を履くまでに時間がかかった。玄関前に子どもが集まり、靴を履く場所が混雑していた。',good:'靴を履く場所を色テープで示し、少人数ずつ準備できる流れにする。待つ場所も足形で示す。',wrongs:['早く靴を履くように急がせる','保育者が全員の靴を履かせる','準備が遅い子を最後にする']},
+  {record:'絵本の時間に後方の子が立ち歩いた。絵本が見えにくい位置に座っている子がいた。',good:'座る位置を半円にし、クッションや目印で絵本が見える場所を示す。',wrongs:['立ち歩かないように注意する','絵本の時間を短くして終える','後ろの子だけ別の活動にする']},
+  {record:'給食前の手洗いで列が混雑した。水道の前で待つ場所が分からず、押し合う姿があった。',good:'手洗い場へ行く人数を分け、待つ場所に足形マークを置く。終わった子の動線も分ける。',wrongs:['押さないように約束させる','一列にきちんと並ぶまで待つ','保育者が一人ずつ強く指示する']},
+  {record:'園庭から戻る場面で玄関前に子どもが集まりすぎた。帽子や靴を置く場所が重なっていた。',good:'玄関前に帽子・靴・荷物の置き場所を分け、戻った順に次の動きが分かる表示を出す。',wrongs:['玄関前で静かに待つよう注意する','戻る時間を短くする','保育者が荷物をまとめて片付ける']},
+  {record:'ままごとコーナーで役割を決める前に遊びが始まり、同じ道具を使いたい子同士で言い合いになった。',good:'道具の数を調整し、役割カードを置いて、遊び始める前に選べる時間をつくる。',wrongs:['けんかをした子を遊びから離す','役割は保育者がすべて決める','言い合いをしないよう約束だけ確認する']},
+  {record:'朝の会で名前を呼ばれても返事をしない子がいた。周囲の音が大きく、保育者の声が届きにくい位置に座っていた。',good:'座る位置を見直し、返事の前に視線が合うよう間をとる。返事以外の表現も受け止める。',wrongs:['大きな声で返事をするまで待つ','返事ができない理由を本人に説明させる','返事をしない子を注意する']},
+  {record:'園庭で水たまりに入りたい子と避けたい子が同じ動線を通り、ぶつかりそうになった。',good:'遊びの場所と通る道を分け、濡れてよい場所をコーンや線で示す。',wrongs:['水たまり遊びをすぐ禁止する','走らないように繰り返し言う','濡れた子だけ室内に戻す']},
+  {record:'発表の場面で前に出ることをためらう子がいた。全員の前に立つ形だけが用意されていた。',good:'小グループで見せる、作品を保育者が持つなど、表現方法を複数用意する。',wrongs:['前に出られるまで励まし続ける','発表できない子は見学にする','全員同じ方法で発表させる']},
+  {record:'手洗い後、タオルを探す子が多く、濡れた手のまま室内を歩く姿が見られた。',good:'タオルの位置を写真や色で分かるようにし、手洗い後の動線上に置く。',wrongs:['タオルを忘れないよう強く伝える','保育者が全員の手を拭く','濡れた手で歩いた子を注意する']},
+  {record:'異年齢で遊ぶ時間に年下の子が使っていた玩具を年上の子がすぐ取ってしまう場面があった。',good:'一緒に使える素材を増やし、保育者が「一緒に使う」「待つ」を言葉で仲立ちする。',wrongs:['年上の子だけ我慢させる','年齢別に完全に分ける','玩具を取った子を叱る']},
+  {record:'避難訓練の後、保育室に戻ってから落ち着かず歩き回る子がいた。活動の切り替えが急だった。',good:'戻った後に深呼吸や短い絵本の時間を入れ、次の活動へ移る間をつくる。',wrongs:['訓練後なので静かにするよう注意する','すぐ通常活動に戻す','歩き回る子を別室で待たせる']},
+  {record:'栽培活動で水やりをしたい子が集中し、ジョウロの取り合いになった。使える道具は一つだけだった。',good:'ジョウロを複数用意し、待つ子には観察カードや順番札を用意する。',wrongs:['水やりは保育者が行う','取り合いになったら活動を中止する','順番を守るよう口頭で言い続ける']}
+];
+const lensScenarios=[
+  {lens:'child',text:'「楽しく遊んだ」とだけ書かれている。どの子が、何をし、何を言ったのかが分からない。',tip:'見えた行動・表情・発言を足すと、子どもの姿が記録になります。'},
+  {lens:'child',text:'「落ち着きがなかった」と書かれているが、立ち上がった回数や場面、視線、手の動きが書かれていない。',tip:'評価語を行動に置き換えると、次の支援につながります。'},
+  {lens:'child',text:'「集中していた」とあるが、何分ほど続けたのか、どの素材をどう扱ったのかがない。',tip:'時間・操作・言葉などを入れると姿が具体化します。'},
+  {lens:'child',text:'泣いたことは書かれているが、泣く前に何があり、泣いた後にどうしたかが書かれていない。',tip:'前後の行動を入れると、子どもの姿を丁寧に捉えられます。'},
+  {lens:'env',text:'片付けが進まなかったが、玩具の置き場所やラベル、箱の数、通路の広さについての記述がない。',tip:'物の量・位置・表示・動線を見直すと、環境構成の課題が見えます。'},
+  {lens:'env',text:'手洗い場で混雑したとあるが、待つ場所や終わった後の通り道がどうなっていたかが書かれていない。',tip:'子どもの動きと空間の関係を見るのが環境構成の視点です。'},
+  {lens:'env',text:'制作で材料を取りに行く子が多かったが、材料の置き方や数、机の配置が記録されていない。',tip:'素材の配置を記録すると、活動しやすい環境か検討できます。'},
+  {lens:'env',text:'絵本が見えにくい子がいた可能性があるが、座席の形や距離への記述がない。',tip:'見える・聞こえる・動ける配置かどうかを確認します。'},
+  {lens:'rel',text:'取り合いがあったと書かれているが、誰と誰がどのように関わったか、言葉や視線がない。',tip:'友達とのやり取り、視線、言葉、貸し借りを記録すると関係性が見えてきます。'},
+  {lens:'rel',text:'「仲良く遊んだ」とあるが、役割分担や声かけ、相手への反応が書かれていない。',tip:'関係性は、誰とどんなやり取りがあったかで捉えます。'},
+  {lens:'rel',text:'保育者に近づいたことは書かれているが、その前に友達との関わりがあったかが分からない。',tip:'子ども同士と保育者との関係をつなげて見ます。'},
+  {lens:'rel',text:'年上の子が年下の子に関わった場面なのに、互いの表情や言葉が記録されていない。',tip:'異年齢の関わりも、育ちを見る大切な材料です。'},
+  {lens:'flow',text:'制作中に席を立つ子が多かった。導入から材料を取りに行くまでの順番や切り替えの説明がない。',tip:'活動の始まり・展開・切り替え・終わりを確認すると、流れの改善点が見えます。'},
+  {lens:'flow',text:'午睡前に走る姿があったが、遊びから午睡へ移る手順や合図が書かれていない。',tip:'切り替えの流れが見えると、無理のない支援を考えられます。'},
+  {lens:'flow',text:'散歩の準備に時間がかかったが、誰がどの順番で準備したか、待つ時間がどう生まれたかがない。',tip:'活動の流れは、待ち時間や重なりを見直す視点です。'},
+  {lens:'flow',text:'給食前にざわついたとあるが、手洗い、配膳、着席までのつながりが記録されていない。',tip:'前後のつながりを整理すると、見通しの持ちやすさが分かります。'},
+  {lens:'support',text:'「注意した」とだけ書かれていて、保育者がどんな言葉をかけ、何を見守ったかが分からない。',tip:'保育者の支援は、タイミング・言葉・見守り・環境調整まで具体化します。'},
+  {lens:'support',text:'保育者が手伝ったとあるが、どこまで手伝い、どこから子どもに任せたかが書かれていない。',tip:'支援の量とタイミングを書くと、子どもの主体性も見えます。'},
+  {lens:'support',text:'友達同士のトラブルに介入したとあるが、仲立ちの言葉や待った時間が分からない。',tip:'仲立ちの具体的な言葉を記録すると、支援の振り返りができます。'},
+  {lens:'support',text:'活動がうまくいかなかったとあるが、保育者が環境を変えたのか、声かけを変えたのかがない。',tip:'保育者が何を調整したかを書くと、次の実践につながります。'},
+  {lens:'growth',text:'今日の出来事は詳しいが、この経験が次の育ちや課題にどうつながるかが書かれていない。',tip:'経験の意味を、次に伸ばしたい力や育ちに関連した問題として言語化します。'},
+  {lens:'growth',text:'できた・できなかったの記録で終わっており、どんな力の芽生えが見えたかが書かれていない。',tip:'育ちは結果だけでなく、過程の中の変化から捉えます。'},
+  {lens:'growth',text:'友達に譲れなかったことだけが書かれ、次にどんな関わりを経験してほしいかがない。',tip:'問題を責める形ではなく、次の育ちへの問いに変えます。'},
+  {lens:'growth',text:'生活習慣の場面で困りごとは書かれているが、見通しや自分でやってみる力へのつながりがない。',tip:'生活場面も、主体性や見通しの育ちとして捉えられます。'}
+];
+const weak=['しっかり注意する','もっと頑張るように声をかける','様子を見る','できるまで繰り返し言い聞かせる','反省させる','急がせる','約束を守らせる','できない理由を聞く','静かになるまで待つ','保育者が代わりに全部行う','活動を短くして終える','問題になった物をすぐ片付ける'];
+let st={name:'',mode:'fact',factPos:0,planPos:0,lensPos:0,total:0,exp:0,lv:1,combo:0,factPool:[],planPool:[],lensPool:[],notes:[],lastFactText:'',lastPlanText:'',lastLensText:'',recent:{},currentQ:null,answerLocked:false};
+const $=id=>document.getElementById(id),rnd=s=>Math.abs(Math.sin(s*999.17)*10000)%1,pick=(a,s)=>a[Math.floor(rnd(s)*a.length)];
+function sound(){try{let ac=new (AudioContext||webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=620;g.gain.value=.025;o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.11);o.stop(ac.currentTime+.12)}catch(e){}}
+function shuffle(a,seed=37){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(rnd(i+seed)*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function fill(t,seed){return t.replaceAll('{n}',pick(people,seed)).replaceAll('{num}',String(2+Math.floor(rnd(seed+9)*5))).replaceAll('{time}',pick(times,seed+11)).replaceAll('{place}',pick(places,seed+13)).replaceAll('{material}',pick(materials,seed+17)).replaceAll('{friend}',pick(relationWords,seed+19))}
+function fmt(t,seed){return fill(t,seed)}
+function uniqueOptions(options){let out=[];for(let o of options){if(o&&!out.includes(o))out.push(o)};for(let w of weak){if(out.length>=4)break;if(!out.includes(w))out.push(w)}return out.slice(0,4)}
+function escapeHtml(str){return str.replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function naturalDetail(seed){
+  const details=[
+    fill(pick(objectiveDetails,seed+1),seed+1),
+    fill('{n}さんは{material}を手に持ったまま、{friend}の方を見ていた。',seed+3),
+    fill('{n}さんと{friend}の距離が近く、同じ素材に手を伸ばす姿があった。',seed+5),
+    fill('保育者は{place}の入口側に立ち、全体の動きを見守っていた。',seed+7),
+    fill('活動の終わりを知らせる合図の後も、数名が{material}を持っていた。',seed+9),
+    fill('近くでは{friend}が順番を待ち、保育者の声かけを聞いていた。',seed+11)
+  ];
+  return pick(details,seed+13);
+}
+function makeUniqueRecord(text,seen,seed){
+  let out=text,tries=0;
+  while(seen.has(out)&&tries<16){
+    out=text+' '+naturalDetail(seed+tries*23);
+    tries++;
+  }
+  return out;
+}
+function enrichRecord(record,d,seed){
+  const scene=fill('{time}、{place}で、',seed+2);
+  const focus=pick([
+    fill('{n}さんを中心に見ていると、',seed+4),
+    fill('{n}さんと{friend}の近くで、',seed+6),
+    '少人数で遊んでいる中で、',
+    '保育者が少し離れて見守る中で、',
+    '活動の切り替えに入る前に、'
+  ],seed+8);
+  let base=scene+focus+record;
+  let add=[
+    'その場面では、'+naturalDetail(seed+21),
+    '前回は声かけを増やしたが、同じ姿が続いた。',
+    '子どもの動線と物の置き場所が重なっていた。',
+    '活動の前後で待つ時間が長くなっていた。',
+    '友達とのやり取りが重なり、保育者が仲立ちする場面もあった。'
+  ];
+  if(d===1)return base;
+  if(d===2)return base+' '+add[0];
+  if(d===3)return '午前の記録：'+base+' '+add[0]+' '+add[2];
+  return '一週間の記録より：'+base+' '+add[0]+' '+add[3]+' '+add[4];
+}
+function makeFactPool(){let pool=[],seen=new Set();for(let d=1;d<=4;d++){let guard=0;while(pool.filter(q=>q.difficulty===d).length<PER_DIFF&&guard<PER_DIFF*20){let i=guard++,seed=d*10000+i*47,isFact=i%2===0;let text;if(isFact){text=fill(pick(factFrames,seed),seed);if(d>=2)text+=' '+fill(pick(objectiveDetails,seed+3),seed+3);if(d>=3)text='記録文：'+text+' その後、'+fill(pick(factFrames,seed+5),seed+5);if(d>=4)text+=' ただし、気持ちは書かず、見えた動きだけを記録している。'}else{text=fill(pick(thinkFrames,seed),seed);if(d>=2)text+=' '+pick(interpretationTails,seed+4);if(d>=3)text='記録文：'+fill(pick(factFrames,seed+6),seed+6)+' '+text;if(d>=4)text+=' この記述には、見えた行動と保育者の解釈が混ざっている。'}if(seen.has(text))continue;seen.add(text);pool.push({difficulty:d,text,answer:isFact?'fact':'think',tip:isFact?'観察できる行動・発言・環境が中心なので「事実」として扱えます。':'気持ち・意図・性格・家庭背景などを推測しているため「考察」として分けます。'});}}return shuffle(pool,101)}
+function makePlanPool(){let pool=[],seen=new Set();for(let d=1;d<=4;d++){let guard=0;while(pool.filter(q=>q.difficulty===d).length<PER_DIFF&&guard<PER_DIFF*20){let i=guard++,s=d*20000+i*53,base=planScenarios[i%planScenarios.length],record=enrichRecord(base.record,d,s);record=makeUniqueRecord(record,seen,s+i);seen.add(record);let good=base.good;let supportAdd=['子どもが選べる余地を残し、できた姿を短く言葉にして返す。','始まりと終わりの合図をそろえ、少人数ずつ動ける流れにする。','友達との関わりが生まれる場面では、保育者が言葉を補って仲立ちする。','見通しを持てるよう、写真・色・位置の手がかりを用意する。'];let expandedGood=d>=3?good+' '+pick(supportAdd,s+4):good;let options=d>=2?uniqueOptions([expandedGood,...shuffle(base.wrongs.concat(weak),s+8).slice(0,5)]):uniqueOptions([expandedGood,...base.wrongs]);options=shuffle(options,s+6);pool.push({difficulty:d,record,options,answer:options.findIndex(x=>x===expandedGood),tip:'記録の困りごとを、環境構成・活動の流れ・関係性・保育者の支援に結びつけて選びます。'});}}return shuffle(pool,202)}
+function makeLensPool(){let pool=[],seen=new Set();for(let d=1;d<=4;d++){let guard=0;while(pool.filter(q=>q.difficulty===d).length<PER_DIFF&&guard<PER_DIFF*20){let i=guard++,seed=d*30000+i*31,base=lensScenarios[i%lensScenarios.length],extra='';if(d===2)extra=' さらに、明日の支援につなげる視点も必要です。';if(d===3)extra=' 記録には場面の前後関係も含めて読み取る必要があります。';if(d===4)extra=' 複数の観点が重なっていますが、まず不足が大きい観点を選びます。';let scene='【場面】'+fill(pick(times,seed),seed)+'／'+fill(pick(places,seed+2),seed+2)+'。';let text=scene+' '+base.text+extra;text=makeUniqueRecord(text,seen,seed+i);seen.add(text);let titles=lenses.map(l=>l.title);let options=shuffle(titles,seed+19);pool.push({difficulty:d,text,answer:options.indexOf(lenses.find(l=>l.id===base.lens).title),options,tip:base.tip});}}return shuffle(pool,303)}
+function typeWriter(el,text,done){el.textContent='';el.classList.add('caret');let n=0,t=setInterval(()=>{el.textContent+=text[n++]||'';if(n%5===0)sound();if(n>text.length){clearInterval(t);el.classList.remove('caret');if(done)done()}},22)}
+function lensCardsHtml(full=false){return lenses.map((l,i)=>`<div class="lensCard ${i===0&&full?'active':''}"><span class="icon">${l.icon}</span><b>${i+1}. ${l.title}</b><span class="micro">${full?l.q:l.short}</span></div>`).join('')}
+
+function sideCardsHtml(items){return items.map((it,i)=>`<div class="lensCard ${it.active?'active':''}"><span class="icon">${it.icon}</span><b>${it.title}</b><span class="micro">${it.body}</span></div>`).join('')}
+function updateSidePanel(){
+  const mission=$('mission'),mini=$('lensMini');
+  if(!mission||!mini)return;
+  const name=st.name||'見習い魔法使い';
+  if(st.mode==='fact'){
+    mission.textContent=`${name}さん、今は「事実/考察」の練習中。\n左下には、この問題で使う見分け方だけを表示しています。`;
+    mini.innerHTML=sideCardsHtml([
+      {icon:'👀',title:'見える事実',body:'行動・表情・発言・場所・物の配置など、見たまま書ける内容。',active:true},
+      {icon:'💭',title:'考察に分ける言葉',body:'「楽しそう」「わざと」「やる気がない」など、気持ち・意図・背景の推測。'},
+      {icon:'✏️',title:'書き換えのコツ',body:'「楽しそう」→「笑顔で『もう一回』と言った」のように具体化。'},
+      {icon:'🧭',title:'迷ったら',body:'確認できる部分を事実、理由や意味づけを考察欄へ分ける。'}
+    ]);
+  }else if(st.mode==='lens'){
+    mission.textContent=`${name}さん、今は「6観点」の練習中。\nこのモードだけ、6つの観点カードを表示します。`;
+    mini.innerHTML=lensCardsHtml(false);
+  }else if(st.mode==='plan'){
+    mission.textContent=`${name}さん、今は「指導案」の練習中。\n記録を、明日の環境構成・流れ・支援へつなげる視点を表示しています。`;
+    mini.innerHTML=sideCardsHtml([
+      {icon:'🏡',title:'環境を変える',body:'物の数、置き場所、写真ラベル、待つ場所、動線を調整する。',active:true},
+      {icon:'🌀',title:'流れを整える',body:'導入・展開・切り替え・終わり方を、子どもが見通せる形にする。'},
+      {icon:'🤝',title:'関係を支える',body:'貸し借り、順番、言葉のやり取りを保育者が仲立ちする。'},
+      {icon:'🪄',title:'支援を具体化',body:'「注意する」だけでなく、短い言葉・選択肢・手がかりを用意する。'}
+    ]);
+  }else if(st.mode==='remake'){
+    mission.textContent=`${name}さん、今は「モヤモヤ・リメイク」。\n反省文を責める文章ではなく、次の計画につながる文章へ整えます。`;
+    mini.innerHTML=sideCardsHtml([
+      {icon:'☕',title:'責めない',body:'「怒ってしまった」で止めず、何が起きたかを落ち着いて分ける。',active:true},
+      {icon:'📌',title:'事実から始める',body:'子どもの行動・場面・物の配置を、見えた形で一文にする。'},
+      {icon:'✨',title:'明日に変える',body:'環境構成、活動の流れ、保育者の支援として書き換える。'}
+    ]);
+  }else if(st.mode==='note'){
+    mission.textContent=`${name}さん、今は「お助けノート」。\n間違えた問題を、赤ペン回避ポイントとして復習します。`;
+    mini.innerHTML=sideCardsHtml([
+      {icon:'📓',title:'間違いは素材',body:'間違えた問題ほど、日誌でつまずきやすいポイントです。',active:true},
+      {icon:'🔁',title:'もう一度見る',body:'なぜ違ったかを、事実・考察・6観点・指導案に分けて確認。'},
+      {icon:'🌱',title:'次につなげる',body:'次に同じ場面が来たら、どの言葉で書くかを考える。'}
+    ]);
+  }
+}
+function missionText(){return `―― 古い保育の魔導書が、${st.name}さんの名前に反応して光りはじめた。\n\nこれからの日誌は、ただ「反省」を書く場所ではありません。子どもの姿を見つめ、明日の環境構成・動線計画・保育者の支援を考える、指導計画作成プログラムです。\n\n魔導書が示す見直しの観点は六つ。\n\n一、子どもの姿。\n二、環境構成。\n三、関係性。\n四、活動の流れ。\n五、保育者の支援。\n六、子どもの育ちに関連した問題。\n\n「できなかった」で止まった記録を、次の育ちへ向かう問いに変える。\nそれが、トワイライト・ロゼに光るLOGOS Amuletの新しい使命です。\n\nさあ、${st.name}さん。\n今日の一文を、明日の保育につながる魔法へ錬成しましょう。`;}
+function showContractMission(){$('missionLead').textContent=`${st.name}さん、実習おつかれさま☕️ 魔導書に名前が刻まれました。`;$('gate').classList.add('hidden');$('missionGate').classList.remove('hidden');$('enterRoomBtn').classList.add('hidden');typeWriter($('contractMissionText'),missionText(),()=>{$('enterRoomBtn').classList.remove('hidden')})}
+function enterRoom(){$('missionGate').classList.add('hidden');$('app').classList.remove('hidden');$('reviewGuide').innerHTML=lenses.map((l,i)=>`<div class="reviewPill"><b>${i+1}. ${l.title}</b><div class="micro">${l.short}</div></div>`).join('');updateSidePanel();renderQ()}
+function curPool(){if(st.mode==='fact')return st.factPool;if(st.mode==='plan')return st.planPool;return st.lensPool}
+function curPos(){if(st.mode==='fact')return st.factPos;if(st.mode==='plan')return st.planPos;return st.lensPos}
+function advancePos(){if(st.mode==='fact')st.factPos++;else if(st.mode==='plan')st.planPos++;else if(st.mode==='lens')st.lensPos++}
+function inc(){advancePos();st.total++}
+function qKey(q){if(!q)return '';if(st.mode==='fact')return q.text;if(st.mode==='plan')return q.record;return q.text}
+function lastKey(){if(st.mode==='fact')return st.lastFactText;if(st.mode==='plan')return st.lastPlanText;return st.lastLensText}
+function setLast(src){if(st.mode==='fact')st.lastFactText=src;else if(st.mode==='plan')st.lastPlanText=src;else if(st.mode==='lens')st.lastLensText=src}
+function recentBucketKey(){return st.mode+'_'+(+$('diff').value||1)}
+function qFamily(q){
+  let key=qKey(q);
+  if(st.mode==='plan'){
+    for(let i=0;i<planScenarios.length;i++){if(key.includes(planScenarios[i].record.slice(0,28)))return 'plan:'+i}
+  }
+  if(st.mode==='lens'){
+    for(let i=0;i<lensScenarios.length;i++){if(key.includes(lensScenarios[i].text.slice(0,24)))return 'lens:'+i}
+  }
+  if(st.mode==='fact'){
+    let normalized=key;
+    people.concat(materials,relationWords,places,times).forEach(w=>{normalized=normalized.split(w).join('□')});
+    normalized=normalized.replace(/[0-9０-９一二三四五六七八九十]+/g,'#');
+    normalized=normalized.replace(/記録文：|その後、|午前の記録：|一週間の記録より：/g,'');
+    return 'fact:'+normalized.slice(0,96);
+  }
+  return key.slice(0,120);
+}
+function rememberQuestion(q){
+  if(!q)return;
+  let bucket=recentBucketKey(),arr=st.recent[bucket]||[];
+  arr.unshift('exact:'+qKey(q),'family:'+qFamily(q));
+  st.recent[bucket]=arr.slice(0,18);
+}
+function isRecentQuestion(q){
+  let arr=st.recent[recentBucketKey()]||[];
+  return arr.includes('exact:'+qKey(q))||arr.includes('family:'+qFamily(q))||qKey(q)===lastKey();
+}
+function nextNonRepeat(){
+  let d=+$('diff').value,pool=curPool().filter(q=>q.difficulty===d);
+  if(!pool.length)return null;
+  let pos=curPos()%pool.length,tries=0,q=pool[pos];
+  while(pool.length>1&&isRecentQuestion(q)&&tries<pool.length){
+    advancePos();
+    pos=curPos()%pool.length;
+    q=pool[pos];
+    tries++;
+  }
+  return q;
+}
+function modeName(){return st.mode==='fact'?'事実/考察':st.mode==='plan'?'指導案':st.mode==='lens'?'6観点':st.mode==='remake'?'モヤモヤ':'お助け'}
+function amuletInfo(lv){
+  if(lv>=10)return {cls:'stage-crown',icon:'👑',title:'神秘の王冠アミュレット',desc:'記録を明日の計画へ結ぶ力が輝いています'};
+  if(lv>=7)return {cls:'stage-star',icon:'🌟',title:'クリスタルスター・アミュレット',desc:'複数の観点をつなげて考える力が育っています'};
+  if(lv>=4)return {cls:'stage-diamond',icon:'💎',title:'ダイヤの結晶アミュレット',desc:'事実と考察を分ける力が安定してきました'};
+  return {cls:'stage-heart',icon:'💗',title:'ハート型アミュレット',desc:'やさしく観察する力が芽生えています'};
+}
+function renderAmulet(){
+  let info=amuletInfo(st.lv),c=$('crucible'),g=$('gem'),label=$('amuletStage');
+  if(!c||!g||!label)return;
+  c.classList.remove('stage-heart','stage-diamond','stage-star','stage-crown');
+  c.classList.add(info.cls);
+  g.textContent=info.icon;
+  label.innerHTML=`${info.icon} ${info.title}<small>${info.desc}</small>`;
+}
+function update(){$('level').textContent=st.lv;$('exp').textContent=st.exp;$('count').textContent=st.total;$('combo').textContent=st.combo;let need=st.lv*100,base=(st.lv-1)*100,p=Math.max(0,Math.min(100,(st.exp-base)/(need-base)*100));$('bar').style.width=p+'%';$('next').textContent=`次の変身まであと${Math.max(0,need-st.exp)} EXP｜${modeName()} ${Math.min(curPos()+1,QUESTION_LIMIT)} / ${QUESTION_LIMIT}`;$('crucible').classList.toggle('combo',st.combo>=3);renderAmulet()}
+function labelHtml(txt){return `<div class="questionLabel">${txt}</div>`}
+function renderQ(){update();$('feedback').textContent='';let q=nextNonRepeat();if(!q)return;st.currentQ=q;st.answerLocked=false;rememberQuestion(q);if(st.mode==='fact'){$('question').innerHTML=labelHtml('これは事実？それとも考察？')+escapeHtml(q.text);$('choices').innerHTML='<button class="btn choice" data-a="fact">📌 事実として記録する</button><button class="btn choice" data-a="think">💭 考えたこととして扱う</button>';document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(b.dataset.a===q.answer,q.tip,q.text))}else if(st.mode==='plan'){$('question').innerHTML=labelHtml('明日の計画につなげるなら？')+'<div class="recordLead">記録</div>'+escapeHtml(q.record);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">✨ ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.record))}else{$('question').innerHTML=labelHtml('不足している見直し観点は？')+escapeHtml(q.text);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">🔮 ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.text))}}
+function answer(ok,tip,src){if(st.answerLocked)return;st.answerLocked=true;document.querySelectorAll('.choice').forEach(b=>b.disabled=true);setLast(src);if(ok){st.combo++;st.exp+=20+(st.combo>=3?10:0);if(st.exp>=st.lv*100)st.lv++;$('feedback').textContent=`正解、えらい！ ${tip} ${st.combo>=3?'錬成炉が加速中✨':''}`;sound()}else{st.combo=0;st.notes.unshift([src,tip,modeName()]);st.notes=st.notes.slice(0,18);$('feedback').textContent='惜しい！大丈夫、お助けノートに入ったよ。'+tip}inc();update();setTimeout(renderQ,950)}
+function switchMode(m){st.mode=m;document.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('active',t.dataset.mode===m);t.classList.toggle('ghost',t.dataset.mode!==m)});$('quiz').classList.toggle('hidden',!(m==='fact'||m==='plan'||m==='lens'));$('remake').classList.toggle('hidden',m!=='remake');$('note').classList.toggle('hidden',m!=='note');updateSidePanel();if(m==='fact'||m==='plan'||m==='lens')renderQ();if(m==='note')renderNotes()}
+function renderNotes(){$('notes').innerHTML=st.notes.length?st.notes.map(n=>`<div class="card"><b>${escapeHtml(n[2])}のしょんぼりポイント</b><p>${escapeHtml(n[0])}</p><p class="small">${escapeHtml(n[1])}</p></div>`).join(''):'<p class="sub">まだ空っぽ。間違えても、ここに優しく保存されるよ。</p>'}
+function remakeText(v){return `【今日のモヤモヤ】\n${v}\n\n【6つの観点で見直す】\n1. 子どもの姿\n・見えた行動、表情、発言を一つ選び、事実として書く。\n・例：「片付けの声かけ後、A児はブロックを手に持ったまま棚の前に立っていた。」\n\n2. 環境構成\n・物の戻し場所、表示、量、動線が子どもに分かりやすかったかを確認する。\n・写真ラベル、色分け、箱の位置、待つ場所などを見直す。\n\n3. 関係性\n・友達とのやり取り、貸し借り、視線、言葉、保育者との関わりを記録する。\n・取り合いがあった場合も「誰と、何をめぐって、どのように関わったか」を書く。\n\n4. 活動の流れ\n・導入、展開、切り替え、終わり方のどこで迷いが起きたかを見る。\n・終わりの合図や次の行動が見える形になっていたかを確認する。\n\n5. 保育者の支援\n・「強く注意した」で終わらせず、次は短く具体的な言葉で伝える。\n・例：「赤いブロックはこの箱に入れよう」「あと一つ入れたらおしまいにしよう」。\n\n6. 子どもの育ちに関連した問題\n・この出来事を、次の育ちにつながる問いに変える。\n・例：「片付けの見通しを持つ経験を、どのように積み重ねられるか。」\n\n【明日の計画案】\n・片付け場所に写真ラベルを貼り、戻す場所を見える化する。\n・一斉に切り替える前に、近くの子から少人数ずつ誘う。\n・保育者は行動を具体的に伝え、できた姿を言葉にして返す。\n\n【日誌の書き換え例】\n片付けの場面で、子どもたちは遊びを続ける姿が見られた。玩具の戻し場所が分かりにくく、手に持ったまま立っている子もいた。友達との取り合いも見られたため、明日は玩具の置き場所を写真で示し、少人数ずつ片付けに誘う。子どもが見通しを持って行動できるよう、短い言葉で次の動きを伝えたい。`;}
+
+function sparkleGem(){
+  const crystal=$('crystalTouch'), gem=$('gem');
+  if(!crystal||!gem)return;
+  gem.classList.remove('sparkle-active');
+  crystal.classList.remove('shimmer-active');
+  void gem.offsetWidth;
+  gem.classList.add('sparkle-active');
+  crystal.classList.add('shimmer-active');
+  crystal.querySelectorAll('.sparkle-particle').forEach(n=>n.remove());
+  const count=14;
+  for(let i=0;i<count;i++){
+    const p=document.createElement('span');
+    const angle=(Math.PI*2/count)*i+(Math.random()*0.26-0.13);
+    const dist=52+Math.random()*44;
+    p.className='sparkle-particle'+(i%5===0?' ring':'');
+    p.style.setProperty('--tx',(Math.cos(angle)*dist).toFixed(1)+'px');
+    p.style.setProperty('--ty',(Math.sin(angle)*dist).toFixed(1)+'px');
+    p.style.setProperty('--size',(8+Math.random()*9).toFixed(1)+'px');
+    p.style.setProperty('--dur',(760+Math.random()*340).toFixed(0)+'ms');
+    crystal.appendChild(p);
+    setTimeout(()=>p.remove(),1200);
+  }
+  setTimeout(()=>{gem.classList.remove('sparkle-active');crystal.classList.remove('shimmer-active')},980);
+  sound();
+}
+
+function startApp(){st.name=$('nameInput').value.trim()||'見習い魔法使い';st.factPool=makeFactPool();st.planPool=makePlanPool();st.lensPool=makeLensPool();$('room').textContent=`${st.name}さんの指導計画作成プログラム`;$('hello').textContent=`${st.name}さん、実習おつかれさま☕️ 今日も少しだけで大丈夫。`;showContractMission()}
+$('startBtn').onclick=startApp;
+$('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();startApp()}});
+$('enterRoomBtn').onclick=enterRoom;
+$('crystalTouch').addEventListener('pointerdown',e=>{e.preventDefault();sparkleGem()});
+$('crystalTouch').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sparkleGem()}});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchMode(t.dataset.mode));
+$('skip').onclick=()=>{if(st.answerLocked)return;st.answerLocked=true;let q=st.currentQ||nextNonRepeat();setLast(qKey(q));inc();renderQ()};
+$('diff').onchange=()=>{if(st.mode==='fact')st.lastFactText='';else if(st.mode==='plan')st.lastPlanText='';else st.lastLensText='';st.currentQ=null;st.answerLocked=false;renderQ()};
+$('remakeBtn').onclick=()=>{let v=$('diary').value.trim()||'片付けの時間に子どもが動かなかった。友達との玩具の取り合いもあり、保育者が強く注意してしまった。';$('remakeResult').textContent=remakeText(v);$('remakeResult').classList.remove('hidden')};
+</script>
+</body>
+</html>
