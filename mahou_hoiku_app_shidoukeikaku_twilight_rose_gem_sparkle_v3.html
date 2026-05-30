@@ -55,7 +55,7 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 .missionCard,.lensCard,.card,.miniCard{animation:reveal .45s ease both;text-align:left;padding:14px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.15)}
 .missionCard b,.lensCard b{display:block;color:var(--gold);margin-bottom:6px}.lensCard .icon{font-size:24px;display:inline-block;margin-bottom:4px}.lensCard.active{outline:2px solid rgba(255,226,154,.74);box-shadow:0 0 28px rgba(255,226,154,.12)}
 
-/* === デスクトップ向けの基本構造 === */
+/* === デスクトップ向けのレイアウト構造 === */
 .app{width:min(1180px,100%);margin:0 auto;padding:18px 16px 40px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.brand{display:flex;gap:12px;align-items:center}.sigil{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;font-size:26px}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:405px 1fr;gap:16px}.panel{padding:20px}.sideTitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.badge{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;border-radius:999px;background:rgba(255,226,154,.12);border:1px solid rgba(255,226,154,.24);color:#ffeec1;font-size:12px;font-weight:900}
@@ -90,54 +90,62 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 @keyframes haloFlash{0%{opacity:0;transform:scale(.72)}18%{opacity:.95}100%{opacity:0;transform:scale(1.38)}}
 @keyframes sparkleBurst{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.2)}18%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(160deg) scale(1.15)}}
 
-.cutePointStrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.cutePoint{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.55;color:#f6d5e1}.cutePoint b{color:#ffe8a8}.softDivider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}.noteNickname{display:inline-block;margin-left:4px;padding:3px 8px;border-radius:999px;background:rgba(255,143,184,.16);border:1px solid rgba(255,143,184,.24);font-size:12px;color:#ffeaf4}
+.cutePointStrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+.cutePoint{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.55;color:#f6d5e1}
+.cutePoint b{color:#ffe8a8}.softDivider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}.noteNickname{display:inline-block;margin-left:4px;padding:3px 8px;border-radius:999px;background:rgba(255,143,184,.16);border:1px solid rgba(255,143,184,.24);font-size:12px;color:#ffeaf4}
 @media(max-width:740px){.appIntro{grid-template-columns:1fr}.featureGrid{grid-template-columns:1fr}.cutePointStrip{grid-template-columns:1fr}}
 
-/* === 📱 スマートフォン表示専用の徹底的な重なり防止調整 === */
+/* === 📱 スマートフォン表示専用：スクロールと重なりバグの徹底排除 === */
 @media(max-width:920px){
   body {
-    /* 画面下端の引っかかりを防ぐセーフエリア設定 */
     padding-bottom: env(safe-area-inset-bottom);
+    overflow-y: auto !important;
   }
+  /* メインレイアウトを縦並びにして画面幅一杯に広げる */
   .grid{
-    grid-template-columns:1fr;
-    display: flex;
-    flex-direction: column;
+    grid-template-columns:1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
   }
-  /* 下部に固定されるナビゲーションメニューの完全隔離 */
+  /* 下部に完全に固定されるフッターメニューバー */
   .tabs{
     position:fixed !important;
     left:10px !important;
     right:10px !important;
     bottom:14px !important;
     z-index:99999 !important;
-    background:rgba(24,12,24,.94) !important; /* より濃くして背後の文字を完全に隠す */
-    border:1.5px solid rgba(255,255,255,.3) !important;
+    background:rgba(26,14,32,.96) !important; /* 背後を完璧に隠すための不透明度アップ */
+    border:1.5px solid rgba(255,255,255,.28) !important;
     border-radius:24px;
     padding:8px;
     backdrop-filter:blur(24px) !important;
-    box-shadow:0 12px 42px rgba(0,0,0,.8);
-    display:flex;
+    box-shadow:0 -8px 32px rgba(0,0,0,0.7), 0 12px 42px rgba(0,0,0,.9) !important;
+    display:flex !important;
     gap:4px;
   }
   .tab{
-    flex:1;font-size:12px;padding:12px 4px;margin:0;
+    flex:1;font-size:12px;padding:12px 2px;margin:0;
     white-space: nowrap;
   }
-  /* メインコンテンツの下部パディングを『フッターメニューより高く』強制設定 */
+  /* コンテンツ自体の末尾にメニューバーを完全に回避するための余白スペースを強制指定 */
   .app{
     padding:12px 12px 180px !important; 
-    min-height: 100vh;
     box-sizing: border-box;
   }
-  .crucible{width:306px;height:306px}
+  /* 右側のクイズやコンテンツパネルに独立したスクロールと底上げ余白を与える */
+  .panel {
+    padding-bottom: 110px !important;
+  }
+  .crucible{width:300px;height:300px}
   .missionType{min-height:350px}
   .toolbar{grid-template-columns:1fr}
 }
 
 @media(max-width:520px){
   .book{padding:28px 18px}.panel{padding:16px}.stats{font-size:12px}
-  .crucible{width:260px;height:260px}.crystal{width:104px;height:140px}
+  .crucible{width:260px;height:260px}
+  .crystal{width:104px;height:140px}
   .tabs{
     left:8px !important;
     right:8px !important;
@@ -145,17 +153,19 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
     padding:6px;
   }
   .tab{font-size:11px;padding:10px 2px}
-  .q{font-size:17px;padding:14px;margin:10px 0;line-height:1.7}
+  .q{font-size:16px;padding:14px;margin:10px 0;line-height:1.65}
   
-  /* ボタン自体の押しやすさを確保しつつ、高さを圧縮 */
+  /* スマホの小さな縦幅に対応するためクイズボタンの高さバランスを最適化 */
   .choice{
     font-size:14px !important;
     padding:14px 16px !important;
-    margin:8px 0 !important;
+    margin:10px 0 !important;
     line-height:1.4 !important;
+    display: block !important;
+    width: 100% !important;
   }
   .lensGrid{grid-template-columns:1fr}.reviewGrid{grid-template-columns:1fr}
-  .app{padding:12px 12px 170px !important}
+  .app{padding:12px 12px 190px !important}
 }
 </style>
 </head>
@@ -270,7 +280,7 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
     </section>
   </section>
 
-  <!-- タブナビゲーション（HTML構造の最後に配置して固定配置時の干渉を抑制） -->
+  <!-- タブナビゲーション（構造上最下部へ配置） -->
   <div class="tabs">
     <button class="btn tab active" data-mode="fact">📌 事実/考察</button>
     <button class="btn tab ghost" data-mode="lens">🔮 6観点</button>
@@ -290,7 +300,7 @@ const lenses=[
   {id:'rel',icon:'🤝',title:'関係性',short:'友達・保育者・集団との関わりを見る',q:'誰とどのように関わり、言葉や視線、貸し借り、仲立ちはどう生まれたか。'},
   {id:'flow',icon:'🌀',title:'活動の流れ',short:'導入・展開・切り替え・終わりを整える',q:'始まりから終わりまで、見通しを持てる流れになっていたか。'},
   {id:'support',icon:'🪄',title:'保育者の支援',short:'声かけ・見守り・仲立ちを具体化する',q:'保育者は何を見て、どのタイミングで、どんな支援をしたか。'},
-  {id:'growth',icon:'🌱',title:'子どもの育ちに関連した問題',short:'次の育ちにつながる問いを立てる',q:'この経験は何の育ちにつながり、次にどんな課題や可能性見えるか。'}
+  {id:'growth',icon:'🌱',title:'子どもの育ちに関連した問題',short:'次の育ちにつながる問いを立てる',q:'この経験は何の育ちにつながり、次にどんな課題や可能性が見えるか。'}
 ];
 const times=['登園後','午前の自由遊び','朝の会の前','戸外遊びの途中','給食前','午睡前','午睡明け','降園準備の時間','制作活動の導入','散歩から戻った後','手洗いの順番待ち','片付けの合図後'];
 const places=['保育室のままごとコーナー','積み木コーナー','絵本棚の前','園庭の砂場','水道の前','玄関の靴箱前','制作机の横','午睡室の入口','廊下の壁面前','テラスのプランター前','ホールのマット上','ブロック棚の近く'];
@@ -433,7 +443,7 @@ function enrichRecord(record,d,seed){
   ];
   if(d===1)return base;
   if(d===2)return base+' '+add[0];
-  if(d===3)return '午前の記録：'+base+' '+add[0]+' '+add[2];
+  if(d===3)return '午午前の記録：'+base+' '+add[0]+' '+add[2];
   return '一週間の記録より：'+base+' '+add[0]+' '+add[3]+' '+add[4];
 }
 function makeFactPool(){let pool=[],seen=new Set();for(let d=1;d<=4;d++){let guard=0;while(pool.filter(q=>q.difficulty===d).length<PER_DIFF&&guard<PER_DIFF*20){let i=guard++,seed=d*10000+i*47,isFact=i%2===0;let text;if(isFact){text=fill(pick(factFrames,seed),seed);if(d>=2)text+=' '+fill(pick(objectiveDetails,seed+3),seed+3);if(d>=3)text='記録文：'+text+' その後、'+fill(pick(factFrames,seed+5),seed+5);if(d>=4)text+=' ただし、気持ちは書かず、見えた動きだけを記録している。'}else{text=fill(pick(thinkFrames,seed),seed);if(d>=2)text+=' '+pick(interpretationTails,seed+4);if(d>=3)text='記録文：'+fill(pick(factFrames,seed+6),seed+6)+' '+text;if(d>=4)text+=' この記述には、見えた行動と保育者の解釈が混ざっている。'}if(seen.has(text))continue;seen.add(text);pool.push({difficulty:d,text,answer:isFact?'fact':'think',tip:isFact?'観察できる行動・発言・環境が中心なので「事実」として扱えます。':'気持ち・意図・性格・家庭背景などを推測しているため「考察」として分けます。'});}}return shuffle(pool,101)}
@@ -466,7 +476,7 @@ function updateSidePanel(){
       {icon:'🪄',title:'支援を具体化',body:'「注意する」だけでなく、短い言葉・選択肢・手がかりを用意する。'}
     ]);
   }else if(st.mode==='remake'){
-    mission.textContent=`${name}さん、今は「モヤモヤ・リメイク」。\n反省文を責める文章ではなく、次の計画につながる文章へ整えます。`;
+    mission.textContent=`${name}さん、今は「モヤモヤ・リメイク」。\n反省文を責める文章ではなく、次の計画につながる文章へ整めます。`;
     mini.innerHTML=sideCardsHtml([
       {icon:'☕',title:'責めない',body:'「怒ってしまった」で止めず、何が起きたかを落ち着いて分ける。',active:true},
       {icon:'📌',title:'事実から始める',body:'子どもの行動・場面・物の配置を、見えた形で一文にする。'},
@@ -548,7 +558,31 @@ function renderAmulet(){
 }
 function update(){$('level').textContent=st.lv;$('exp').textContent=st.exp;$('count').textContent=st.total;$('combo').textContent=st.combo;let need=st.lv*100,base=(st.lv-1)*100,p=Math.max(0,Math.min(100,(st.exp-base)/(need-base)*100));$('bar').style.width=p+'%';$('next').textContent=`次の変身まであと${Math.max(0,need-st.exp)} EXP｜${modeName()} ${Math.min(curPos()+1,QUESTION_LIMIT)} / ${QUESTION_LIMIT}`;$('crucible').classList.toggle('combo',st.combo>=3);renderAmulet()}
 function labelHtml(txt){return `<div class="questionLabel">${txt}</div>`}
-function renderQ(){update();$('feedback').textContent='';let q=nextNonRepeat();if(!q)return;st.currentQ=q;st.answerLocked=false;rememberQuestion(q);if(st.mode==='fact'){$('question').innerHTML=labelHtml('これは事実？それとも考察？')+escapeHtml(q.text);$('choices').innerHTML='<button class="btn choice" data-a="fact">📌 事実として記録する</button><button class="btn choice" data-a="think">💭 考えたこととして扱う</button>';document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(b.dataset.a===q.answer,q.tip,q.text))}else if(st.mode==='plan'){$('question').innerHTML=labelHtml('明日の計画につなげるなら？')+'<div class="recordLead">記録</div>'+escapeHtml(q.record);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">✨ ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.record))}else{$('question').innerHTML=labelHtml('不足している見直し観点は？')+escapeHtml(q.text);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">🔮 ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach=()=>answer(+b.dataset.i===q.answer,q.tip,q.text)}}
+
+function renderQ(){
+  update();
+  $('feedback').textContent='';
+  let q=nextNonRepeat();
+  if(!q)return;
+  st.currentQ=q;
+  st.answerLocked=false;
+  rememberQuestion(q);
+  
+  if(st.mode==='fact'){
+    $('question').innerHTML=labelHtml('これは事実？それとも考察？')+escapeHtml(q.text);
+    $('choices').innerHTML='<button class="btn choice" data-a="fact">📌 事実として記録する</button><button class="btn choice" data-a="think">💭 考えたこととして扱う</button>';
+    document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(b.dataset.a===q.answer,q.tip,q.text));
+  }else if(st.mode==='plan'){
+    $('question').innerHTML=labelHtml('明日の計画につなげるなら？')+'<div class="recordLead">記録</div>'+escapeHtml(q.record);
+    $('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">✨ ${escapeHtml(o)}</button>`).join('');
+    document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.record));
+  }else{
+    $('question').innerHTML=labelHtml('不足している見直し観点は？')+escapeHtml(q.text);
+    $('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">🔮 ${escapeHtml(o)}</button>`).join('');
+    document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.text));
+  }
+}
+
 function answer(ok,tip,src){if(st.answerLocked)return;st.answerLocked=true;document.querySelectorAll('.choice').forEach(b=>b.disabled=true);setLast(src);if(ok){st.combo++;st.exp+=20+(st.combo>=3?10:0);if(st.exp>=st.lv*100)st.lv++;$('feedback').textContent=`正解、えらい！ ${tip} ${st.combo>=3?'錬成炉が加速中✨':''}`;sound()}else{st.combo=0;st.notes.unshift([src,tip,modeName()]);st.notes=st.notes.slice(0,18);$('feedback').textContent='惜しい！大丈夫、お助けノートに入ったよ。'+tip}inc();update();setTimeout(renderQ,1200)}
 function switchMode(m){st.mode=m;document.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('active',t.dataset.mode===m);t.classList.toggle('ghost',t.dataset.mode!==m)});$('quiz').classList.toggle('hidden',!(m==='fact'||m==='plan'||m==='lens'));$('remake').classList.toggle('hidden',m!=='remake');$('note').classList.toggle('hidden',m!=='note');updateSidePanel();if(m==='fact'||m==='plan'||m==='lens')renderQ();if(m==='note')renderNotes()}
 function renderNotes(){$('notes').innerHTML=st.notes.length?st.notes.map(n=>`<div class="card"><b>${escapeHtml(n[2])}のしょんぼりポイント</b><p>${escapeHtml(n[0])}</p><p class="small">${escapeHtml(n[1])}</p></div>`).join(''):'<p class="sub">まだ空っぽ。間違えても、ここに優しく保存されるよ。</p>'}
