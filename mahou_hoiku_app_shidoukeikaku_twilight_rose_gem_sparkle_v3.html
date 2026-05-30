@@ -54,7 +54,10 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 .missionCards,.lensGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin:14px 0}
 .missionCard,.lensCard,.card,.miniCard{animation:reveal .45s ease both;text-align:left;padding:14px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.15)}
 .missionCard b,.lensCard b{display:block;color:var(--gold);margin-bottom:6px}.lensCard .icon{font-size:24px;display:inline-block;margin-bottom:4px}.lensCard.active{outline:2px solid rgba(255,226,154,.74);box-shadow:0 0 28px rgba(255,226,154,.12)}
-.app{width:min(1180px,100%);margin:0 auto;padding:18px 16px 140px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.brand{display:flex;gap:12px;align-items:center}.sigil{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;font-size:26px}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid var(--line)}
+
+/* === デスクトップ向けの基本構造 === */
+.app{width:min(1180px,100%);margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.brand{display:flex;gap:12px;align-items:center}.sigil{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;font-size:26px}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:405px 1fr;gap:16px}.panel{padding:20px}.sideTitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.badge{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;border-radius:999px;background:rgba(255,226,154,.12);border:1px solid rgba(255,226,154,.24);color:#ffeec1;font-size:12px;font-weight:900}
 .crucible{position:relative;width:330px;height:330px;margin:4px auto 8px;display:grid;place-items:center}.ring{position:absolute;border-radius:50%;pointer-events:none}.outer{inset:6px;border:1px solid rgba(156,248,255,.66);animation:spin 28s linear infinite}.mid{inset:42px;border:1px solid rgba(255,225,236,.72);animation:spinR 16s linear infinite}.inner{inset:82px;border:1px dashed rgba(201,167,255,.72);animation:spin 11s linear infinite}.crucible.combo .outer{animation-duration:7s}.crucible.combo .mid{animation-duration:4s}.crucible.combo .inner{animation-duration:2.8s}.crystal{width:126px;height:166px;clip-path:polygon(50% 0,91% 22%,78% 86%,50% 100%,22% 86%,9% 22%);background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(127,255,212,.22),rgba(178,141,255,.33));display:grid;place-items:center;animation:float 4.2s ease-in-out infinite}.gem{width:66px;height:66px;background:radial-gradient(circle at 30% 25%,#fff,#ffe6a6 20%,#ff8fb8 48%,#8c64ff 78%);border-radius:45% 55% 50% 50%;animation:pulse 2.15s ease-in-out infinite}.barwrap{height:12px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold),var(--cyan),var(--mint));background-size:200% auto;animation:shimmer 4s linear infinite;transition:.35s}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab.active{background:linear-gradient(135deg,#ff78ae,#a879ff)}.tab{padding:12px 15px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.grow{flex:1}.q{font-size:19px;line-height:1.78;padding:18px;border-radius:24px;background:rgba(0,0,0,.19);border:1px solid rgba(255,255,255,.12);margin:14px 0}.questionLabel{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;margin-bottom:8px;border-radius:999px;background:rgba(156,248,255,.10);border:1px solid rgba(156,248,255,.22);color:#dffcff;font-size:12px;font-weight:900}.recordLead{display:inline-flex;margin:2px 0 10px;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);font-size:13px;font-weight:900;color:#ffe7f0}.choice{width:100%;text-align:left;margin:6px 0}.feedback{min-height:44px;color:#ffe7a8;font-weight:900;line-height:1.65}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.result{white-space:pre-wrap;text-align:left;line-height:1.82;background:rgba(0,0,0,.19);padding:16px;border-radius:20px;border:1px solid rgba(255,255,255,.12)}.result strong{color:#ffe8a8}.toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.hintBox{padding:13px 14px;border-radius:20px;background:rgba(156,248,255,.09);border:1px solid rgba(156,248,255,.18);line-height:1.7;color:#e6fbff}.reviewGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0 14px}.reviewPill{padding:12px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}.reviewPill b{color:#ffe6a6}.footerNote{margin-top:14px;padding:12px 14px;border-radius:18px;background:rgba(255,143,184,.09);border:1px solid rgba(255,143,184,.18)}
@@ -90,30 +93,69 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 .cutePointStrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.cutePoint{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.55;color:#f6d5e1}.cutePoint b{color:#ffe8a8}.softDivider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}.noteNickname{display:inline-block;margin-left:4px;padding:3px 8px;border-radius:999px;background:rgba(255,143,184,.16);border:1px solid rgba(255,143,184,.24);font-size:12px;color:#ffeaf4}
 @media(max-width:740px){.appIntro{grid-template-columns:1fr}.featureGrid{grid-template-columns:1fr}.cutePointStrip{grid-template-columns:1fr}}
 
-/* === 📱 スマホ表示の重なり解消レイアウト調整 === */
+/* === 📱 スマートフォン表示専用の徹底的な重なり防止調整 === */
 @media(max-width:920px){
-  .grid{grid-template-columns:1fr}
-  .tabs{
-    position:fixed;left:10px;right:10px;bottom:12px;z-index:9999;
-    background:rgba(25,13,24,.88);border:1px solid rgba(255,255,255,.25);
-    border-radius:24px;padding:8px;backdrop-filter:blur(24px);
-    box-shadow:0 12px 40px rgba(0,0,0,.6);
+  body {
+    /* 画面下端の引っかかりを防ぐセーフエリア設定 */
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .tab{flex:1;font-size:12px;padding:11px 4px;margin:0}
-  .app{padding:12px 12px 160px !important} 
+  .grid{
+    grid-template-columns:1fr;
+    display: flex;
+    flex-direction: column;
+  }
+  /* 下部に固定されるナビゲーションメニューの完全隔離 */
+  .tabs{
+    position:fixed !important;
+    left:10px !important;
+    right:10px !important;
+    bottom:14px !important;
+    z-index:99999 !important;
+    background:rgba(24,12,24,.94) !important; /* より濃くして背後の文字を完全に隠す */
+    border:1.5px solid rgba(255,255,255,.3) !important;
+    border-radius:24px;
+    padding:8px;
+    backdrop-filter:blur(24px) !important;
+    box-shadow:0 12px 42px rgba(0,0,0,.8);
+    display:flex;
+    gap:4px;
+  }
+  .tab{
+    flex:1;font-size:12px;padding:12px 4px;margin:0;
+    white-space: nowrap;
+  }
+  /* メインコンテンツの下部パディングを『フッターメニューより高く』強制設定 */
+  .app{
+    padding:12px 12px 180px !important; 
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
   .crucible{width:306px;height:306px}
   .missionType{min-height:350px}
   .toolbar{grid-template-columns:1fr}
 }
+
 @media(max-width:520px){
-  .book{padding:28px 18px}.panel{padding:16px}.stats{font-size:13px}
-  .crucible{width:270px;height:270px}.crystal{width:108px;height:145px}
-  .tabs{gap:4px;padding:6px;left:6px;right:6px;bottom:8px}
+  .book{padding:28px 18px}.panel{padding:16px}.stats{font-size:12px}
+  .crucible{width:260px;height:260px}.crystal{width:104px;height:140px}
+  .tabs{
+    left:8px !important;
+    right:8px !important;
+    bottom:10px !important;
+    padding:6px;
+  }
   .tab{font-size:11px;padding:10px 2px}
-  .q{font-size:17px;padding:14px;margin:10px 0}
-  .choice{font-size:14px;padding:12px 14px;margin:4px 0}
+  .q{font-size:17px;padding:14px;margin:10px 0;line-height:1.7}
+  
+  /* ボタン自体の押しやすさを確保しつつ、高さを圧縮 */
+  .choice{
+    font-size:14px !important;
+    padding:14px 16px !important;
+    margin:8px 0 !important;
+    line-height:1.4 !important;
+  }
   .lensGrid{grid-template-columns:1fr}.reviewGrid{grid-template-columns:1fr}
-  .app{padding:12px 12px 140px !important}
+  .app{padding:12px 12px 170px !important}
 }
 </style>
 </head>
@@ -192,14 +234,8 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
         <p><strong>指導計画作成プログラム</strong><br>日誌のモヤモヤを、子どもの姿・環境構成・関係性・活動の流れ・保育者の支援・子どもの育ちに関連した問題へ分けて整理します。</p>
         <div class="sparkleChips"><span class="sparkleChip">🌙 夜間にやさしい</span><span class="sparkleChip">💎 お守り進化</span><span class="sparkleChip">☕ 怒らない計画化</span><span class="sparkleChip">📓 自動復習</span></div>
       </div>
-      <div class="tabs">
-        <button class="btn tab active" data-mode="fact">📌 事実/考察</button>
-        <button class="btn tab ghost" data-mode="lens">🔮 6観点</button>
-        <button class="btn tab ghost" data-mode="plan">✨ 指導案</button>
-        <button class="btn tab ghost" data-mode="remake">☕ モヤモヤ</button>
-        <button class="btn tab ghost" data-mode="note">📓 お助け</button>
-      </div>
-
+      
+      <!-- メインのクイズエリア -->
       <div id="quiz">
         <div class="toolbar">
           <select id="diff" class="grow">
@@ -215,6 +251,7 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
         <div id="feedback" class="feedback"></div>
       </div>
 
+      <!-- リメイクエリア -->
       <div id="remake" class="hidden">
         <h2>☕ モヤモヤ・リメイクルーム</h2>
         <p class="sub">「今日怒っちゃった…」「子どもが動いてくれなかった…」を、怒らずに解決する環境構成・動線計画へやさしくリライトします。</p>
@@ -224,6 +261,7 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
         <div id="remakeResult" class="result hidden"></div>
       </div>
 
+      <!-- ノートエリア -->
       <div id="note" class="hidden">
         <h2>📓 しょんぼりお助けノート <span class="noteNickname">やらかし図鑑</span></h2>
         <div class="hintBox">クイズでうっかり間違えた問題はここに自動ストック。苦手は「できない証拠」ではなく、赤ペン回避ポイントです。</div>
@@ -231,6 +269,15 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
       </div>
     </section>
   </section>
+
+  <!-- タブナビゲーション（HTML構造の最後に配置して固定配置時の干渉を抑制） -->
+  <div class="tabs">
+    <button class="btn tab active" data-mode="fact">📌 事実/考察</button>
+    <button class="btn tab ghost" data-mode="lens">🔮 6観点</button>
+    <button class="btn tab ghost" data-mode="plan">✨ 指導案</button>
+    <button class="btn tab ghost" data-mode="remake">☕ モヤモヤ</button>
+    <button class="btn tab ghost" data-mode="note">📓 お助け</button>
+  </div>
 </main>
 
 <script>
@@ -243,7 +290,7 @@ const lenses=[
   {id:'rel',icon:'🤝',title:'関係性',short:'友達・保育者・集団との関わりを見る',q:'誰とどのように関わり、言葉や視線、貸し借り、仲立ちはどう生まれたか。'},
   {id:'flow',icon:'🌀',title:'活動の流れ',short:'導入・展開・切り替え・終わりを整える',q:'始まりから終わりまで、見通しを持てる流れになっていたか。'},
   {id:'support',icon:'🪄',title:'保育者の支援',short:'声かけ・見守り・仲立ちを具体化する',q:'保育者は何を見て、どのタイミングで、どんな支援をしたか。'},
-  {id:'growth',icon:'🌱',title:'子どもの育ちに関連した問題',short:'次の育ちにつながる問いを立てる',q:'この経験は何の育ちにつながり、次にどんな課題や可能性が見えるか。'}
+  {id:'growth',icon:'🌱',title:'子どもの育ちに関連した問題',short:'次の育ちにつながる問いを立てる',q:'この経験は何の育ちにつながり、次にどんな課題や可能性見えるか。'}
 ];
 const times=['登園後','午前の自由遊び','朝の会の前','戸外遊びの途中','給食前','午睡前','午睡明け','降園準備の時間','制作活動の導入','散歩から戻った後','手洗いの順番待ち','片付けの合図後'];
 const places=['保育室のままごとコーナー','積み木コーナー','絵本棚の前','園庭の砂場','水道の前','玄関の靴箱前','制作机の横','午睡室の入口','廊下の壁面前','テラスのプランター前','ホールのマット上','ブロック棚の近く'];
@@ -323,7 +370,7 @@ const lensScenarios=[
   {lens:'env',text:'制作で材料を取りに行く子が多かったが、材料の置き方や数、机の配置が記録されていない。',tip:'素材の配置を記録すると、活動しやすい環境か検討できます。'},
   {lens:'env',text:'絵本が見えにくい子がいた可能性があるが、座席の形や距離への記述がない。',tip:'見える・聞こえる・動ける配置かどうかを確認します。'},
   {lens:'rel',text:'取り合いがあったと書かれているが、誰と誰がどのように関わったか、言葉や視線がない。',tip:'友達とのやり取り、視線、言葉、貸し借りを記録すると関係性が見えてきます。'},
-  {lens:'rel',text:'「仲良く遊んだ」とあるが、役割分担や声かけ、相手への反応が書かれていない. 。',tip:'関係性は、誰とどんなやり取りがあったかで捉えます。'},
+  {lens:'rel',text:'「仲良く遊んだ」とあるが、役割分担や声かけ、相手への反応が書かれていない。',tip:'関係性は、誰とどんなやり取りがあったかで捉えます。'},
   {lens:'rel',text:'保育者に近づいたことは書かれているが、その前に友達との関わりがあったかが分からない。',tip:'子ども同士と保育者との関係をつなげて見ます。'},
   {lens:'rel',text:'年上の子が年下の子に関わった場面なのに、互いの表情や言葉が記録されていない。',tip:'異年齢の関わりも、育ちを見る大切な材料です。'},
   {lens:'flow',text:'制作中に席を立つ子が多かった。導入から材料を取りに行くまでの順番や切り替えの説明がない。',tip:'活動の始まり・展開・切り替え・終わりを確認すると、流れの改善点が見えます。'},
@@ -442,7 +489,7 @@ function curPos(){if(st.mode==='fact')return st.factPos;if(st.mode==='plan')retu
 function advancePos(){if(st.mode==='fact')st.factPos++;else if(st.mode==='plan')st.planPos++;else if(st.mode==='lens')st.lensPos++}
 function inc(){advancePos();st.total++}
 function qKey(q){if(!q)return '';if(st.mode==='fact')return q.text;if(st.mode==='plan')return q.record;return q.text}
-function lastKey(){if(st.mode==='fact')st.lastFactText;if(st.mode==='plan')st.lastPlanText;return st.lastLensText}
+function lastKey(){if(st.mode==='fact')return st.lastFactText;if(st.mode==='plan')return st.lastPlanText;return st.lastLensText}
 function setLast(src){if(st.mode==='fact')st.lastFactText=src;else if(st.mode==='plan')st.lastPlanText=src;else if(st.mode==='lens')st.lastLensText=src}
 function recentBucketKey(){return st.mode+'_'+(+$('diff').value||1)}
 function qFamily(q){
@@ -501,11 +548,11 @@ function renderAmulet(){
 }
 function update(){$('level').textContent=st.lv;$('exp').textContent=st.exp;$('count').textContent=st.total;$('combo').textContent=st.combo;let need=st.lv*100,base=(st.lv-1)*100,p=Math.max(0,Math.min(100,(st.exp-base)/(need-base)*100));$('bar').style.width=p+'%';$('next').textContent=`次の変身まであと${Math.max(0,need-st.exp)} EXP｜${modeName()} ${Math.min(curPos()+1,QUESTION_LIMIT)} / ${QUESTION_LIMIT}`;$('crucible').classList.toggle('combo',st.combo>=3);renderAmulet()}
 function labelHtml(txt){return `<div class="questionLabel">${txt}</div>`}
-function renderQ(){update();$('feedback').textContent='';let q=nextNonRepeat();if(!q)return;st.currentQ=q;st.answerLocked=false;rememberQuestion(q);if(st.mode==='fact'){$('question').innerHTML=labelHtml('これは事実？それとも考察？')+escapeHtml(q.text);$('choices').innerHTML='<button class="btn choice" data-a="fact">📌 事実として記録する</button><button class="btn choice" data-a="think">💭 考えたこととして扱う</button>';document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(b.dataset.a===q.answer,q.tip,q.text))}else if(st.mode==='plan'){$('question').innerHTML=labelHtml('明日の計画につなげるなら？')+'<div class="recordLead">記録</div>'+escapeHtml(q.record);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">✨ ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.record))}else{$('question').innerHTML=labelHtml('不足している見直し観点は？')+escapeHtml(q.text);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">🔮 ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.text))}}
+function renderQ(){update();$('feedback').textContent='';let q=nextNonRepeat();if(!q)return;st.currentQ=q;st.answerLocked=false;rememberQuestion(q);if(st.mode==='fact'){$('question').innerHTML=labelHtml('これは事実？それとも考察？')+escapeHtml(q.text);$('choices').innerHTML='<button class="btn choice" data-a="fact">📌 事実として記録する</button><button class="btn choice" data-a="think">💭 考えたこととして扱う</button>';document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(b.dataset.a===q.answer,q.tip,q.text))}else if(st.mode==='plan'){$('question').innerHTML=labelHtml('明日の計画につなげるなら？')+'<div class="recordLead">記録</div>'+escapeHtml(q.record);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">✨ ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.i===q.answer,q.tip,q.record))}else{$('question').innerHTML=labelHtml('不足している見直し観点は？')+escapeHtml(q.text);$('choices').innerHTML=q.options.map((o,i)=>`<button class="btn choice" data-i="${i}">🔮 ${escapeHtml(o)}</button>`).join('');document.querySelectorAll('.choice').forEach=()=>answer(+b.dataset.i===q.answer,q.tip,q.text)}}
 function answer(ok,tip,src){if(st.answerLocked)return;st.answerLocked=true;document.querySelectorAll('.choice').forEach(b=>b.disabled=true);setLast(src);if(ok){st.combo++;st.exp+=20+(st.combo>=3?10:0);if(st.exp>=st.lv*100)st.lv++;$('feedback').textContent=`正解、えらい！ ${tip} ${st.combo>=3?'錬成炉が加速中✨':''}`;sound()}else{st.combo=0;st.notes.unshift([src,tip,modeName()]);st.notes=st.notes.slice(0,18);$('feedback').textContent='惜しい！大丈夫、お助けノートに入ったよ。'+tip}inc();update();setTimeout(renderQ,1200)}
 function switchMode(m){st.mode=m;document.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('active',t.dataset.mode===m);t.classList.toggle('ghost',t.dataset.mode!==m)});$('quiz').classList.toggle('hidden',!(m==='fact'||m==='plan'||m==='lens'));$('remake').classList.toggle('hidden',m!=='remake');$('note').classList.toggle('hidden',m!=='note');updateSidePanel();if(m==='fact'||m==='plan'||m==='lens')renderQ();if(m==='note')renderNotes()}
 function renderNotes(){$('notes').innerHTML=st.notes.length?st.notes.map(n=>`<div class="card"><b>${escapeHtml(n[2])}のしょんぼりポイント</b><p>${escapeHtml(n[0])}</p><p class="small">${escapeHtml(n[1])}</p></div>`).join(''):'<p class="sub">まだ空っぽ。間違えても、ここに優しく保存されるよ。</p>'}
-function remakeText(v){return `【今日のモヤモヤ】\n${v}\n\n【6つの観点で見直す】\n1. 子どもの姿\n・見えた行動、表情、発言を一つ選び、事実として書く。\n・例：「片付けの声かけ後、A児はブロックを手に持ったまま棚の前に立っていた。」\n\n2. 環境構成\n・物の戻し場所、表示、量、動線が子どもに分かりやすかったかを確認する。\n・写真ラベル、色分け、箱の位置、待つ場所などを見直す。\n\n3. 関係性\n・友達とのやり取り、貸し借り、視線、言葉、保育者との関わりを記録する。\n・取り合いがあった場合も「誰と、何をめぐって、どのように関わったか」を書く。\n\n4. 活動の流れ\n・導入、展開、切り替え、終わり方のどこで迷いが起きたかを見る。\n・終わりの合張や次の行動が見える形になっていたかを確認する。\n\n5. 保育者の支援\n・「強く注意した」で終わらせず、次は短く具体的な言葉で伝える。\n・例：「赤いブロックはこの箱に入れよう」「あと一つ入れたらおしまいにしよう」。\n\n6. 子どもの育ちに関連した問題\n・この出来事を、次の育ちにつながる問いに変える。\n・例：「片付けの見通しを持つ経験を、どのように積み重ねられるか。」\n\n【明日の計画案】\n・片付け場所に写真ラベルを貼り、戻す場所を見える化する。\n・一斉に切り替える前に、近くの子から少人数ずつ誘う。\n・保育者は行動を具体的に伝え、できた姿を言葉にして返す。\n\n【日誌の書き換え例】\n片付けの場面で、子どもたちは遊びを続ける姿が見られた。玩具の戻し場所が分かりにくく、手に持ったまま立っている子もいた。友達との取り合いも見られたため、明日は玩具の置き場所を写真で示し、少人数ずつ片付けに誘う。子どもが見通しを持って行動できるよう、短い言葉で次の動きを伝えたい。`;}
+function remakeText(v){return `【今日のモヤモヤ】\n${v}\n\n【6つの観点で見直す】\n1. 子どもの姿\n・見えた行動、表情、発言を一つ選び、事実として書く。\n・例：「片付けの声かけ後、A児はブロックを手に持ったまま棚の前に立っていた。」\n\n2. 環境構成\n・物の戻し場所、表示、量、動線が子どもに分かりやすかったかを確認する。\n・写真ラベル、色分け、箱の位置、待つ場所などを見直す。\n\n3. 関係性\n・友達とのやり取り、貸し借り、視線、言葉、保育者との関わりを記録する。\n・取り合いがあった場合も「誰と、何をめぐって、どのように関わったか」を書く。\n\n4. 活動の流れ\n・導入、展開、切り替え、終わり方のどこで迷いが起きたかを見る。\n・終わりの合図や次の行動が見える形になっていたかを確認する。\n\n5. 保育者の支援\n・「強く注意した」で終わらせず、次は短く具体的な言葉で伝える。\n・例：「赤いブロックはこの箱に入れよう」「あと一つ入れたらおしまいにしよう」。\n\n6. 子どもの育ちに関連した問題\n・この出来事を、次の育ちにつながる問いに変える。\n・例：「片付けの見通しを持つ経験を、どのように積み重ねられるか。」\n\n【明日の計画案】\n・片付け場所に写真ラベルを貼り、戻す場所を見える化する。\n・一斉に切り替える前に、近くの子から少人数ずつ誘う。\n・保育者は行動を具体的に伝え、できた姿を言葉にして返す。\n\n【日誌の書き換え例】\n片付けの場面で、子どもたちは遊びを続ける姿が見られた。玩具の戻し場所が分かりにくく、手に持ったまま立っている子もいた。友達との取り合いも見られたため、明日は玩具の置き場所を写真で示し、少人数ずつ片付けに誘う。子どもが見通しを持って行動できるよう、短い言葉で次の動きを伝えたい。`;}
 function sparkleGem(){
   const crystal=$('crystalTouch'), gem=$('gem');
   if(!crystal||!gem)return;
