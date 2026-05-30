@@ -21,7 +21,6 @@ body{
     radial-gradient(circle at 88% 11%,rgba(156,248,255,.20),transparent 26%),
     radial-gradient(circle at 52% 94%,rgba(255,226,154,.14),transparent 32%),
     linear-gradient(145deg,#0f0711,var(--bg),var(--bg2));
-  overflow-x:hidden;
 }
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:34px 34px;animation:stars 24s linear infinite}
 body:after{content:"";position:fixed;inset:auto 5% -220px auto;width:420px;height:420px;border-radius:50%;background:rgba(255,143,184,.13);filter:blur(30px);pointer-events:none}
@@ -55,21 +54,21 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 .missionCard,.lensCard,.card,.miniCard{animation:reveal .45s ease both;text-align:left;padding:14px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.15)}
 .missionCard b,.lensCard b{display:block;color:var(--gold);margin-bottom:6px}.lensCard .icon{font-size:24px;display:inline-block;margin-bottom:4px}.lensCard.active{outline:2px solid rgba(255,226,154,.74);box-shadow:0 0 28px rgba(255,226,154,.12)}
 
-/* === デスクトップ向けのレイアウト構造 === */
+/* 基本レイアウト */
 .app{width:min(1180px,100%);margin:0 auto;padding:18px 16px 40px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.brand{display:flex;gap:12px;align-items:center}.sigil{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;font-size:26px}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:405px 1fr;gap:16px}.panel{padding:20px}.sideTitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.badge{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;border-radius:999px;background:rgba(255,226,154,.12);border:1px solid rgba(255,226,154,.24);color:#ffeec1;font-size:12px;font-weight:900}
 .crucible{position:relative;width:330px;height:330px;margin:4px auto 8px;display:grid;place-items:center}.ring{position:absolute;border-radius:50%;pointer-events:none}.outer{inset:6px;border:1px solid rgba(156,248,255,.66);animation:spin 28s linear infinite}.mid{inset:42px;border:1px solid rgba(255,225,236,.72);animation:spinR 16s linear infinite}.inner{inset:82px;border:1px dashed rgba(201,167,255,.72);animation:spin 11s linear infinite}.crucible.combo .outer{animation-duration:7s}.crucible.combo .mid{animation-duration:4s}.crucible.combo .inner{animation-duration:2.8s}.crystal{width:126px;height:166px;clip-path:polygon(50% 0,91% 22%,78% 86%,50% 100%,22% 86%,9% 22%);background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(127,255,212,.22),rgba(178,141,255,.33));display:grid;place-items:center;animation:float 4.2s ease-in-out infinite}.gem{width:66px;height:66px;background:radial-gradient(circle at 30% 25%,#fff,#ffe6a6 20%,#ff8fb8 48%,#8c64ff 78%);border-radius:45% 55% 50% 50%;animation:pulse 2.15s ease-in-out infinite}.barwrap{height:12px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold),var(--cyan),var(--mint));background-size:200% auto;animation:shimmer 4s linear infinite;transition:.35s}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab.active{background:linear-gradient(135deg,#ff78ae,#a879ff)}.tab{padding:12px 15px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.grow{flex:1}.q{font-size:19px;line-height:1.78;padding:18px;border-radius:24px;background:rgba(0,0,0,.19);border:1px solid rgba(255,255,255,.12);margin:14px 0}.questionLabel{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;margin-bottom:8px;border-radius:999px;background:rgba(156,248,255,.10);border:1px solid rgba(156,248,255,.22);color:#dffcff;font-size:12px;font-weight:900}.recordLead{display:inline-flex;margin:2px 0 10px;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);font-size:13px;font-weight:900;color:#ffe7f0}.choice{width:100%;text-align:left;margin:6px 0}.feedback{min-height:44px;color:#ffe7a8;font-weight:900;line-height:1.65}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.result{white-space:pre-wrap;text-align:left;line-height:1.82;background:rgba(0,0,0,.19);padding:16px;border-radius:20px;border:1px solid rgba(255,255,255,.12)}.result strong{color:#ffe8a8}.toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.hintBox{padding:13px 14px;border-radius:20px;background:rgba(156,248,255,.09);border:1px solid rgba(156,248,255,.18);line-height:1.7;color:#e6fbff}.reviewGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0 14px}.reviewPill{padding:12px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}.reviewPill b{color:#ffe6a6}.footerNote{margin-top:14px;padding:12px 14px;border-radius:18px;background:rgba(255,143,184,.09);border:1px solid rgba(255,143,184,.18)}
+
+/* デスクトップ向けのメニュー配置設定（上部に表示） */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab.active{background:linear-gradient(135deg,#ff78ae,#a879ff)}.tab{padding:12px 15px}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.grow{flex:1}.q{font-size:19px;line-height:1.78;padding:18px;border-radius:24px;background:rgba(0,0,0,.19);border:1px solid rgba(255,255,255,.12);margin:14px 0}.questionLabel{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;margin-bottom:8px;border-radius:999px;background:rgba(156,248,255,.10);border:1px solid rgba(156,248,255,.22);color:#dffcff;font-size:12px;font-weight:900}.recordLead{display:inline-flex;margin:2px 0 10px;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);font-size:13px;font-weight:900;color:#ffe7f0}.choice{width:100%;text-align:left;margin:6px 0}.feedback{min-height:44px;color:#ffe7a8;font-weight:900;line-height:1.65}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.result{white-space:pre-wrap;text-align:left;line-height:1.82;background:rgba(0,0,0,.19);padding:16px;border-radius:20px;border:1px solid rgba(255,255,255,.12)}.result strong{color:#ffe8a8}.toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.hintBox{padding:13px 14px;border-radius:20px;background:rgba(156,248,255,.09);border:1px solid rgba(156,248,255,.18);line-height:1.7;color:#e6fbff}.reviewGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0 14px}.reviewPill{padding:12px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}.reviewPill b{color:#ffe6a6}.footerNote{margin-top:14px;padding:12px 14px;border-radius:18px;background:rgba(255,143,184,.09);border:1px solid rgba(255,143,184,.18)}
 
 .projectStamp{display:inline-flex;align-items:center;gap:8px;margin:0 auto 12px;padding:8px 13px;border-radius:999px;background:rgba(255,226,154,.13);border:1px solid rgba(255,226,154,.30);color:#fff0c7;font-size:13px;font-weight:900;letter-spacing:.03em}
 .heroRibbon{display:inline-flex;gap:8px;align-items:center;justify-content:center;margin:4px auto 14px;padding:9px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(255,143,184,.18),rgba(201,167,255,.14));border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);color:#ffeaf4;font-weight:900;font-size:13px}
 .startLead{max-width:660px;margin:0 auto 20px;line-height:1.9;color:#f9d5e3}.startForm{width:min(460px,100%);margin:22px auto 8px;display:grid;gap:12px;justify-items:center}.startForm input{text-align:center;font-weight:800;letter-spacing:.03em}.startForm .btn{min-width:240px;margin:0}.startHint{margin-top:8px;color:#ebc4d4}.focusChips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px auto 4px}.focusChip{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);font-size:12px;color:#ffeaf4;font-weight:900}
-.featureGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:20px 0 18px;text-align:left}
-.featureCard{position:relative;overflow:hidden;padding:16px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.125),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.11)}
-.featureCard:after{content:"";position:absolute;right:-36px;bottom:-42px;width:112px;height:112px;border-radius:50%;background:rgba(255,143,184,.16);filter:blur(3px)}
-.featureIcon{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;margin-bottom:9px;background:linear-gradient(135deg,rgba(255,143,184,.34),rgba(201,167,255,.28));box-shadow:0 10px 28px rgba(255,143,184,.13);font-size:23px}
-.featureCard b{display:block;margin-bottom:6px;color:#ffe8a8;font-size:15px}.featureCard span{position:relative;z-index:1;display:block;color:#f9d6e3;font-size:13px;line-height:1.65}
+.cutePointStrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.cutePoint{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.55;color:#f6d5e1}.cutePoint b{color:#ffe8a8}.softDivider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}.noteNickname{display:inline-block;margin-left:4px;padding:3px 8px;border-radius:999px;background:rgba(255,143,184,.16);border:1px solid rgba(255,143,184,.24);font-size:12px;color:#ffeaf4}
 .appIntro{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;margin-bottom:14px;padding:14px;border-radius:26px;background:linear-gradient(135deg,rgba(255,143,184,.13),rgba(201,167,255,.08));border:1px solid rgba(255,255,255,.14)}
 .appIntro strong{color:#ffe9a9}.appIntro p{margin:0;line-height:1.75}.sparkleChips{display:flex;gap:8px;flex-wrap:wrap;align-content:center}.sparkleChip{padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:900;color:#ffeaf4}
 .amuletStage{margin:10px auto 8px;text-align:center;padding:10px 12px;border-radius:20px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.13);color:#ffeec8;font-weight:900;line-height:1.55}
@@ -90,52 +89,42 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 @keyframes haloFlash{0%{opacity:0;transform:scale(.72)}18%{opacity:.95}100%{opacity:0;transform:scale(1.38)}}
 @keyframes sparkleBurst{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.2)}18%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(160deg) scale(1.15)}}
 
-.cutePointStrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
-.cutePoint{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.55;color:#f6d5e1}
-.cutePoint b{color:#ffe8a8}.softDivider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}.noteNickname{display:inline-block;margin-left:4px;padding:3px 8px;border-radius:999px;background:rgba(255,143,184,.16);border:1px solid rgba(255,143,184,.24);font-size:12px;color:#ffeaf4}
-@media(max-width:740px){.appIntro{grid-template-columns:1fr}.featureGrid{grid-template-columns:1fr}.cutePointStrip{grid-template-columns:1fr}}
-
-/* === 📱 スマートフォン表示専用：スクロールと重なりバグの徹底排除 === */
+/* === 📱 スマートフォン表示専用：フローティング排除＆下部インライン配置 === */
 @media(max-width:920px){
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-    overflow-y: auto !important;
-  }
-  /* メインレイアウトを縦並びにして画面幅一杯に広げる */
   .grid{
     grid-template-columns:1fr !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 16px;
   }
-  /* 下部に完全に固定されるフッターメニューバー */
-  .tabs{
-    position:fixed !important;
-    left:10px !important;
-    right:10px !important;
-    bottom:14px !important;
-    z-index:99999 !important;
-    background:rgba(26,14,32,.96) !important; /* 背後を完璧に隠すための不透明度アップ */
-    border:1.5px solid rgba(255,255,255,.28) !important;
-    border-radius:24px;
-    padding:8px;
-    backdrop-filter:blur(24px) !important;
-    box-shadow:0 -8px 32px rgba(0,0,0,0.7), 0 12px 42px rgba(0,0,0,.9) !important;
-    display:flex !important;
-    gap:4px;
+  /* フローティング（画面固定）を完全に廃止し、コンテンツの一番下に自然に並べる */
+  .tabs {
+    position: static !important;
+    margin: 24px 0 10px 0 !important;
+    width: 100% !important;
+    background: rgba(32, 17, 38, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 20px;
+    padding: 8px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    display: flex !important;
+    gap: 4px;
+    justify-content: space-between;
   }
-  .tab{
-    flex:1;font-size:12px;padding:12px 2px;margin:0;
-    white-space: nowrap;
+  .tab {
+    flex: 1;
+    padding: 12px 2px !important;
+    margin: 0;
+    font-size: 11px !important;
+    font-weight: 800;
+    text-align: center;
+    border-radius: 14px !important;
   }
-  /* コンテンツ自体の末尾にメニューバーを完全に回避するための余白スペースを強制指定 */
-  .app{
-    padding:12px 12px 180px !important; 
-    box-sizing: border-box;
+  .app {
+    padding: 12px 12px 30px !important; /* 被らないため無駄に広げていたパディングを適正化 */
   }
-  /* 右側のクイズやコンテンツパネルに独立したスクロールと底上げ余白を与える */
   .panel {
-    padding-bottom: 110px !important;
+    padding-bottom: 20px !important;
   }
   .crucible{width:300px;height:300px}
   .missionType{min-height:350px}
@@ -144,28 +133,21 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
 
 @media(max-width:520px){
   .book{padding:28px 18px}.panel{padding:16px}.stats{font-size:12px}
-  .crucible{width:260px;height:260px}
-  .crystal{width:104px;height:140px}
-  .tabs{
-    left:8px !important;
-    right:8px !important;
-    bottom:10px !important;
-    padding:6px;
-  }
-  .tab{font-size:11px;padding:10px 2px}
+  .crucible{width:260px;height:260px}.crystal{width:104px;height:140px}
   .q{font-size:16px;padding:14px;margin:10px 0;line-height:1.65}
-  
-  /* スマホの小さな縦幅に対応するためクイズボタンの高さバランスを最適化 */
   .choice{
     font-size:14px !important;
     padding:14px 16px !important;
-    margin:10px 0 !important;
+    margin:8px 0 !important;
     line-height:1.4 !important;
     display: block !important;
     width: 100% !important;
   }
   .lensGrid{grid-template-columns:1fr}.reviewGrid{grid-template-columns:1fr}
-  .app{padding:12px 12px 190px !important}
+  .tabs {
+    padding: 4px;
+    margin-top: 18px !important;
+  }
 }
 </style>
 </head>
@@ -245,7 +227,6 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
         <div class="sparkleChips"><span class="sparkleChip">🌙 夜間にやさしい</span><span class="sparkleChip">💎 お守り進化</span><span class="sparkleChip">☕ 怒らない計画化</span><span class="sparkleChip">📓 自動復習</span></div>
       </div>
       
-      <!-- メインのクイズエリア -->
       <div id="quiz">
         <div class="toolbar">
           <select id="diff" class="grow">
@@ -261,7 +242,6 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
         <div id="feedback" class="feedback"></div>
       </div>
 
-      <!-- リメイクエリア -->
       <div id="remake" class="hidden">
         <h2>☕ モヤモヤ・リメイクルーム</h2>
         <p class="sub">「今日怒っちゃった…」「子どもが動いてくれなかった…」を、怒らずに解決する環境構成・動線計画へやさしくリライトします。</p>
@@ -271,23 +251,21 @@ textarea{min-height:156px;resize:vertical;line-height:1.8}
         <div id="remakeResult" class="result hidden"></div>
       </div>
 
-      <!-- ノートエリア -->
       <div id="note" class="hidden">
         <h2>📓 しょんぼりお助けノート <span class="noteNickname">やらかし図鑑</span></h2>
         <div class="hintBox">クイズでうっかり間違えた問題はここに自動ストック。苦手は「できない証拠」ではなく、赤ペン回避ポイントです。</div>
         <div id="notes" class="cards" style="margin-top:12px"></div>
       </div>
+
+      <div class="tabs">
+        <button class="btn tab active" data-mode="fact">📌 事実/考察</button>
+        <button class="btn tab ghost" data-mode="lens">🔮 6観点</button>
+        <button class="btn tab ghost" data-mode="plan">✨ 指導案</button>
+        <button class="btn tab ghost" data-mode="remake">☕ モヤモヤ</button>
+        <button class="btn tab ghost" data-mode="note">📓 お助け</button>
+      </div>
     </section>
   </section>
-
-  <!-- タブナビゲーション（構造上最下部へ配置） -->
-  <div class="tabs">
-    <button class="btn tab active" data-mode="fact">📌 事実/考察</button>
-    <button class="btn tab ghost" data-mode="lens">🔮 6観点</button>
-    <button class="btn tab ghost" data-mode="plan">✨ 指導案</button>
-    <button class="btn tab ghost" data-mode="remake">☕ モヤモヤ</button>
-    <button class="btn tab ghost" data-mode="note">📓 お助け</button>
-  </div>
 </main>
 
 <script>
@@ -318,7 +296,7 @@ const factFrames=[
   '{n}さんは、保育者が差し出した{material}を受け取り、隣の箱に入れた。',
   '{time}、{n}さんは列の後ろに立ち、前の子の肩に触れずに待っていた。',
   '{n}さんは{material}を{num}個重ねた後、崩れたものを自分で拾った。',
-  '{place}で、{n}さんは友達の言葉を聞いた後、保育者の顔を見た。',
+  '{place}で、{n}さんは友達の言葉を聞いた後、保育者の顔を見た. 。',
   '{time}、{n}さんは自分の椅子を両手で持ち、机の下に入れた。',
   '{n}さんは「かして」と言い、{friend}の持つ{material}を指さした。',
   '{place}で、{n}さんは床に落ちた{material}を拾い、透明のケースへ入れた。',
@@ -443,7 +421,7 @@ function enrichRecord(record,d,seed){
   ];
   if(d===1)return base;
   if(d===2)return base+' '+add[0];
-  if(d===3)return '午午前の記録：'+base+' '+add[0]+' '+add[2];
+  if(d===3)return '午前の記録：'+base+' '+add[0]+' '+add[2];
   return '一週間の記録より：'+base+' '+add[0]+' '+add[3]+' '+add[4];
 }
 function makeFactPool(){let pool=[],seen=new Set();for(let d=1;d<=4;d++){let guard=0;while(pool.filter(q=>q.difficulty===d).length<PER_DIFF&&guard<PER_DIFF*20){let i=guard++,seed=d*10000+i*47,isFact=i%2===0;let text;if(isFact){text=fill(pick(factFrames,seed),seed);if(d>=2)text+=' '+fill(pick(objectiveDetails,seed+3),seed+3);if(d>=3)text='記録文：'+text+' その後、'+fill(pick(factFrames,seed+5),seed+5);if(d>=4)text+=' ただし、気持ちは書かず、見えた動きだけを記録している。'}else{text=fill(pick(thinkFrames,seed),seed);if(d>=2)text+=' '+pick(interpretationTails,seed+4);if(d>=3)text='記録文：'+fill(pick(factFrames,seed+6),seed+6)+' '+text;if(d>=4)text+=' この記述には、見えた行動と保育者の解釈が混ざっている。'}if(seen.has(text))continue;seen.add(text);pool.push({difficulty:d,text,answer:isFact?'fact':'think',tip:isFact?'観察できる行動・発言・環境が中心なので「事実」として扱えます。':'気持ち・意図・性格・家庭背景などを推測しているため「考察」として分けます。'});}}return shuffle(pool,101)}
@@ -476,7 +454,7 @@ function updateSidePanel(){
       {icon:'🪄',title:'支援を具体化',body:'「注意する」だけでなく、短い言葉・選択肢・手がかりを用意する。'}
     ]);
   }else if(st.mode==='remake'){
-    mission.textContent=`${name}さん、今は「モヤモヤ・リメイク」。\n反省文を責める文章ではなく、次の計画につながる文章へ整めます。`;
+    mission.textContent=`${name}さん、今は「モヤモヤ・リメイク」。\n反省文を責める文章ではなく、次の計画につながる文章へ整えます。`;
     mini.innerHTML=sideCardsHtml([
       {icon:'☕',title:'責めない',body:'「怒ってしまった」で止めず、何が起きたかを落ち着いて分ける。',active:true},
       {icon:'📌',title:'事実から始める',body:'子どもの行動・場面・物の配置を、見えた形で一文にする。'},
