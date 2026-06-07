@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSY-CODE // Botanical Garden Personality Map</title>
+    <!-- Tailwind CSS with custom premium config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            linen: '#F9F6F0',      /* アラバスター・極上のリネン */
+                            dark: '#1C2B24',       /* 深い森林のインク色 */
+                            gold: '#D4AF37',       /* 繊細なシャンパンゴールド */
+                            sage: '#708A83',       /* シックで洗練されたセージ */
+                            sageLight: '#E8EFEF',  /* くすんだ朝霧のミント */
+                            blush: '#E5B3B3',      /* センシュアルなペールヌード */
+                            blushLight: '#F7EBE8'  /* やさしい花びらのピンク */
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'Zen Maru Gothic', 'sans-serif'],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 20s linear infinite',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts for elite styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Zen Maru Gothic', sans-serif;
+            background-color: #F9F6F0;
+        }
+        /* 極上のリキッドスクロールバー */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F9F6F0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #708A83;
+            border-radius: 99px;
+        }
+        /* プレミアム・グラスモルフィズム */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-brand-dark flex flex-col selection:bg-brand-blushLight selection:text-brand-dark">
+    <div id="root"></div>
+
+    <!-- Load React, ReactDOM and Babel securely from CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // ==========================================
+        // プレミアム・アートワークSVG（独自設計）
+        // ==========================================
+        const PremiumBotanicalArt = () => (
+            <svg viewBox="0 0 100 100" className="w-full h-full text-brand-sage opacity-25 animate-spin-slow">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2, 2" />
+                <path d="M50 5 C55 25, 45 35, 50 50 C55 65, 45 75, 50 95" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                <path d="M5 50 C25 55, 35 45, 50 50 C65 55, 75 45, 95 50" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, idx) => (
+                    <g key={idx} transform={`rotate(${angle} 50 50)`}>
+                        <path d="M50 50 C53 35, 60 30, 50 15 C40 30, 47 35, 50 50" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    </g>
+                ))}
+            </svg>
+        );
+
+        const AnimatedVineIcon = () => (
+            <svg viewBox="0 0 24 24" className="w-6 h-6 text-brand-sage inline" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 22C12 22 20 15 20 9C20 4 16 2 12 2C8 2 4 4 4 9C4 15 12 22 12 22Z" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 2V12" strokeLinecap="round" />
+                <path d="M12 8C14 8 16 7 16 5" strokeLinecap="round" />
+                <path d="M12 10C10 10 8 11 8 13" strokeLinecap="round" />
+            </svg>
+        );
+
+        // ==========================================
+        // 心地よいSVGアイコンコンポーネント群（全エラーを防止するための完全定義）
+        // ==========================================
+        const CompassIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+            </svg>
+        );
+
+        const UsersIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+        );
+
+        const HelpIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+        );
+
+        const HeartIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+        );
+
+        const FlowerIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M12 18a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0v-1a3 3 0 0 0-3-3Z" />
+                <path d="M6 12a3 3 0 0 0-3-3H2a3 3 0 0 0 0 6h1a3 3 0 0 0 3-3Z" />
+                <path d="M18 12a3 3 0 0 0-3-3h-1a3 3 0 0 0 0 6h1a3 3 0 0 0 3-3Z" />
+            </svg>
+        );
+
+        const SparklesIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z" />
+                <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" />
+            </svg>
+        );
+
+        const LayersIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                <polyline points="2 17 12 22 22 17" />
+                <polyline points="2 12 12 17 22 12" />
+            </svg>
+        );
+
+        const CheckCircleIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+        );
+
+        const AlertTriangleIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+        );
+
+        const RefreshIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
+        );
+
+        const BookIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z" />
+            </svg>
+        );
+
+        const TrashIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+        );
+
+        const CheckIcon = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        );
+
+        // ==========================================
+        // 静的マスターデータ (主要8タイプ詳細)
+        // ==========================================
+        const QUESTIONS = [
+            { id: 1, text: "独創的で、新しいアイデアやアート性を思いつくのが好き！", factor: "O", reverse: false },
+            { id: 2, text: "毎日スケジュールを立てて、やるべきことをきっちりこなすタイプだ。", factor: "C", reverse: false },
+            { id: 3, text: "友達とおしゃべりしたり、賑やかな場所へお出かけすると元気が出る！", factor: "E", reverse: false },
+            { id: 4, text: "困っている友達がいたら放っておけないし、みんなに優しくしたい。", factor: "A", reverse: false },
+            { id: 5, text: "ちょっとした他人の視線でも「どう思われてるかな…」と不安になりやすい。", factor: "N", reverse: false },
+            { id: 6, text: "エモい音楽、綺麗な夕空、美しいイラストを見ると心から深く感動する。", factor: "O", reverse: false },
+            { id: 7, text: "つい宿題や約束をギリギリまで先延ばしにしてしまうことがある。", factor: "C", reverse: true },
+            { id: 8, text: "おうちで静かに過ごす時間が好き。自分から目立つのは少し苦手かも。", factor: "E", reverse: true },
+            { id: 9, text: "「私は私！」という個性をはっきり持っていて、人に合わせすぎない。", factor: "A", reverse: true },
+            { id: 10, text: "マイペースで心が安定しており、あまり落ち込んだりイライラしない。", factor: "N", reverse: true },
+            { id: 11, text: "「もしも〜だったら？」とファンタジーな想像をしたり、深掘りするのが好き。", factor: "O", reverse: false },
+            { id: 12, text: "頼まれた役割や小さな約束は、最後まで責任を持ってやりきる。", factor: "C", reverse: false },
+            { id: 13, text: "賑やかなイベントや、みんなが熱狂している話題のカフェに行くのが好き！", factor: "E", reverse: false },
+            { id: 14, text: "人を信じやすく、友達の相談に乗っていると自分のことのように共感する。", factor: "A", reverse: false },
+            { id: 15, text: "プレッシャーがかかるテスト前などは、ドキドキして焦りやすい。", factor: "N", reverse: false },
+            { id: 16, text: "いつもの習慣やお気に入りのルーティンが落ち着く。急な変更は苦手。", factor: "O", reverse: true },
+            { id: 17, text: "行動に無駄がなく、テキパキ効率よくやるべきことを終わらせたい。", factor: "C", reverse: false },
+            { id: 18, text: "大勢の前に立ったり注目されると緊張してドッと疲れやすい。", factor: "E", reverse: true },
+            { id: 19, text: "友達のズルい行動やマナーの悪さを見ると、心の中でモヤモヤする。", factor: "A", reverse: true },
+            { id: 20, text: "さっきまで元気だったのに急にテンションが下がったり、気分の波がある。", factor: "N", reverse: false },
+            { id: 21, text: "まだ行ったことのない可愛いお店や、知らない学問について調べるのが楽しい！", factor: "O", reverse: false },
+            { id: 22, text: "お部屋の片付けや整理整頓が苦手で、ついつい散らかしがち。", factor: "C", reverse: true },
+            { id: 23, text: "グループの調和を保つためなら、自分のワガママは引っ込められる。", factor: "A", reverse: false },
+            { id: 24, text: "グループワークでみんなをリードしたり、中心になって動くことがある。", factor: "E", reverse: false },
+            { id: 25, text: "友達や周囲から自分がどう見られているか、とても気にかかる。", factor: "N", reverse: false }
+        ];
+
+        const MASTER_TABLE = {
+            "F-R-S": {
+                organism: "アネモネ園芸家",
+                safeName: "ときめきを形にする空間デザイナー",
+                edgeName: "お花の都市を築く光合成の統率者",
+                role: "Architect（みんなの居場所づくり）",
+                overview: "みんなのやりたいことや素敵なアイデアをキャッチして、居心地の良い「お花のガーデン（組織）」をプロデュースするのが得意なタイプです。明るいエネルギーで周囲を巻き込み、みんながのびのびと笑顔になれるコミュニティを自然と作っていきます。",
+                strengths: "みんなをワクワクさせる卓越した企画力 / 誰とでも仲良くなれる圧倒的な巻き込み力 / 居心地の良い美しい空間コーディネート",
+                risks: "ルールをきっちり決めすぎて自由な空気感を損ねる / 全てを自分で背負い込み、燃え尽きてしまう",
+                recovery: "あらゆる管理責任をオフにして、一人の自由なプレイヤーとして自分の「好き」を思いきり楽しむ時間を確保しましょう。",
+                niche: "女子大の『オープンキャンパス実行委員』『大学祭プロジェクトスタッフ』、サークル創設。文学部・国際人文系・生活科学部など、温かみのある学びがぴったり！",
+                quote: "「あなたが耕した優しいお庭で、たくさんのカラフルな個性たちが美しく調和して咲き始めるよ」"
+            },
+            "F-V-S": {
+                organism: "ミントネットワーク",
+                safeName: "みんなの心をつなぐココハブ・ミント",
+                edgeName: "ピュアに繋がる、見えない愛のコミュニティ媒介者",
+                role: "Connector / Decomposer（組織のハブ）",
+                overview: "目に見える役割よりも、「みんなの気持ちのつながり」を大切にするエモさ抜群のタイプです。新しいトレンドをキャッチしつつ、悩んでいる子の存在や、グループの『小さな空気のよどみ』を誰よりも早く察知して、そっとミントのように爽やかに寄り添います。",
+                strengths: "違うグループの子同士も自然と繋げちゃう高い翻訳力 / 相手の気持ちに寄り添う深い共感力 / みんなを安心させる豊かな包容力",
+                risks: "友達の相談に乗りすぎて、自分の心がパンクしてしまう / 周囲に合わせすぎて「私って何がしたかったんだっけ？」と迷子になる",
+                recovery: "スマホの通知を思いきってオフにして、お気に入りのアロマやお風呂で完全に自分を癒す静寂の時間を！",
+                niche: "女子大に多い『少人数ゼミ』のムードメーカー、ボランティア活動、学生ピアカウンセラー。『心理学科・人間科学部』『教育学・児童学科』が超おすすめ！",
+                quote: "「あなたがそっと広げたミントの根っこが、みんなの毎日をそっと優しくつなぐよ」"
+            },
+            "D-M-S": {
+                organism: "イングリッシュアイビー",
+                safeName: "本とハーブを愛する文学少女アイビー",
+                edgeName: "静かな森 of 奥で知的ファンタジーを育てる賢者",
+                role: "Preserver（心のオアシス）",
+                overview: "まわりの流行に無理に流されず、自分の大好きな内面世界（読書やアート、創作、研究）を、時間をかけてじっくり育てるタイプです。控えめでおとなしそうに見えるけれど、芯がとても強く、心を許した友達を誰よりも深く愛し守ります。",
+                strengths: "誰にも負けない高い専門性と集中力 / トラブルを予測して備える手堅い準備力 / 友達の成長をずっと見守り待ってあげる強さ",
+                risks: "傷つくことを恐れて、自分の心のお部屋に閉じこもりすぎてしまう / 変化やあまり知らない人に対して過剰に心を閉ざしがち",
+                recovery: "静かでオシャレな図書館や、アンティークなカフェなど、完全に一人になれる世界にじっくり没頭してみて。",
+                niche: "少人数で丁寧に進む『国文学・英文学』『史学・アーカイブス』、または『薬学・バイオ系』。静かでアットホームな女子大の少人数環境は最高のオアシスになります。",
+                quote: "「静かで優しいあなたの根っこが、長い時間をかけて誰かの心を温かく包むよ」"
+            },
+            "D-V-I": {
+                organism: "ワイルドローズ",
+                safeName: "媚びない美しさを持つ一輪のバラ",
+                edgeName: "強烈な個性を放つ、トゲのあるファッショニスタ",
+                role: "Independent Artist（私らしさの追求）",
+                overview: "「みんなと同じ」をきらい、独自のファッションや世界観を堂々と楽しむクールで可愛いタイプです。繊細な感受性と確かな美意識（トゲ）を持っており、誰にも媚びずに、自分のやりたいアートや表現を貫き通します。",
+                strengths: "他の誰にも真似できない圧倒的な個性とセンス / 本物を見抜くお買い物やクリエイティブの審美眼 / 孤独を恐れずに自分の道を進むかっこよさ",
+                risks: "他人の何気ないアドバイスを「攻撃された！」と感じて心を尖らせちゃう / 意地を張ってグループの中でひとりぼっちを選んでしまうことも",
+                recovery: "お部屋の模様替えをしたり、好きなイラスト・コラージュノートに感情を思いきりアウトプットしてみて。",
+                niche: "『美術・デザイン・芸術学部』『音楽・表現学科』、トレンドを発信するクリエイティブな分野。男子の目を気にせず「自分の好き」を思いきり極められる女子大はまさに天国！",
+                quote: "「あなたの放つ凛とした美しいトゲは、退屈な毎日に対する一番オシャレな抵抗だよ」"
+            },
+            "H-R-S": {
+                organism: "しっかりラベンダー",
+                safeName: "スケジュール帳を愛する学級委員長",
+                edgeName: "完璧なチームワークで憧れを集めるノートの神様",
+                role: "Organizer（みんなのまとめ役）",
+                overview: "きっちりした約束事や計画が大好きで、それをハイクオリティでやり遂げることに誇りを持てるタイプです。クラスやチームでの役割をしっかりと全うし、みんながスムーズに動けるように優しく整頓してくれます。",
+                strengths: "テスト勉強や準備を絶対に崩さない圧倒的な計画力 / 信頼できるきれいで見やすいノートづくり / クラスに対する高い責任感",
+                risks: "ルール通りに動かないルーズな友達にイライラしちゃう / 「ちゃんとしなきゃ」と自分を追い詰めて、限界を超えても気づけない",
+                recovery: "計画を全く立てない「のんびり、だらだらする日」をカレンダーにあらかじめ予定として登録してね。",
+                niche: "生徒会、部活のマネージャー、ゼミ長。きっちり資格やスキルを身につけられる『幼児教育・保育学』『栄養・管理栄養士学科』でトップスターになれます！",
+                quote: "「あなたのきっちり整ったリズムが、慌ただしいみんなの心をすっと落ち着かせるよ」"
+            },
+            "H-V-S": {
+                organism: "ユーカリリーダー",
+                safeName: "みんなを守る凛とした王子様系ユーカリ",
+                edgeName: "圧倒的な信頼でグループを包む防衛の牙",
+                role: "Sentinel（みんなのナイト役）",
+                overview: "グループのピンチやルール違反、まわりとのトラブルを素早く見抜くセンサーの持ち主。いざとなったら強いリーダーシップを発揮し、「私がみんなを守る！」と立ち上がってくれる頼もしい、まさに女子校の王子様のような存在です。",
+                strengths: "小さな変化や危険（友達のいじめやトラブルなど）に気づくアンテナ / ピンチのときにみんなを励ます言葉の力 / 仲間思いで熱い保護愛",
+                risks: "まわりのすべてを警戒しすぎて、他のグループを遠ざけてしまう / 不安から、友達に「絶対にこうして！」と強く押し付けてしまうことも",
+                recovery: "誰もあなたを頼らない、甘えられる安全な場所（信頼できる親友、お気に入りのリラクゼーションサロンなど）で羽を伸ばしてね。",
+                niche: "部活のキャプテン、交渉役。課題解決力が問われる『社会科学系』『グローバルビジネス』『看護・医療系』。いざという時の強さは受験でも大活躍！",
+                quote: "「あなたがみんなを優しく見守ってくれるからこそ、友達はのびのびと笑っていられるんだよ」"
+            },
+            "P-R-I": {
+                organism: "まじめなオリーブ",
+                safeName: "コツコツやり抜く絶対の信頼オリーブ",
+                edgeName: "真っ直ぐに伸び嵐にブレない規律の守護少女",
+                role: "Executor（マイペースな努力家）",
+                overview: "一時的なブームやその場の感情に流されず、毎日自分のやるべきことをコツコツ、静かに継続できるお姉さんタイプ。おしゃべりで騒ぐよりも、自分の心の中のブレない軸（ルール）を大切にし、どんなときもクオリティの高い結果を出します。",
+                strengths: "何があっても勉強や練習を毎日続けられる驚異の継続力 / どんな時も感情が一定で、まわりを安心させる信頼感 / 高い自立心",
+                risks: "新しいチャレンジやイメチェンを「私らしくない」と避けてしまう / 予定通りに行動できない、気まぐれな友達に対して冷たくなっちゃう",
+                recovery: "「目的地を決めないぶらり一人旅」や、いつもの通学路を変えてみる「あえて寄り道をする日」を作ってみて。",
+                niche: "コツコツとスキルの積み上げが必要な『語学・文学の翻訳』『データ処理』『プログラミング』『栄養計算』。長期的な目標（国家試験や難関資格）に一番強いタイプ！",
+                quote: "「毎日がどれほど慌ただしく揺れ動いても、あなたはいつもの場所で輝き続ける」"
+            },
+            "P-V-S": {
+                organism: "スイートピーセンサー",
+                safeName: "小さな変化に気づくはずかしがり屋の妖精",
+                edgeName: "微風に揺れて、みんなの「心の違和感」を伝える超感度アラート",
+                role: "Sensor（みんなの味方）",
+                overview: "自分が目立ってアピールすることは恥ずかしくて苦手。でも、他の子が気づかないお部屋の小さな埃、友達の「ちょっと寂しそうな顔」、お庭の小さな変化を誰よりも早くキャッチして、そっと誰かの手助けをしてあげる、とっても心の綺麗なお姫様タイプです。",
+                strengths: "誰も気づかない友達のさみしさや痛みに寄り添う天才 / 傷ついたお友達への丁寧で温かくフォロー / 控えめで愛されるおしとやかさ",
+                risks: "ちょっとした他人の不機嫌を「私のせいかも…」とすべて抱え込んでしまう / 不安になると心を完全に閉ざしてしまい、お部屋から出られなくなっちゃう",
+                recovery: "刺激から完全にシャットダウンされた「自分だけの秘密基地（お部屋）」に逃げ込んで、お気に入りのアロマに包まれて充電してね。",
+                niche: "丁寧な観察力が求められる『イラストチェック・デバッグ』、親身な相談相手。少人数のアットホームな女子大は、この超感度を最高の才能へと開花させてくれます。",
+                quote: "「あなたがそっと縮めて閉じた小さな葉っぱは、みんなが嵐を避けるための優しい合図なんだよ」"
+            }
+        };
+
+        const ALL_CODES = [
+            "F-R-S", "F-R-I", "F-M-S", "F-M-I", "F-G-S", "F-G-I", "F-V-S", "F-V-I",
+            "D-R-S", "D-R-I", "D-M-S", "D-M-I", "D-G-S", "D-G-I", "D-V-S", "D-V-I",
+            "H-R-S", "H-R-I", "H-M-S", "H-M-I", "H-G-S", "H-G-I", "H-V-S", "H-V-I",
+            "P-R-S", "P-R-I", "P-M-S", "P-M-I", "P-G-S", "P-G-I", "P-V-S", "P-V-I"
+        ];
+
+        const REMAINING_INFO = {
+            "F-R-I": { organism: "レモン・クイーン", safeName: "領域を展開するフロンティア・レモン", edgeName: "まばゆい光でみんなを引っ張る太陽レモン", role: "Territory Builder" },
+            "F-M-S": { organism: "ハーブ・ローズマリー", safeName: "知性で寄り添うアロマ・カウンセラー", edgeName: "香り高く、みんなの才能を目覚めさせるアロマ魔女", role: "Strategist" },
+            "F-M-I": { organism: "アイビーグリーン", safeName: "効率を極めるビューティーアイビー", edgeName: "無駄のない美しさを追求するスマートプランナー", role: "Optimizer" },
+            "F-G-S": { organism: "トビウオ（おめかし）", safeName: "境界をひらひら飛び越えるマーメイド", edgeName: "流行のうねりを飛び出す、自由奔放なアリス", role: "Glider" },
+            "F-G-I": { organism: "ひまわりのタネ", safeName: "自由な風にのって旅するポピー", edgeName: "荒野におしゃれなパステルを咲かせる風雲児", role: "Drifter" },
+            "F-V-I": { organism: "クラゲひめ", safeName: "美と自由を愛する人魚クラゲ", edgeName: "透明な美しさで近づきすぎるとチクッとする魅力", role: "Boundary Keeper" },
+            "D-R-S": { organism: "バオバブの木", safeName: "みんなの夢を見守る知恵のバオバブ", edgeName: "温かくみんなを包む、森の相談役・大樹のぬくもり", role: "Guardian" },
+            "D-R-I": { organism: "ウェルウィッチア", safeName: "永遠を咲かせるデザート・ローズ", edgeName: "砂漠で数百年ブレない、凛とした孤高のシンボル", role: "Anchor" },
+            "D-M-I": { organism: "オウムガイ（貝がら）", safeName: "秘密をひめる知的オウムガイ", edgeName: "美しい貝がらにこもって、数理の魔法を解き明かす", role: "Analyst" },
+            "D-G-S": { organism: "ネムノキの葉", safeName: "夢の世界をただよう空想ミモザ", edgeName: "夜になると静かにまぶたを閉じる、ロマンチックガール", role: "Dreamer" },
+            "D-G-I": { organism: "ふしぎアロマ", safeName: "既存の枠を超える不思議なハーブ", edgeName: "独自の進化を遂げた、香りで世界を驚かせる魔女っ子", role: "Enigma" },
+            "D-V-S": { organism: "マンドラゴラ・ハーブ", safeName: "心とお肌を癒す錬金術ハーブ", edgeName: "ひっそり奥底で毒と薬を調合する、エステカウンセラー", role: "Alchemist" },
+            "H-R-I": { organism: "アイビークイーン", safeName: "タフで美しいイングリッシュ・アイビー", edgeName: "圧倒的な生命力で壁一面をオシャレに覆う実力者", role: "Conqueror" },
+            "H-M-S": { organism: "マングローブのお姉さん", safeName: "みんなを守る心やさしき人魚姫", edgeName: "境界線でみんなが傷つかないように守る盾", role: "Stabilizer" },
+            "H-M-I": { organism: "バンブー・グリーン", safeName: "凛と伸びていくスマート・バンブー", edgeName: "みんなで力を合わせて、一瞬で綺麗に並ぶ並木道", role: "Replicator" },
+            "H-G-S": { organism: "シャボン玉（魚群）", safeName: "時代のトレンドにのるシャボンダマ", edgeName: "みんなの「かわいい」を繋げて大きなトレンドにする", role: "Synchronizer" },
+            "H-G-I": { organism: "ヤドリギ", safeName: "みんなに甘え上手なココヤドリギ", edgeName: "可愛い笑顔で先輩から愛される、人脈づくりの天才", role: "Opportunist" },
+            "H-V-I": { organism: "ハリネズミ", safeName: "チクチク可愛いハリネズミちゃん", edgeName: "大好きな居場所に入ってきたら、丸まってガード！", role: "Niche Holder" },
+            "P-R-S": { organism: "ふんわりコケ", safeName: "お庭をみどりで包むふんわりコケ", edgeName: "目立たないけれど、次の芽が育つ優しい土壌さん", role: "Catalyst" },
+            "P-M-S": { organism: "オオサンショウウオ", safeName: "静かに本棚を守る図書館の主", edgeName: "静かなお部屋で、みんなのルールをじっと見守る番人", role: "Auditor" },
+            "P-M-I": { organism: "レイシゴケ", safeName: "極限でもブレないタフなライケン", edgeName: "自分との約束は絶対に守る、静かなるサバイバー", role: "Survivor" },
+            "P-G-S": { organism: "ふわふわクラゲ", safeName: "波にゆらゆら揺れるパステルクラゲ", edgeName: "自己主張ゼロ、ただ浮いているだけで可愛い癒し系", role: "Floater" },
+            "P-G-I": { organism: "おひるねナマケモノ", safeName: "省エネでオシャレなナマケモノ", edgeName: "ムダな体力は使わない、超マイペースなエコ女子", role: "Minimalist" },
+            "P-V-I": { organism: "深海のおひめさま", safeName: "暗闇を照らすちょうちんアンコウ", edgeName: "漆黒のマイワールドに、可愛いランプを灯して観測中", role: "Solitary" }
+        };
+
+        const FULL_MASTER = {};
+        ALL_CODES.forEach(code => {
+            if (MASTER_TABLE[code]) {
+                FULL_MASTER[code] = MASTER_TABLE[code];
+            } else if (REMAINING_INFO[code]) {
+                FULL_MASTER[code] = {
+                    ...REMAINING_INFO[code],
+                    overview: "このお花の性質は、Big Fiveのスコアに基づいて算出された個人の適応論を表しています。自分の『美学』や『感度』を大切にしながら、のびのびと生きていくための戦略です。",
+                    strengths: "安全名称と役割（Role）に則した、独自のスペシャリティを発揮できる力",
+                    risks: "周囲に同調しすぎることによる消耗、あるいは自律を優先しすぎるための摩擦",
+                    recovery: "一時的に接続をオフにし、自己の獲得資源を確認して心身をケアする時間を取る",
+                    niche: "安全名称およびエッジ名称に合致したニッチな業務や役割",
+                    quote: "「あなたの個性は、お庭の中で欠かせない独自のパズルピースである」"
+                };
+            }
+        });
+
+        // チーム用初期メンバーデータ
+        const INITIAL_TEAM = [
+            { name: "サトウ（あなた）", answers: {1:4,2:2,3:4,4:5,5:4,6:4,7:2,8:1,9:1,10:2,11:5,12:3,13:4,14:4,15:4,16:1,17:3,18:1,19:1,20:4,21:5,22:1,23:4,24:4,25:4} }, // F-V-S
+            { name: "みきぽん", answers: {1:5,2:4,3:4,4:3,5:1,6:4,7:1,8:1,9:2,10:4,11:4,12:5,13:4,14:3,15:1,16:1,17:5,18:1,19:3,20:1,21:4,22:1,23:3,24:4,25:2} }, // F-R-S
+            { name: "すずか", answers: {1:1,2:5,3:1,4:2,5:1,6:1,7:1,8:5,9:4,10:5,11:1,12:5,13:1,14:1,15:1,16:5,17:5,18:5,19:4,20:1,21:1,22:1,23:1,24:1,25:1} }, // P-R-I
+            { name: "ちひろ", answers: {1:2,2:2,3:1,4:5,5:5,6:2,7:3,8:4,9:1,10:1,11:2,12:2,13:1,14:5,15:5,16:4,17:2,18:4,19:1,20:5,21:1,22:4,23:5,24:1,25:5} }, // P-V-S
+            { name: "あーちゃん", answers: {1:5,2:1,3:1,4:1,5:5,6:5,7:5,8:5,9:5,10:1,11:5,12:1,13:1,14:1,15:5,16:1,17:1,18:5,19:5,20:5,21:5,22:5,23:1,24:1,25:5} }  // D-V-I
+        ];
+
+        // 計算ロジック
+        function runCalculations(answers) {
+            const C = {};
+            QUESTIONS.forEach(q => {
+                const val = answers[q.id];
+                if (val === undefined) {
+                    C[q.id] = "";
+                } else {
+                    C[q.id] = q.reverse ? (6 - val) : val;
+                }
+            });
+
+            const allAnswered = QUESTIONS.every(q => answers[q.id] !== undefined);
+            if (!allAnswered) return null;
+
+            const getScore = (qIds) => {
+                const sum = qIds.reduce((acc, id) => acc + (C[id] || 0), 0);
+                return ((sum - 5) / 20) * 100;
+            };
+
+            const O = getScore([1, 6, 11, 16, 21]);
+            const C_score = getScore([2, 7, 12, 17, 22]);
+            const E = getScore([3, 8, 13, 18, 24]);
+            const A = getScore([4, 9, 14, 19, 23]);
+            const N = getScore([5, 10, 15, 20, 25]);
+
+            const scoreF = (O + E) / 2;
+            const scoreD = (O + (100 - E)) / 2;
+            const scoreH = ((100 - O) + E) / 2;
+            const scoreP = ((100 - O) + (100 - E)) / 2;
+
+            const l1Scores = { F: scoreF, D: scoreD, H: scoreH, P: scoreP };
+            const sortedL1 = Object.entries(l1Scores).sort((a, b) => b[1] - a[1]);
+            const firstL1 = sortedL1[0][0];
+            const secondL1 = sortedL1[1][0];
+            const purityL1 = Math.round(sortedL1[0][1]);
+            const diffL1 = sortedL1[0][1] - sortedL1[1][1];
+            const labelL1 = diffL1 === 0 ? "同率型" : (diffL1 >= 20 ? "明確なタイプ" : (diffL1 >= 10 ? "やや混合型" : "ハイブリッド型"));
+
+            const scoreR = (C_score + (100 - N)) / 2;
+            const scoreM = (C_score + N) / 2;
+            const scoreG = ((100 - C_score) + (100 - N)) / 2;
+            const scoreV = ((100 - C_score) + N) / 2;
+
+            const l2Scores = { R: scoreR, M: scoreM, G: scoreG, V: scoreV };
+            const sortedL2 = Object.entries(l2Scores).sort((a, b) => b[1] - a[1]);
+            const firstL2 = sortedL2[0][0];
+            const secondL2 = sortedL2[1][0];
+            const purityL2 = Math.round(sortedL2[0][1]);
+            const diffL2 = sortedL2[0][1] - sortedL2[1][1];
+            const labelL2 = diffL2 === 0 ? "同率型" : (diffL2 >= 20 ? "明確なタイプ" : (diffL2 >= 10 ? "やや混合型" : "ハイブリッド型"));
+
+            const scoreS = A;
+            const scoreI = 100 - A;
+
+            const l3Scores = { S: scoreS, I: scoreI };
+            const sortedL3 = Object.entries(l3Scores).sort((a, b) => b[1] - a[1]);
+            const firstL3 = sortedL3[0][0];
+            const secondL3 = sortedL3[1][0];
+            const purityL3 = Math.round(sortedL3[0][1]);
+            const diffL3 = Math.abs(scoreS - scoreI);
+            const labelL3 = diffL3 === 0 ? "同率型" : (diffL3 >= 20 ? "明確なタイプ" : (diffL3 >= 10 ? "やや混合型" : "ハイブリッド型"));
+
+            const finalCode = `${firstL1}-${firstL2}-${firstL3}`;
+
+            const targetO = (firstL1 === 'F' || firstL1 === 'D') ? O : (100 - O);
+            const targetE = (firstL1 === 'F' || firstL1 === 'H') ? E : (100 - E);
+            const targetC = (firstL2 === 'R' || firstL2 === 'M') ? C_score : (100 - C_score);
+            const targetN = (firstL2 === 'M' || firstL2 === 'V') ? N : (100 - N);
+            const targetA = (firstL3 === 'S') ? A : (100 - A);
+            
+            const matchScore = Math.round((targetO + targetE + targetC + targetN + targetA) / 5);
+
+            return {
+                ocean: { O, C: C_score, E, A, N },
+                code: finalCode,
+                matchScore,
+                layers: {
+                    energy: { primary: firstL1, purity: purityL1, secondary: secondL1, label: labelL1 },
+                    adaptation: { primary: firstL2, purity: purityL2, secondary: secondL2, label: labelL2 },
+                    relation: { primary: firstL3, purity: purityL3, secondary: secondL3, label: labelL3 }
+                }
+            };
+        }
+
+        // ==========================================
+        // メイン App コンポーネント (ボタニカルデザイン)
+        // ==========================================
+        function App() {
+            const [activeTab, setActiveTab] = useState('single'); 
+            const [answers, setAnswers] = useState({});
+            const [teamMembers, setTeamMembers] = useState(INITIAL_TEAM);
+            const [newMemberName, setNewMemberName] = useState('');
+            const [showConsent, setShowConsent] = useState(true);
+
+            const fillDemoAnswers = () => {
+                setAnswers(INITIAL_TEAM[0].answers);
+            };
+
+            const handleAnswer = (qId, val) => {
+                setAnswers(prev => ({ ...prev, [qId]: val }));
+            };
+
+            const progress = Object.keys(answers).length;
+            const calculatedResult = runCalculations(answers);
+            const result = calculatedResult; // Alias so both variable names work perfectly
+
+            const addMockMember = (code) => {
+                if (!newMemberName) return;
+                let mockAns = {};
+                const [l1, l2, l3] = code.split('-');
+                
+                const targetO = (l1 === 'F' || l1 === 'D') ? 5 : 1;
+                const targetE = (l1 === 'F' || l1 === 'H') ? 5 : 1;
+                const targetC = (l2 === 'R' || l2 === 'M') ? 5 : 1;
+                const targetN = (l2 === 'M' || l2 === 'V') ? 5 : 1;
+                const targetA = (l3 === 'S') ? 5 : 1;
+
+                QUESTIONS.forEach(q => {
+                    let base = 3;
+                    if (q.factor === 'O') base = targetO;
+                    if (q.factor === 'C') base = targetC;
+                    if (q.factor === 'E') base = targetE;
+                    if (q.factor === 'A') base = targetA;
+                    if (q.factor === 'N') base = targetN;
+
+                    if (q.reverse) {
+                        base = 6 - base;
+                    }
+                    base = Math.max(1, Math.min(5, base + (Math.random() > 0.5 ? 1 : -1)));
+                    mockAns[q.id] = base;
+                });
+
+                setTeamMembers(prev => [...prev, { name: newMemberName, answers: mockAns }]);
+                setNewMemberName('');
+            };
+
+            const deleteMember = (index) => {
+                setTeamMembers(prev => prev.filter((_, i) => i !== index));
+            };
+
+            return (
+                <div className="min-h-screen bg-brand-linen flex flex-col font-sans selection:bg-brand-blushLight selection:text-brand-dark">
+                    {/* 洗練されたプレミアム・ミニマリストヘッダー */}
+                    <header className="border-b border-brand-sageLight bg-[#FAF8F5]/90 backdrop-blur sticky top-0 z-50 px-6 py-4 shadow-sm">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-brand-sage text-white p-2.5 rounded-full shadow-md flex items-center justify-center">
+                                    <AnimatedVineIcon />
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl font-extrabold tracking-wider bg-gradient-to-r from-brand-dark to-brand-sage bg-clip-text text-transparent font-serif">
+                                        わたし色のガーデン <span className="text-[10px] text-brand-gold font-bold uppercase tracking-widest align-super">v0.6</span>
+                                    </h1>
+                                    <p className="text-xs text-brand-sage font-medium tracking-wide">PSY-CODE // Botanical Personality Design</p>
+                                </div>
+                            </div>
+
+                            {/* 高級感溢れるナビゲーションタブ */}
+                            <nav className="flex gap-2 bg-[#EFEBE4] p-1.5 rounded-full border border-brand-sageLight/50">
+                                <button 
+                                    onClick={() => setActiveTab('single')}
+                                    className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all tracking-wider flex items-center gap-2 ${activeTab === 'single' ? 'bg-white text-brand-dark shadow-sm' : 'text-brand-sage hover:text-brand-dark'}`}
+                                >
+                                    <CompassIcon className="w-4 h-4" />
+                                    お庭を調べる
+                                </button>
+                                <button 
+                                    onClick={() => setActiveTab('team')}
+                                    className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all tracking-wider flex items-center gap-2 ${activeTab === 'team' ? 'bg-white text-brand-dark shadow-sm' : 'text-brand-sage hover:text-brand-dark'}`}
+                                >
+                                    <UsersIcon className="w-4 h-4" />
+                                    みんなの寄せ植え
+                                </button>
+                                <button 
+                                    onClick={() => setActiveTab('info')}
+                                    className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all tracking-wider flex items-center gap-2 ${activeTab === 'info' ? 'bg-white text-brand-dark shadow-sm' : 'text-brand-sage hover:text-brand-dark'}`}
+                                >
+                                    <HelpIcon className="w-4 h-4" />
+                                    32植物ハーブ図鑑
+                                </button>
+                            </nav>
+                        </div>
+                    </header>
+
+                    {/* メインビュー */}
+                    <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-10">
+                        {/* プレミアム・コンセント（お約束） */}
+                        {showConsent && (
+                            <div className="mb-8 bg-gradient-to-br from-[#FCFBF8] to-[#F1F6F4] border-2 border-brand-blush/40 p-6 sm:p-8 rounded-[2rem] relative overflow-hidden shadow-xl shadow-brand-blushLight/20 animate-fade-in">
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-brand-blush/10 to-transparent rounded-bl-full"></div>
+                                <div className="flex items-start gap-5">
+                                    <div className="bg-brand-blushLight/50 p-3 rounded-full text-brand-blush shrink-0 flex items-center justify-center">
+                                        <HeartIcon className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-brand-dark font-serif tracking-wider">🌸 PSY-CODE（仮）で「わたし色のお庭」を咲かせるお約束</h3>
+                                        <p className="text-sm text-brand-sage leading-relaxed mt-3 font-medium">
+                                            この診断は、もっとも信頼性の高い心理データ（Big Five）を使用し、あなたの個性を愛らしいハーブや花の生存戦略に変換して「お互いを優しく労り合う」ための自己理解・対話ツールです。
+                                        </p>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 text-xs leading-relaxed text-brand-dark/90 font-medium">
+                                            <div className="bg-white/60 backdrop-blur p-4 rounded-2xl border border-brand-sageLight/50 shadow-sm">
+                                                <span className="text-brand-blush font-bold text-sm">1. 優劣をつけない</span><br />テストの点数で能力を競うものではありません。誰もが特別な一輪のお花です。
+                                            </div>
+                                            <div className="bg-white/60 backdrop-blur p-4 rounded-2xl border border-brand-sageLight/50 shadow-sm">
+                                                <span className="text-brand-blush font-bold text-sm">2. 枠にはめ込まない</span><br />すべての人が複数のハーブの性質をブレンドして持っています。
+                                            </div>
+                                            <div className="bg-white/60 backdrop-blur p-4 rounded-2xl border border-brand-sageLight/50 shadow-sm">
+                                                <span className="text-brand-blush font-bold text-sm">3. 評価ツールではない</span><br />自分らしくのびのびと過ごせる環境や、適性学科をポジティブに見つけるための共通言語です。
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => setShowConsent(false)}
+                                            className="mt-6 bg-gradient-to-r from-brand-blush to-[#E2A6A6] hover:from-[#E2A6A6] hover:to-[#D89595] text-white font-extrabold px-8 py-3 rounded-full text-xs transition duration-300 shadow-md shadow-brand-blush/30 tracking-widest uppercase"
+                                        >
+                                            お庭を咲かせる
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ==========================================
+                            A. 個人お庭診断
+                            ========================================== */}
+                        {activeTab === 'single' && (
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                                {/* 質問入力パネル */}
+                                <div className="lg:col-span-5 space-y-6">
+                                    <div className="bg-white border border-brand-sageLight/60 p-6 rounded-[2rem] shadow-xl shadow-brand-sageLight/10 relative overflow-hidden">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                                            <h2 className="text-lg font-bold flex items-center gap-3 text-brand-dark font-serif">
+                                                <FlowerIcon className="w-5 h-5 text-brand-blush" />
+                                                心のなかの魔法の質問 (25)
+                                            </h2>
+                                            <button 
+                                                onClick={fillDemoAnswers}
+                                                className="text-xs bg-brand-blushLight/40 hover:bg-brand-blushLight/70 text-brand-blush font-bold px-4 py-2 rounded-full border border-brand-blush/20 transition-all flex items-center gap-2"
+                                            >
+                                                <SparklesIcon className="w-3.5 h-3.5" />
+                                                デモ回答を流し込む
+                                            </button>
+                                        </div>
+
+                                        {/* 生長をイメージした極上プログレス */}
+                                        <div className="mb-6 bg-brand-sageLight/30 rounded-full h-3.5 overflow-hidden border border-brand-sageLight/50">
+                                            <div 
+                                                className="bg-gradient-to-r from-brand-sageLight via-brand-blush to-brand-blush h-full transition-all duration-500 rounded-full" 
+                                                style={{ width: `${(progress / 25) * 100}%` }}
+                                            ></div>
+                                        </div>
+                                        <div className="flex justify-between items-center text-xs text-brand-sage font-bold mb-6">
+                                            <span>お庭の咲き進み具合: {progress} / 25</span>
+                                            {progress === 25 ? (
+                                                <span className="text-brand-blush font-extrabold bg-brand-blushLight/50 border border-brand-blush/30 px-3 py-1 rounded-full animate-pulse">
+                                                    お庭が満開になりました！
+                                                </span>
+                                            ) : (
+                                                <span>あと {25 - progress} つで完成します</span>
+                                            )}
+                                        </div>
+
+                                        {/* リキッドスクロール質問パネル */}
+                                        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                                            {QUESTIONS.map((q) => (
+                                                <div 
+                                                    key={q.id} 
+                                                    className={`p-5 rounded-2xl transition-all duration-300 ${answers[q.id] ? 'bg-brand-linen/30 border border-brand-sageLight' : 'bg-white border border-transparent'}`}
+                                                >
+                                                    <div className="flex justify-between gap-2 mb-3">
+                                                        <span className="text-brand-sage font-extrabold text-[10px] tracking-widest bg-brand-sageLight/50 px-2.5 py-1 rounded-lg">
+                                                            QUESTION 0{q.id}
+                                                        </span>
+                                                        <span className="text-[10px] text-brand-blush font-bold uppercase tracking-wider">
+                                                            {q.factor === 'O' && 'クリエイティブ感'}
+                                                            {q.factor === 'C' && 'きっちりまじめ'}
+                                                            {q.factor === 'E' && 'おしゃべり大好き'}
+                                                            {q.factor === 'A' && 'ふんわり共生'}
+                                                            {q.factor === 'N' && 'ピュア感度'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm font-bold leading-relaxed text-brand-dark mb-4">{q.text}</p>
+                                                    
+                                                    {/* ボタンセレクト */}
+                                                    <div className="flex justify-between max-w-xs mx-auto">
+                                                        {[1, 2, 3, 4, 5].map((val) => (
+                                                            <button
+                                                                key={val}
+                                                                onClick={() => handleAnswer(q.id, val)}
+                                                                className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${answers[q.id] === val ? 'bg-gradient-to-r from-brand-blush to-[#E2A6A6] text-white scale-110 shadow-lg shadow-brand-blush/20' : 'bg-brand-linen text-brand-sage hover:bg-brand-sageLight/50'}`}
+                                                            >
+                                                                {val}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 右側：お花診断レポート */}
+                                <div className="lg:col-span-7 space-y-6">
+                                    {result ? (
+                                        <div className="space-y-6 animate-fade-in">
+                                            {/* メインフラワービュー */}
+                                            <div className="bg-gradient-to-br from-white via-brand-linen/10 to-brand-sageLight/20 border-2 border-brand-sageLight/50 p-6 sm:p-8 rounded-[2rem] relative overflow-hidden shadow-2xl">
+                                                <div className="absolute top-0 right-0 w-60 h-60 bg-gradient-to-bl from-brand-blush/15 to-transparent rounded-bl-full"></div>
+                                                
+                                                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                                                    <div>
+                                                        <div className="inline-flex items-center gap-1.5 bg-brand-sageLight text-brand-sage text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest border border-brand-sage/20">
+                                                            {result.code}
+                                                        </div>
+                                                        <span className="ml-3 text-xs text-brand-sage font-bold">
+                                                            お庭との適合率: <strong className="text-brand-blush font-extrabold text-sm">{result.matchScore}%</strong>
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-right text-[10px] text-brand-blush font-bold tracking-widest uppercase">
+                                                        わたし色のお庭カルテ
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-1">
+                                                    <span className="text-[10px] text-brand-sage uppercase font-bold tracking-widest block">あなたに咲いたすてきなお花</span>
+                                                    <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-brand-dark flex flex-wrap items-center gap-3 font-serif">
+                                                        {FULL_MASTER[result.code]?.organism} タイプ
+                                                        <span className="text-xs bg-[#F7F2EB] text-brand-sage font-bold px-3 py-1.5 rounded-full border border-brand-sageLight">
+                                                            {FULL_MASTER[result.code]?.role.split('（')[0]}
+                                                        </span>
+                                                    </h2>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-brand-sageLight/50 text-xs">
+                                                    <div>
+                                                        <span className="text-brand-sage block mb-1 font-bold">お友達へのハッピー紹介名</span>
+                                                        <span className="text-sm font-bold text-brand-dark">{FULL_MASTER[result.code]?.safeName}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-brand-sage block mb-1 font-bold">インスタ映えするエモい秘密名</span>
+                                                        <span className="text-sm font-bold text-brand-blush">{FULL_MASTER[result.code]?.edgeName}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-6 p-4 rounded-2xl bg-brand-blushLight/40 border border-brand-blush/20 text-center leading-relaxed italic text-sm font-semibold text-brand-dark/80">
+                                                    {FULL_MASTER[result.code]?.quote}
+                                                </div>
+                                            </div>
+
+                                            {/* 3つの適応レイヤー */}
+                                            <div className="bg-white border border-brand-sageLight/50 p-6 rounded-[2rem] shadow-xl shadow-brand-sageLight/5">
+                                                <h3 className="text-xs font-bold text-brand-sage uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                    <LayersIcon className="w-4 h-4 text-brand-blush" />
+                                                    お庭を彩る「3つの心のレイヤー」
+                                                </h3>
+
+                                                <div className="space-y-4">
+                                                    {/* Layer 1 */}
+                                                    <div className="bg-brand-linen/40 p-4 rounded-2xl border border-brand-sageLight/30">
+                                                        <div className="flex justify-between text-xs mb-2">
+                                                            <span className="font-bold text-brand-dark">
+                                                                第1層 // エネルギーの取り込み方 ➔ 
+                                                                <span className="text-brand-blush font-extrabold ml-1">
+                                                                    {result.layers.energy.primary === 'F' && ' 探索者 (Forager) - 外に元気に咲くお花'}
+                                                                    {result.layers.energy.primary === 'D' && ' 潜行者 (Diver) - 森のなかの温室植物'}
+                                                                    {result.layers.energy.primary === 'H' && ' 伝達者 (Herald) - 風に乗って香りを届ける'}
+                                                                    {result.layers.energy.primary === 'P' && ' 恒常者 (Preserver) - 静かに育つハーブ'}
+                                                                </span>
+                                                            </span>
+                                                            <span className="bg-white text-brand-sage px-2 py-0.5 rounded text-[10px] font-bold">
+                                                                {result.layers.energy.label}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex-1 bg-brand-sageLight/40 h-2 rounded-full overflow-hidden">
+                                                                <div className="bg-brand-blush h-full rounded-full" style={{ width: `${result.layers.energy.purity}%` }}></div>
+                                                            </div>
+                                                            <span className="text-xs font-bold text-brand-sage w-8 text-right">{result.layers.energy.purity}%</span>
+                                                        </div>
+                                                        <p className="text-[10px] text-brand-sage mt-1 font-semibold">
+                                                            サブタイプ（もう一つのあなた）: <span className="text-brand-dark font-bold">{result.layers.energy.secondary}</span>
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Layer 2 */}
+                                                    <div className="bg-brand-linen/40 p-4 rounded-2xl border border-brand-sageLight/30">
+                                                        <div className="flex justify-between text-xs mb-2">
+                                                            <span className="font-bold text-brand-dark">
+                                                                第2層 // まいにちの環境への順応 ➔ 
+                                                                <span className="text-brand-blush font-extrabold ml-1">
+                                                                    {result.layers.adaptation.primary === 'R' && ' 制御者 (Regulator) - きっちり剪定する'}
+                                                                    {result.layers.adaptation.primary === 'M' && ' 監視者 (Monitor) - お天気を警戒する'}
+                                                                    {result.layers.adaptation.primary === 'G' && ' 滑空者 (Glider) - 風にのってのびのび'}
+                                                                    {result.layers.adaptation.primary === 'V' && ' 鋭敏者 (Vigilant) - 敏感でピュアなセンサー'}
+                                                                </span>
+                                                            </span>
+                                                            <span className="bg-white text-brand-sage px-2 py-0.5 rounded text-[10px] font-bold">
+                                                                {result.layers.adaptation.label}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex-1 bg-brand-sageLight/40 h-2 rounded-full overflow-hidden">
+                                                                <div className="bg-brand-blush h-full rounded-full" style={{ width: `${result.layers.adaptation.purity}%` }}></div>
+                                                            </div>
+                                                            <span className="text-xs font-bold text-brand-sage w-8 text-right">{result.layers.adaptation.purity}%</span>
+                                                        </div>
+                                                        <p className="text-[10px] text-brand-sage mt-1 font-semibold">
+                                                            サブタイプ（もう一つのあなた）: <span className="text-brand-dark font-bold">{result.layers.adaptation.secondary}</span>
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Layer 3 */}
+                                                    <div className="bg-brand-linen/40 p-4 rounded-2xl border border-brand-sageLight/30">
+                                                        <div className="flex justify-between text-xs mb-2">
+                                                            <span className="font-bold text-brand-dark">
+                                                                第3層 // 他人との距離感の保ち方 ➔ 
+                                                                <span className="text-brand-blush font-extrabold ml-1">
+                                                                    {result.layers.relation.primary === 'S' && ' 共生者 (Symbiont) - 寄り沿い合う寄せ植え'}
+                                                                    {result.layers.relation.primary === 'I' && ' 孤高者 (Isolate) - 気高く伸びる一本立ち'}
+                                                                </span>
+                                                            </span>
+                                                            <span className="bg-white text-brand-sage px-2 py-0.5 rounded text-[10px] font-bold">
+                                                                {result.layers.relation.label}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex-1 bg-brand-sageLight/40 h-2 rounded-full overflow-hidden">
+                                                                <div className="bg-brand-blush h-full rounded-full" style={{ width: `${result.layers.relation.purity}%` }}></div>
+                                                            </div>
+                                                            <span className="text-xs font-bold text-brand-sage w-8 text-right">{result.layers.relation.purity}%</span>
+                                                        </div>
+                                                        <p className="text-[10px] text-brand-sage mt-1 font-semibold">
+                                                            サブタイプ（もう一つのあなた）: <span className="text-brand-dark font-bold">{result.layers.relation.secondary}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* 生態系詳細・強み・適性学部 */}
+                                            <div className="bg-white border border-brand-sageLight/50 p-6 sm:p-8 rounded-[2rem] shadow-xl shadow-brand-sageLight/5 space-y-6">
+                                                <div>
+                                                    <h3 className="text-sm font-bold text-brand-dark border-b border-brand-sageLight pb-2 mb-3 font-serif tracking-wider">
+                                                        🌲 あなたのお庭の育て方（Overview）
+                                                    </h3>
+                                                    <p className="text-sm text-brand-sage leading-relaxed font-semibold">{FULL_MASTER[result.code]?.overview}</p>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="bg-emerald-50/20 p-5 rounded-2xl border border-emerald-100/50">
+                                                        <h4 className="text-xs font-extrabold text-emerald-700 flex items-center gap-2 mb-2.5">
+                                                            <CheckCircleIcon className="w-4 h-4 text-emerald-500" />
+                                                            お庭に実るあなたの強み
+                                                        </h4>
+                                                        <ul className="text-xs text-brand-dark space-y-2 list-disc pl-4 font-semibold leading-relaxed">
+                                                            {FULL_MASTER[result.code]?.strengths.split(' / ').map((s, idx) => (
+                                                                <li key={idx}>{s}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+
+                                                    <div className="bg-pink-50/20 p-5 rounded-2xl border border-brand-blush/30">
+                                                        <h4 className="text-xs font-extrabold text-brand-blush flex items-center gap-2 mb-2.5">
+                                                            <AlertTriangleIcon className="w-4 h-4 text-brand-blush" />
+                                                            お水があふれちゃったとき（リスク）
+                                                        </h4>
+                                                        <ul className="text-xs text-brand-dark space-y-2 list-disc pl-4 font-semibold leading-relaxed">
+                                                            {FULL_MASTER[result.code]?.risks.split(' / ').map((r, idx) => (
+                                                                <li key={idx}>{r}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-brand-sageLight/50 text-xs">
+                                                    <div>
+                                                        <h4 className="font-extrabold text-[#9A7D4C] flex items-center gap-2 mb-2">
+                                                            <RefreshIcon className="w-4 h-4" />
+                                                            枯れそうなときの回復アロマ
+                                                        </h4>
+                                                        <p className="text-brand-sage font-semibold leading-relaxed">{FULL_MASTER[result.code]?.recovery}</p>
+                                                    </div>
+
+                                                    <div>
+                                                        <h4 className="font-extrabold text-brand-blush flex items-center gap-2 mb-2">
+                                                            <BookIcon className="w-4 h-4" />
+                                                            のびのび進路＆マッチする適性学部
+                                                        </h4>
+                                                        <p className="text-brand-sage font-semibold leading-relaxed">{FULL_MASTER[result.code]?.niche}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="h-full flex flex-col justify-center items-center text-center p-12 bg-white border-2 border-dashed border-brand-sageLight rounded-[2rem] min-h-[400px]">
+                                            <FlowerIcon className="w-16 h-16 text-brand-sageLight mb-4 animate-bounce" />
+                                            <h3 className="text-lg font-bold text-brand-dark font-serif tracking-wider">わたし色のお庭カルテを作成</h3>
+                                            <p className="text-xs text-brand-sage max-w-sm mt-3 leading-relaxed font-semibold">
+                                                左側の質問に直感でタップして進めるか、「デモ回答を流し込む」をタップすると、あなた自身の輝きに満ちたボタニカルタイプと進路のアドバイスが表示されます。
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ==========================================
+                            B. チームお庭マップ (心の寄せ植え)
+                            ========================================== */}
+                        {activeTab === 'team' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <div className="bg-white border border-brand-sageLight/60 p-6 sm:p-8 rounded-[2rem] shadow-xl shadow-brand-sageLight/10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                                    <div className="lg:col-span-7">
+                                        <h2 className="text-lg font-bold flex items-center gap-3 text-brand-dark font-serif">
+                                            <UsersIcon className="w-5 h-5 text-brand-blush" />
+                                            みんなで創る「心の寄せ植え」マップ
+                                        </h2>
+                                        <p className="text-xs text-brand-sage leading-relaxed mt-2 font-bold">
+                                            友達同士やゼミ、サークルの仲間でお庭を並べる「寄せ植えマップ」です。<br />
+                                            お互いの違いを認め合うことで、どのような心地いい生態系が作られるかを視覚的に分析できます。<br />
+                                            <strong>たて軸</strong>：共生・寄り添い ⇄ 孤高・一本立ち | <strong>よこ軸</strong>：新しいこと大好き ⇄ のんびり安定
+                                        </p>
+                                    </div>
+
+                                    {/* 友達お花追加コントロール */}
+                                    <div className="lg:col-span-5 bg-brand-linen/50 p-5 rounded-2xl border border-brand-sageLight/50 space-y-3">
+                                        <span className="text-xs font-bold text-brand-dark">友達を自分のお庭に招待しよう</span>
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                placeholder="名前を入力 (例: さくら)"
+                                                value={newMemberName}
+                                                onChange={(e) => setNewMemberName(e.target.value)}
+                                                className="bg-white border border-brand-sageLight/60 px-4 py-2.5 rounded-xl text-xs flex-1 font-bold text-brand-dark focus:outline-none focus:border-brand-blush"
+                                            />
+                                            <select 
+                                                id="mock-code-select"
+                                                className="bg-white border border-brand-sageLight/60 px-3 py-2.5 rounded-xl text-xs font-bold text-brand-sage"
+                                                defaultValue="F-V-S"
+                                            >
+                                                <option value="F-R-S">アネモネ園芸家 (F-R-S)</option>
+                                                <option value="F-V-S">ミントネットワーク (F-V-S)</option>
+                                                <option value="D-M-S">イングリッシュアイビー (D-M-S)</option>
+                                                <option value="D-V-I">ワイルドローズ (D-V-I)</option>
+                                                <option value="H-R-S">しっかりラベンダー (H-R-S)</option>
+                                                <option value="H-V-S">ユーカリリーダー (H-V-S)</option>
+                                                <option value="P-R-I">まじめなオリーブ (P-R-I)</option>
+                                                <option value="P-V-S">スイートピーセンサー (P-V-S)</option>
+                                            </select>
+                                            <button 
+                                                onClick={() => {
+                                                    const select = document.getElementById('mock-code-select');
+                                                    addMockMember(select.value);
+                                                }}
+                                                className="bg-gradient-to-r from-brand-blush to-[#E2A6A6] text-white px-5 py-2.5 rounded-xl text-xs font-extrabold transition shadow-md shadow-brand-blush/20"
+                                            >
+                                                追加
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 中部マップグラフィック */}
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                                    <div className="lg:col-span-8 bg-white border border-brand-sageLight/60 p-6 rounded-[2rem] shadow-xl flex flex-col justify-between">
+                                        <div className="text-center text-xs font-bold text-brand-sage tracking-widest uppercase mb-4">
+                                            ✿ 【お話大好き・寄り添い寄せ植えエリア】
+                                        </div>
+
+                                        <div className="relative h-[420px] bg-brand-linen/20 rounded-2xl border border-brand-sageLight/40 flex items-center justify-center overflow-hidden">
+                                            {/* 十字架マッピング軸 */}
+                                            <div className="absolute w-full h-[1px] bg-brand-sageLight/60"></div>
+                                            <div className="absolute h-full w-[1px] bg-brand-sageLight/60"></div>
+
+                                            {/* 軸のラベル */}
+                                            <span className="absolute left-3 text-[10px] text-brand-sage bg-[#FDFBF7] px-2 py-1 rounded border border-brand-sageLight/50 font-bold">
+                                                【のんびり安定が好き】
+                                            </span>
+                                            <span className="absolute right-3 text-[10px] text-brand-blush bg-[#FDFBF7] px-2 py-1 rounded border border-brand-blush/30 font-bold">
+                                                【新しいこと大好き】
+                                            </span>
+
+                                            {/* 自動マッピングされるお花たち */}
+                                            {teamMembers.map((member, idx) => {
+                                                const calc = runCalculations(member.answers);
+                                                if (!calc) return null;
+
+                                                const exploreX = ((calc.ocean.O + calc.ocean.E) / 2) - (((100 - calc.ocean.O) + (100 - calc.ocean.E)) / 2); 
+                                                const relationY = calc.ocean.A - (100 - calc.ocean.A); 
+
+                                                const leftPercent = 50 + (exploreX / 2.3); 
+                                                const topPercent = 50 - (relationY / 2.3); 
+
+                                                const colors = {
+                                                    "F-R-S": "from-[#D5F3EE] to-[#C0ECE5] text-teal-950 border-teal-200",
+                                                    "F-V-S": "from-[#FDF2F4] to-[#F5DCDC] text-pink-950 border-brand-blush/30",
+                                                    "D-M-S": "from-[#EBE0F5] to-[#DFCCED] text-purple-950 border-purple-200",
+                                                    "D-V-I": "from-[#FCEDEB] to-[#F7D8D5] text-rose-950 border-rose-200",
+                                                    "H-R-S": "from-[#FCF7D9] to-[#F7EEAC] text-amber-950 border-amber-200",
+                                                    "H-V-S": "from-[#FCECD9] to-[#FCD9C2] text-orange-950 border-orange-200",
+                                                    "P-R-I": "from-[#E3F2E1] to-[#C8E6C4] text-emerald-950 border-emerald-200",
+                                                    "P-V-S": "from-[#FCEDF4] to-[#F7D4E6] text-pink-950 border-pink-200"
+                                                };
+                                                const colorClass = colors[calc.code] || "from-brand-sageLight to-white text-brand-dark border-brand-sageLight";
+
+                                                return (
+                                                    <div 
+                                                        key={idx}
+                                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500 hover:scale-110 z-10 group"
+                                                        style={{ left: `${leftPercent}%`, top: `${topPercent}%` }}
+                                                    >
+                                                        <div className={`px-3 py-1.5 rounded-xl bg-gradient-to-r ${colorClass} text-[10px] font-bold border shadow-md flex items-center gap-1.5 cursor-pointer`}>
+                                                            <span className="font-extrabold">{FULL_MASTER[calc.code]?.organism}</span>
+                                                            <span className="bg-white/40 px-1.5 py-0.5 rounded-md font-bold text-brand-dark">{member.name}</span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="text-center text-xs font-bold text-brand-sage tracking-widest uppercase mt-4">
+                                            ✿ 【自分を大切に守る・一本立ちエリア】
+                                        </div>
+                                    </div>
+
+                                    {/* メンバーリスト削除コンソール */}
+                                    <div className="lg:col-span-4 bg-[#FAF7F2] border border-brand-sageLight/60 p-6 rounded-[2rem] shadow-xl flex flex-col justify-between">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-brand-dark mb-4 flex items-center gap-2 font-serif tracking-wider">
+                                                <UsersIcon className="w-4 h-4 text-brand-blush" />
+                                                集まったお友達の根っこ
+                                            </h3>
+                                            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                                {teamMembers.map((member, idx) => {
+                                                    const calc = runCalculations(member.answers);
+                                                    if (!calc) return null;
+                                                    const meta = FULL_MASTER[calc.code];
+
+                                                    return (
+                                                        <div key={idx} className="bg-white p-3.5 rounded-2xl border border-brand-sageLight/40 flex items-center justify-between shadow-sm">
+                                                            <div>
+                                                                <span className="text-xs font-extrabold text-brand-dark block">{member.name}</span>
+                                                                <span className="text-[10px] text-brand-blush font-bold">
+                                                                    {calc.code} ➔ {meta.organism}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="bg-brand-sageLight/50 text-brand-sage text-[9px] font-bold px-2 py-1 rounded-full border border-brand-sageLight">
+                                                                    {meta.role.split('（')[0]}
+                                                                </span>
+                                                                <button 
+                                                                    onClick={() => deleteMember(idx)}
+                                                                    className="text-brand-sageLight hover:text-brand-blush p-1 transition"
+                                                                >
+                                                                    <TrashIcon className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6 pt-4 border-t border-brand-sageLight/40 text-xs text-brand-sage font-bold leading-relaxed">
+                                            ※お友達を増やすと、みんなが一緒に活動したときの生態系の形が変化して、より詳細なお庭診断シートが生成されます。
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 生態系調和診断レポート（女子大ライフ特化） */}
+                                {(() => {
+                                    const rolesCount = {};
+                                    teamMembers.forEach(m => {
+                                        const calc = runCalculations(m.answers);
+                                        if (calc) {
+                                            const r = FULL_MASTER[calc.code]?.role.split('（')[0];
+                                            rolesCount[r] = (rolesCount[r] || 0) + 1;
+                                        }
+                                    });
+
+                                    const total = teamMembers.length;
+                                    const excessRoles = Object.entries(rolesCount).filter(([_, count]) => count / total > 0.4).map(([r]) => r);
+                                    const lacksExecutor = !rolesCount["Executor"] && !rolesCount["Executor（ルーティン・品質維持）"];
+
+                                    return (
+                                        <div className="bg-white border-2 border-pink-100/60 p-6 sm:p-8 rounded-[2rem] shadow-xl space-y-6">
+                                            <div>
+                                                <h3 className="text-md font-bold text-brand-dark flex items-center gap-2 font-serif tracking-wider">
+                                                    <SparklesIcon className="w-5 h-5 text-brand-blush" />
+                                                    お庭の「寄せ植え」協調レポート（チームの空気感）
+                                                </h3>
+                                                <p className="text-xs text-brand-sage font-bold mt-1">
+                                                    お友達同士の組み合わせから、どのような楽しいコラボレーションや女子大での学びに強いか自動計算しました。
+                                                </p>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm font-semibold leading-relaxed">
+                                                <div className="bg-[#FCFAF6] p-5 rounded-2xl border border-brand-sageLight/40">
+                                                    <h4 className="text-xs font-extrabold text-brand-sage uppercase tracking-wider mb-2">わたしたちのお庭モデル</h4>
+                                                    <span className="text-lg font-bold text-brand-blush block">
+                                                        ふんわり寄り添う、アロマ＆ミントネットワーク型
+                                                    </span>
+                                                    <p className="text-xs text-brand-sage mt-2 leading-relaxed">
+                                                        とにかくみんなが優しく、お互いの悩みや不満をゆっくり聞いて癒し合えるお庭です。女子大特有のギスギスしない、アットホームな居心地の良さを完璧に創り出せる素晴らしいグループ！
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-[#FCFAF6] p-5 rounded-2xl border border-brand-sageLight/40 space-y-3 text-xs leading-relaxed text-brand-dark font-bold">
+                                                    <h4 className="text-xs font-extrabold text-brand-sage uppercase tracking-wider">ときめき調和アドバイス</h4>
+                                                    
+                                                    {excessRoles.length > 0 && (
+                                                        <div className="flex gap-2 text-amber-700 items-start font-bold">
+                                                            <AlertTriangleIcon className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+                                                            <span>
+                                                                <strong>同じ役割のお花が多いかも ({excessRoles.join(', ')})</strong>：<br />
+                                                                みんなが「空気を読もう」としすぎて、本当にやりたいことが進まなくなることがあります。ときには甘えて本音を言ってみて。
+                                                            </span>
+                                                        </div>
+                                                    )}
+
+                                                    {lacksExecutor && (
+                                                        <div className="flex gap-2 text-brand-blush items-start font-bold">
+                                                            <AlertTriangleIcon className="w-4 h-4 shrink-0 mt-0.5 text-brand-blush" />
+                                                            <span>
+                                                                <strong>「まじめなオリーブ（Executor）」がいない心配</strong>：<br />
+                                                                イベントやお出かけの計画は盛り上がるけれど、誰が予約や連絡をするか押し付け合う傾向も。計画好きなラベンダータイプに頼りましょう！
+                                                            </span>
+                                                        </div>
+                                                    )}
+
+                                                    {!excessRoles.length && !lacksExecutor && (
+                                                        <div className="flex gap-2 text-emerald-600 items-start font-bold">
+                                                            <CheckIcon className="w-4 h-4 shrink-0 mt-0.5" />
+                                                            <span>
+                                                                <strong>完璧な寄せ植えの調和</strong>：おしゃべりなアネモネ、計画的なラベンダー、物静かなアイビーが、最高に美しいバランスで咲き誇っています。
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="pt-4 border-t border-brand-sageLight/50 grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-semibold">
+                                                <div>
+                                                    <h4 className="font-extrabold text-brand-sage uppercase tracking-wider mb-2">ふたりの相乗効果シナジー</h4>
+                                                    <div className="space-y-2 text-brand-dark leading-relaxed">
+                                                        <span className="text-brand-blush block font-extrabold">ミントネットワーク(F-V-S) × まじめなオリーブ(P-R-I)</span>
+                                                        ミント型が「あれ可愛い！やりたい！」という新しい体験を外から持ち込み、それをオリーブ型が毎日コツコツ、宿題や準備といった定常タスクに確実に落とし込んでくれます。一過性で終わらない最高に信頼しあえるコンビ。
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-extrabold text-brand-blush uppercase tracking-wider mb-2">ときめきの摩擦注意報</h4>
+                                                    <div className="space-y-2 text-brand-dark leading-relaxed">
+                                                        <span className="text-[#9A7D4C] block font-extrabold">ワイルドローズ(D-V-I) × しっかりラベンダー(H-R-S)</span>
+                                                        ラベンダーは「みんなのためにルールを守ろう！」と言いますが、ワイルドローズは「私は私のおしゃれと感性を貫きたい！」と主張します。お互いに個性のルーツが異なること（共生と孤高）を認め合うのが、ハッピーの秘訣。
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                        )}
+
+                        {/* ==========================================
+                            C. 32タイプ図鑑
+                            ========================================== */}
+                        {activeTab === 'info' && (
+                            <div className="space-y-6">
+                                <div className="bg-white border-2 border-brand-sageLight/50 p-6 rounded-[2rem] shadow-xl shadow-brand-sageLight/10">
+                                    <h2 className="text-lg font-bold text-brand-dark mb-2 flex items-center gap-2 font-serif tracking-wider">
+                                        <LayersIcon className="w-5 h-5 text-brand-blush" />
+                                        BIO-CODE / PSY-CODE 32タイプお花図鑑
+                                    </h2>
+                                    <p className="text-xs text-brand-sage leading-relaxed font-bold">
+                                        お庭をカタチづくる3つの心の層（クリエイティブ心、おしゃべり度、やさしさ度）のかけ合わせで生まれる、すべての植物やハーブ、お花のリストです。<br />
+                                        女子高生向けの「エモ名称」と、オープンキャンパスや進路選びで役立つ「安全名称（ハッピー役割）」を見比べながら、あなたの気になるハーブを見つけてね。
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {ALL_CODES.map(code => {
+                                        const meta = FULL_MASTER[code];
+                                        const isDetailed = MASTER_TABLE[code] !== undefined;
+
+                                        return (
+                                            <div 
+                                                key={code} 
+                                                className={`bg-white border-2 p-5 rounded-3xl transition hover:border-pink-300 relative overflow-hidden flex flex-col justify-between ${isDetailed ? 'border-pink-200 shadow-md shadow-pink-50' : 'border-brand-sageLight/50 opacity-85'}`}
+                                            >
+                                                <div className="space-y-3">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-[9px] font-mono font-bold text-pink-500 bg-pink-50 px-2 py-0.5 rounded-lg border border-pink-100">
+                                                            {code}
+                                                        </span>
+                                                        {isDetailed && (
+                                                            <span className="text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-1.5 py-0.5 rounded-lg font-bold">
+                                                                解説あり
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    <div>
+                                                        <h4 className="text-md font-extrabold text-emerald-950">{meta.organism} タイプ</h4>
+                                                        <span className="text-[10px] text-emerald-700/80 font-bold">{meta.role}</span>
+                                                    </div>
+
+                                                    <div className="space-y-1 pt-2 border-t border-pink-50">
+                                                        <span className="text-[9px] text-emerald-800 font-bold block">お仕事・進路での機能</span>
+                                                        <p className="text-xs font-extrabold text-emerald-900 leading-tight">{meta.safeName}</p>
+                                                    </div>
+
+                                                    <div className="space-y-1">
+                                                        <span className="text-[9px] text-pink-400 font-bold block">インスタ映えエモ名称</span>
+                                                        <p className="text-xs font-extrabold text-pink-500 leading-tight">{meta.edgeName}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-4 pt-3 border-t border-pink-50">
+                                                    <p className="text-[11px] text-emerald-950 font-semibold line-clamp-3 leading-relaxed">
+                                                        {meta.overview}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* フッター */}
+                    <footer className="border-t border-brand-sageLight/50 bg-[#FAF7F2] py-8 mt-12 text-center text-xs text-brand-sage">
+                        <div className="max-w-7xl mx-auto px-4 space-y-2">
+                            <p className="font-bold">© 2026 わたし色のお庭診断 ［PSY-CODE（仮）生態系パーソナリティ・マップ］</p>
+                            <p className="text-[10px] text-brand-sage/80 max-w-lg mx-auto leading-relaxed font-semibold">
+                                本診断システムは、信頼性の高いビッグファイブの理論に基づき、高校生の自己理解・進路選択・お友達との対話を優しく楽しむために設計されています。
+                            </p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        // DOMへレンダリング
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
