@@ -1,0 +1,2661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PSY-CODE（仮）BIO-CARD v3.4 - Questionnaire First</title>
+  <style>
+    :root {
+      --bg: #050b12;
+      --bg-2: #09131d;
+      --panel: rgba(8, 20, 31, 0.86);
+      --panel-2: rgba(10, 28, 43, 0.9);
+      --panel-3: rgba(6, 16, 24, 0.92);
+      --line: rgba(72, 218, 212, 0.18);
+      --line-strong: rgba(72, 218, 212, 0.45);
+      --teal: #2ef2de;
+      --teal-2: #14c8d2;
+      --mint: #9affcf;
+      --amber: #ffbf66;
+      --violet: #c58dff;
+      --text: #e8fbff;
+      --muted: #96b6be;
+      --danger: #ffc388;
+      --success: #59ffc2;
+      --radius-xl: 26px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --shadow: 0 0 0 1px rgba(46,242,222,0.08), 0 20px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+      --glow: 0 0 0 1px rgba(46,242,222,0.18), 0 0 36px rgba(46,242,222,.12);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+      background:
+        radial-gradient(circle at 16% 80%, rgba(31,214,205,.18), transparent 22%),
+        radial-gradient(circle at 80% 18%, rgba(31,214,205,.08), transparent 18%),
+        linear-gradient(180deg, #07111b 0%, #050a11 100%);
+      color: var(--text);
+      letter-spacing: .02em;
+    }
+    button, input, select, textarea { font: inherit; }
+    .app {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      border-right: 1px solid rgba(46,242,222,.12);
+      background: linear-gradient(180deg, rgba(4,11,19,.96) 0%, rgba(5,12,20,.92) 100%);
+      padding: 18px;
+      overflow: auto;
+    }
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 6px 6px 18px;
+      margin-bottom: 6px;
+    }
+    .brand-icon {
+      width: 48px; height: 48px; border-radius: 16px;
+      background: radial-gradient(circle at 30% 30%, rgba(46,242,222,.28), rgba(20,200,210,.06) 60%), rgba(8, 22, 30, .9);
+      border: 1px solid rgba(46,242,222,.22);
+      box-shadow: var(--glow);
+      display: grid; place-items: center;
+      color: var(--teal);
+      flex: none;
+    }
+    .brand-icon svg { width: 26px; height: 26px; }
+    .brand h1 {
+      font-size: 18px; margin: 0; font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .brand p {
+      margin: 4px 0 0; font-size: 12px; color: var(--muted);
+    }
+    .side-menu { display: grid; gap: 8px; margin: 14px 0 20px; }
+    .side-item {
+      appearance: none; border: 1px solid transparent; cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; text-align: left; padding: 14px 14px;
+      border-radius: 16px;
+      color: var(--text); background: transparent;
+      transition: .22s ease;
+    }
+    .side-item:hover { background: rgba(255,255,255,.02); border-color: rgba(255,255,255,.04); }
+    .side-item.active {
+      background: linear-gradient(90deg, rgba(46,242,222,.15), rgba(46,242,222,.03));
+      border-color: rgba(46,242,222,.15);
+      box-shadow: inset 0 0 0 1px rgba(46,242,222,.05), 0 0 30px rgba(46,242,222,.08);
+    }
+    .side-item .icon {
+      width: 36px; height: 36px; border-radius: 12px;
+      display: grid; place-items: center;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+      color: var(--teal);
+      flex: none;
+    }
+    .side-item .icon svg { width: 18px; height: 18px; }
+    .side-item .label { font-size: 15px; font-weight: 700; }
+    .network-art {
+      height: 170px;
+      position: relative;
+      margin: 22px 0 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(46,242,222,.12);
+      background:
+        radial-gradient(circle at 30% 60%, rgba(46,242,222,.20), transparent 24%),
+        radial-gradient(circle at 72% 72%, rgba(46,242,222,.10), transparent 18%),
+        linear-gradient(180deg, rgba(8,18,26,.9), rgba(5,12,18,.95));
+      overflow: hidden;
+    }
+    .network-art::before,
+    .network-art::after {
+      content: ""; position: absolute; inset: auto auto 0 0;
+      width: 100%; height: 100%; pointer-events: none;
+      background-image:
+        radial-gradient(circle at 18% 78%, rgba(46,242,222,.95) 0 3px, transparent 4px),
+        radial-gradient(circle at 30% 64%, rgba(46,242,222,.8) 0 3px, transparent 4px),
+        radial-gradient(circle at 46% 72%, rgba(46,242,222,.8) 0 3px, transparent 4px),
+        radial-gradient(circle at 60% 56%, rgba(46,242,222,.7) 0 3px, transparent 4px),
+        radial-gradient(circle at 74% 62%, rgba(46,242,222,.7) 0 3px, transparent 4px),
+        linear-gradient(130deg, transparent 18%, rgba(46,242,222,.18) 18.5%, transparent 19%),
+        linear-gradient(155deg, transparent 28%, rgba(46,242,222,.16) 28.5%, transparent 29%),
+        linear-gradient(170deg, transparent 44%, rgba(46,242,222,.16) 44.5%, transparent 45%);
+      opacity: .9;
+    }
+    .about-card {
+      padding: 18px; border-radius: 20px; background: rgba(7,15,24,.85); border: 1px solid rgba(46,242,222,.12);
+      box-shadow: var(--shadow);
+    }
+    .about-card h3 { margin: 0 0 10px; font-size: 15px; }
+    .about-card p { margin: 0; font-size: 13px; line-height: 1.8; color: var(--muted); }
+    .about-card .mini-btn { margin-top: 14px; }
+
+    .main { min-width: 0; padding: 18px 18px 28px; }
+    .topbar {
+      display: flex; gap: 12px; justify-content: space-between; align-items: center;
+      padding: 8px 0 18px;
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(5,11,18,.88), rgba(5,11,18,.58) 75%, transparent 100%);
+    }
+    .top-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .top-tab {
+      border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.02); color: var(--muted);
+      border-radius: 999px; padding: 10px 14px; cursor: pointer; font-weight: 700; transition: .2s ease;
+    }
+    .top-tab.active { color: var(--text); border-color: rgba(46,242,222,.28); box-shadow: inset 0 -2px 0 var(--teal), 0 0 24px rgba(46,242,222,.08); }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(46,242,222,.2); }
+    .btn.primary { background: linear-gradient(90deg, rgba(46,242,222,.16), rgba(20,200,210,.12)); border-color: rgba(46,242,222,.24); }
+    .btn.ghost { color: var(--muted); }
+    .btn.small, .mini-btn { padding: 9px 12px; font-size: 13px; }
+    .mini-btn {
+      border-radius: 12px; display: inline-flex; gap: 8px; align-items: center;
+      border: 1px solid rgba(46,242,222,.14); background: rgba(46,242,222,.06); color: var(--text); cursor: pointer;
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(7,16,25,.95), rgba(6,15,24,.88));
+      border: 1px solid rgba(46,242,222,.12);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .95fr);
+      gap: 0;
+      overflow: hidden;
+    }
+    .hero-left {
+      min-height: 260px;
+      background:
+        radial-gradient(circle at 22% 58%, rgba(46,242,222,.22), transparent 28%),
+        radial-gradient(circle at 18% 24%, rgba(255,255,255,.08), transparent 8%),
+        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.18)),
+        linear-gradient(120deg, rgba(7,30,39,.9), rgba(5,14,22,.82));
+      position: relative;
+      padding: 28px 28px 24px;
+      border-right: 1px solid rgba(46,242,222,.1);
+    }
+    .reef {
+      position: absolute; left: 20px; bottom: 14px; width: 36%; max-width: 230px; min-width: 140px; opacity: .9;
+      filter: drop-shadow(0 0 22px rgba(46,242,222,.18));
+    }
+    .hero-kicker { color: #b5dce0; font-weight: 700; font-size: 14px; }
+    .hero-code {
+      font-size: clamp(72px, 10vw, 128px); line-height: .94; font-weight: 800; letter-spacing: .12em; margin: 18px 0 0 0;
+      color: #d8fffb; text-shadow: 0 0 18px rgba(46,242,222,.32), 0 0 42px rgba(46,242,222,.14);
+      text-align: center;
+      padding-left: 18%;
+    }
+    .hero-right { padding: 26px 30px; display: grid; grid-template-columns: 1fr 190px; gap: 16px; align-items: center; }
+    .eyebrow { font-size: 13px; color: #b1cad0; font-weight: 700; margin-bottom: 10px; }
+    .type-name { font-size: clamp(32px, 4vw, 56px); margin: 0; font-weight: 800; line-height: 1.05; }
+    .type-role-en { color: var(--teal); font-size: clamp(18px, 2vw, 22px); font-weight: 700; margin-left: 12px; }
+    .type-safe { color: var(--success); font-size: 16px; margin-top: 10px; font-weight: 700; }
+    .type-edge { font-size: clamp(28px, 3.1vw, 48px); line-height: 1.18; margin: 16px 0 0; font-family: Georgia, "Times New Roman", serif; }
+    .gauge-wrap { display: grid; place-items: center; }
+    .gauge-title { text-align: center; font-size: 14px; color: #cfeef2; margin-bottom: 12px; font-weight: 700; }
+    .gauge {
+      width: 152px; height: 152px; border-radius: 50%; position: relative;
+      background: conic-gradient(var(--teal) 0 var(--deg), rgba(255,255,255,.06) var(--deg) 360deg);
+      display: grid; place-items: center;
+      box-shadow: inset 0 0 20px rgba(0,0,0,.26), 0 0 30px rgba(46,242,222,.08);
+    }
+    .gauge::after {
+      content: ""; width: 116px; height: 116px; border-radius: 50%; background: #08141d;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .gauge-value {
+      position: absolute; text-align: center; font-size: 20px; font-weight: 700;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .gauge-value strong { font-size: 28px; line-height: 1.0; }
+    .hero-strip {
+      display: flex; gap: 18px; padding: 14px 24px; border-top: 1px solid rgba(46,242,222,.1); flex-wrap: wrap;
+      color: var(--muted); font-size: 14px;
+    }
+    .hero-strip .sep { color: rgba(255,255,255,.12); }
+    .layout-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 18px;
+    }
+    .cards3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .card {
+      background: linear-gradient(180deg, rgba(9,20,31,.95), rgba(7,16,25,.9));
+      border: 1px solid rgba(46,242,222,.12); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow);
+      min-width: 0;
+    }
+    .layer-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 38px; height: 38px; border-radius: 999px; font-weight: 800;
+      background: linear-gradient(180deg, rgba(223,241,255,.98), rgba(173,215,239,.88)); color: #041018; margin-right: 8px;
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+    .card-title { font-size: 15px; font-weight: 800; }
+    .faint-art { opacity: .44; color: var(--teal); }
+    .layer-main { display: flex; gap: 14px; align-items: center; margin-top: 8px; }
+    .big-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid rgba(46,242,222,.7);
+      display: grid; place-items: center; font-size: 28px; font-weight: 800;
+      color: #f2ffff;
+      box-shadow: inset 0 0 20px rgba(46,242,222,.08);
+      flex: none;
+    }
+    .big-circle.amber { border-color: rgba(255,191,102,.7); box-shadow: inset 0 0 20px rgba(255,191,102,.08); }
+    .layer-names strong { display: block; font-size: 15px; }
+    .layer-names span { color: #d7f3f7; font-size: 13px; }
+    .metric { margin-top: 16px; }
+    .metric-row { display: grid; grid-template-columns: 88px 1fr 34px; gap: 10px; align-items: center; margin-top: 8px; }
+    .metric-row .label { color: #d4edf0; font-size: 13px; }
+    .bar {
+      height: 10px; border-radius: 999px; overflow: hidden; position: relative;
+      background: rgba(255,255,255,.06);
+    }
+    .bar > span {
+      position: absolute; inset: 0 auto 0 0; width: 0;
+      background: linear-gradient(90deg, rgba(46,242,222,.75), rgba(114,255,228,.95));
+      border-radius: inherit;
+      box-shadow: 0 0 18px rgba(46,242,222,.24);
+    }
+    .bar.amber > span { background: linear-gradient(90deg, rgba(255,191,102,.7), rgba(255,207,138,.95)); box-shadow: 0 0 18px rgba(255,191,102,.18); }
+    .metric-row .value { text-align: right; font-weight: 800; }
+    .pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 32px; border-radius: 999px; padding: 0 12px; font-size: 13px; font-weight: 700;
+      background: rgba(46,242,222,.08); border: 1px solid rgba(46,242,222,.18); color: var(--text);
+    }
+    .pill.amber { background: rgba(255,191,102,.08); border-color: rgba(255,191,102,.18); }
+    .bigfive { padding: 18px; }
+    .bigfive h3, .niche-panel h3, .insight-card h3, .section-title { margin: 0 0 14px; font-size: 18px; }
+    .info-help { color: var(--muted); font-size: 12px; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(255,255,255,.08); margin-left: 6px; }
+    .bf-row {
+      display: grid; grid-template-columns: 38px 70px 1fr 34px; gap: 10px; align-items: center; margin: 14px 0;
+    }
+    .bf-dot {
+      width: 38px; height: 38px; border-radius: 999px; border: 2px solid rgba(46,242,222,.46); display: grid; place-items: center; color: var(--teal); font-weight: 800;
+    }
+    .bf-label { font-weight: 700; }
+    .bf-value { text-align: right; font-weight: 800; }
+    .stack { display: grid; gap: 18px; }
+    .insights-wrap {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 18px;
+    }
+    .insight-card {
+      padding: 18px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,.07); box-shadow: var(--shadow);
+      min-height: 230px;
+    }
+    .insight-card.teal { background: linear-gradient(180deg, rgba(5,28,36,.95), rgba(7,20,28,.92)); border-color: rgba(46,242,222,.16); }
+    .insight-card.green { background: linear-gradient(180deg, rgba(20,43,24,.92), rgba(15,26,16,.92)); border-color: rgba(154,255,207,.12); }
+    .insight-card.amber { background: linear-gradient(180deg, rgba(55,34,13,.92), rgba(31,23,13,.92)); border-color: rgba(255,191,102,.18); }
+    .insight-card.violet { background: linear-gradient(180deg, rgba(48,20,62,.92), rgba(23,18,36,.92)); border-color: rgba(197,141,255,.18); }
+    .insight-card h3 { display: flex; gap: 10px; align-items: center; }
+    .insight-card ul { margin: 12px 0 0 18px; padding: 0; line-height: 1.8; color: #e4f5f7; font-size: 14px; }
+    .niche-panel { padding: 18px; }
+    .niche-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .niche-item {
+      min-height: 56px; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 10px;
+      border: 1px solid rgba(46,242,222,.14); background: rgba(46,242,222,.04);
+      font-weight: 700;
+    }
+    .niche-item svg, .icon-sm svg { width: 18px; height: 18px; }
+    .footer-note {
+      margin-top: 18px; text-align: center; color: var(--muted); font-size: 13px; padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,.04);
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .question-toolbar, .detail-grid, .eco-grid, .growth-grid {
+      display: grid; gap: 18px;
+    }
+    .question-toolbar { grid-template-columns: 1fr auto auto auto; align-items: center; margin-bottom: 18px; }
+    .inline-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search, .select {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; color: var(--text);
+      padding: 10px 12px;
+    }
+    .question-list { display: grid; gap: 14px; }
+    .question-card { padding: 16px; border-radius: 18px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); }
+    .q-top { display: flex; gap: 12px; align-items: start; justify-content: space-between; }
+    .q-id { font-size: 13px; color: var(--muted); font-weight: 700; }
+    .q-title { font-size: 15px; line-height: 1.7; margin-top: 6px; }
+    .factor-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(46,242,222,.08); border: 1px solid rgba(46,242,222,.12); color: #d5fbff; font-size: 12px; font-weight: 700; }
+    .factor-chip.reverse { background: rgba(255,191,102,.08); border-color: rgba(255,191,102,.16); }
+    .scale { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin-top: 14px; }
+    .scale button {
+      border-radius: 14px; padding: 12px 10px; border: 1px solid rgba(255,255,255,.08); cursor: pointer;
+      background: rgba(255,255,255,.025); color: var(--text); font-weight: 700; transition: .18s ease;
+    }
+    .scale button:hover { border-color: rgba(46,242,222,.2); transform: translateY(-1px); }
+    .scale button.active { background: linear-gradient(90deg, rgba(46,242,222,.18), rgba(20,200,210,.12)); border-color: rgba(46,242,222,.26); }
+    .scale small { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; font-weight: 500; }
+
+    .detail-grid { grid-template-columns: 1.1fr .9fr; }
+    .report-card { padding: 18px; }
+    .summary-row { display: grid; grid-template-columns: 1fr 140px; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .summary-row strong { font-size: 15px; }
+    .summary-row .muted { color: var(--muted); }
+
+    .matrix {
+      position: relative; border-radius: 20px; overflow: hidden; border: 1px solid rgba(46,242,222,.1);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)); height: 340px;
+    }
+    .matrix-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 25% 25%;
+    }
+    .matrix-center-x, .matrix-center-y { position: absolute; background: rgba(46,242,222,.18); }
+    .matrix-center-x { left: 0; right: 0; top: 50%; height: 1px; }
+    .matrix-center-y { top: 0; bottom: 0; left: 50%; width: 1px; }
+    .matrix-label { position: absolute; font-size: 12px; color: var(--muted); font-weight: 700; }
+    .matrix-point {
+      position: absolute; width: 18px; height: 18px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--teal) 50%, rgba(46,242,222,.2));
+      box-shadow: 0 0 0 6px rgba(46,242,222,.12), 0 0 24px rgba(46,242,222,.32);
+      transform: translate(-50%, -50%);
+    }
+    .matrix-point::after { content: attr(data-label); position: absolute; left: 24px; top: -2px; color: white; font-weight: 800; font-size: 13px; white-space: nowrap; }
+    .eco-grid { grid-template-columns: 1fr 1fr; }
+    .growth-grid { grid-template-columns: 1fr 1fr; }
+    .quote {
+      font-size: 20px; line-height: 1.8; color: #e6fbff; font-family: Georgia, serif; margin-top: 10px;
+      padding-left: 18px; border-left: 2px solid rgba(46,242,222,.25);
+    }
+    .muted { color: var(--muted); }
+    .tiny { font-size: 12px; }
+    .empty-state {
+      padding: 26px; border-radius: 20px; background: rgba(255,255,255,.02); border: 1px dashed rgba(255,255,255,.08); color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 1260px) {
+      .layout-grid { grid-template-columns: 1fr; }
+      .insights-wrap { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .cards3 { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { border-right: none; border-bottom: 1px solid rgba(46,242,222,.1); }
+      .hero-right { grid-template-columns: 1fr; }
+      .detail-grid, .eco-grid, .growth-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .question-toolbar { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: stretch; }
+      .actions { justify-content: flex-start; }
+      .insights-wrap { grid-template-columns: 1fr; }
+      .hero-code { padding-left: 0; text-align: left; font-size: 74px; }
+    }
+
+
+    /* ==========================================
+       BIO-CARD Edge Design Add-on v3
+       ========================================== */
+    .bio-card-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(18px, 3vw, 34px);
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(46,242,222,.22);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(46,242,222,.20), transparent 28%),
+        radial-gradient(circle at 86% 10%, rgba(197,141,255,.18), transparent 24%),
+        radial-gradient(circle at 74% 88%, rgba(255,191,102,.13), transparent 24%),
+        linear-gradient(145deg, rgba(4,10,18,.98), rgba(6,18,29,.94) 52%, rgba(3,7,13,.98));
+      box-shadow: var(--shadow), 0 0 70px rgba(46,242,222,.08);
+    }
+    .bio-card-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(115deg, transparent 0 20%, rgba(255,255,255,.07) 21%, transparent 22% 100%),
+        linear-gradient(rgba(46,242,222,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(46,242,222,.045) 1px, transparent 1px);
+      background-size: 100% 100%, 42px 42px, 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,.9), rgba(0,0,0,.14));
+    }
+    .bio-card-panel::after {
+      content: "";
+      position: absolute;
+      inset: -40% -20%;
+      pointer-events: none;
+      background: conic-gradient(from 180deg, transparent, rgba(46,242,222,.11), transparent, rgba(197,141,255,.10), transparent);
+      animation: bioAura 12s linear infinite;
+      opacity: .55;
+    }
+    @keyframes bioAura { to { transform: rotate(360deg); } }
+    .bio-card-layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(360px, 470px) minmax(0, 1fr);
+      gap: clamp(22px, 4vw, 48px);
+      align-items: center;
+    }
+    .bio-card-stage {
+      perspective: 1600px;
+      display: grid;
+      place-items: center;
+      min-height: 720px;
+    }
+    .bio-card-stage.reveal .bio-card {
+      animation: bioReveal .95s cubic-bezier(.2,.85,.16,1);
+    }
+    @keyframes bioReveal {
+      0% { opacity: 0; transform: translateY(24px) rotateX(26deg) rotateZ(-2deg) scale(.88); filter: blur(10px); }
+      58% { opacity: 1; transform: translateY(-8px) rotateX(-5deg) rotateZ(1deg) scale(1.035); filter: blur(0); }
+      100% { opacity: 1; transform: translateY(0) rotateX(0) rotateZ(0) scale(1); filter: blur(0); }
+    }
+    .bio-card {
+      width: min(100%, 420px);
+      aspect-ratio: 2.45 / 3.95;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .72s cubic-bezier(.2,.75,.2,1), filter .3s ease;
+      filter: drop-shadow(0 30px 58px rgba(0,0,0,.55));
+      cursor: pointer;
+    }
+    .bio-card:hover { filter: drop-shadow(0 35px 68px rgba(0,0,0,.62)) drop-shadow(0 0 34px rgba(46,242,222,.16)); }
+    /* v3.3: Do not rotate the whole card for flipping. Some browsers keep showing
+       the mirrored front face when the parent is rotated. Instead, switch the two
+       faces themselves so the back side reliably shows detailed content. */
+    .bio-card.flipped { transform: none; }
+    .bio-card-front { transform: rotateY(0deg); opacity: 1; pointer-events: auto; }
+    .bio-card-back { transform: rotateY(180deg); opacity: 0; pointer-events: none; }
+    .bio-card.flipped .bio-card-front { transform: rotateY(-180deg); opacity: 0; pointer-events: none; }
+    .bio-card.flipped .bio-card-back { transform: rotateY(0deg); opacity: 1; pointer-events: auto; }
+    .bio-card-face {
+      position: absolute;
+      inset: 0;
+      padding: 20px;
+      border-radius: 30px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transition: transform .72s cubic-bezier(.2,.75,.2,1), opacity .32s ease;
+      border: 1px solid rgba(46,242,222,.36);
+      background:
+        radial-gradient(circle at 28% 18%, rgba(46,242,222,.22), transparent 22%),
+        radial-gradient(circle at 80% 72%, rgba(197,141,255,.16), transparent 24%),
+        linear-gradient(165deg, rgba(8,22,33,.98), rgba(3,8,15,.98));
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.06),
+        inset 0 0 34px rgba(46,242,222,.08),
+        0 0 0 1px rgba(46,242,222,.14),
+        0 0 60px rgba(46,242,222,.13);
+    }
+    .bio-card-face::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        linear-gradient(120deg, transparent 12%, rgba(255,255,255,.16) 16%, transparent 21% 64%, rgba(46,242,222,.13) 70%, transparent 78%),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 100% 100%, 22px 22px, 22px 22px;
+      mix-blend-mode: screen;
+      opacity: .78;
+      pointer-events: none;
+    }
+    .bio-card-face::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 0 18px rgba(46,242,222,.08);
+      pointer-events: none;
+    }
+    .bio-card-back {
+      transform: rotateY(180deg);
+      opacity: 0;
+      background:
+        radial-gradient(circle at 20% 24%, rgba(154,255,207,.16), transparent 20%),
+        radial-gradient(circle at 76% 20%, rgba(255,191,102,.12), transparent 22%),
+        linear-gradient(150deg, rgba(5,14,22,.98), rgba(18,9,28,.96));
+    }
+    .bio-card-inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+    .bio-card-front .bio-card-inner {
+      grid-template-rows: auto auto minmax(250px, 1fr) auto;
+    }
+    .bio-card-back .bio-card-inner {
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+    .bio-card-minihead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 31px;
+      font-size: 10px;
+      color: #bceff1;
+      letter-spacing: .16em;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .bio-sync {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: none;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(46,242,222,.11);
+      border: 1px solid rgba(46,242,222,.22);
+      letter-spacing: .08em;
+      color: #efffff;
+    }
+    .bio-card-code-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding-bottom: 8px;
+      min-height: 78px;
+    }
+    .bio-card-code {
+      font-size: clamp(42px, 5vw, 60px);
+      line-height: .92;
+      letter-spacing: .07em;
+      white-space: nowrap;
+      font-weight: 950;
+      color: #f4ffff;
+      text-shadow: 0 0 16px rgba(46,242,222,.42), 0 0 50px rgba(46,242,222,.16);
+    }
+    .bio-card-form {
+      text-align: right;
+      color: var(--amber);
+      font-weight: 900;
+      font-size: 9.5px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      line-height: 1.32;
+      max-width: 150px;
+      overflow-wrap: anywhere;
+    }
+    .bio-organism-art {
+      position: relative;
+      min-height: 152px;
+      height: clamp(152px, 21vw, 178px);
+      display: grid;
+      place-items: center;
+      margin: 2px 0 0;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(46,242,222,.20), transparent 32%),
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.08), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.07);
+      overflow: hidden;
+    }
+    .bio-organism-art::before {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 1px solid rgba(46,242,222,.22);
+      box-shadow: 0 0 40px rgba(46,242,222,.13), inset 0 0 30px rgba(46,242,222,.08);
+    }
+    .bio-organism-art::after {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent, rgba(46,242,222,.14), transparent, rgba(197,141,255,.13), transparent);
+      animation: bioAura 8s linear infinite reverse;
+      opacity: .75;
+    }
+    .bio-organism-glyph {
+      position: relative;
+      z-index: 1;
+      width: 128px;
+      height: 128px;
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      filter: drop-shadow(0 0 22px rgba(46,242,222,.45));
+    }
+    .bio-organism-glyph svg { width: 100%; height: 100%; }
+    .bio-card-organism {
+      font-size: clamp(22px, 3.2vw, 28px);
+      font-weight: 950;
+      letter-spacing: .03em;
+      text-align: center;
+      line-height: 1.12;
+      margin-top: 8px;
+      overflow-wrap: anywhere;
+    }
+    .bio-card-role {
+      text-align: center;
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      line-height: 1.35;
+      margin-top: 4px;
+      overflow-wrap: anywhere;
+    }
+    .bio-edge-box {
+      border-radius: 18px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 10px 12px;
+      min-height: 82px;
+    }
+    .bio-edge-label {
+      color: var(--amber);
+      font-size: 10px;
+      letter-spacing: .18em;
+      font-weight: 950;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .bio-edge-text {
+      font-size: clamp(15px, 2vw, 17px);
+      line-height: 1.32;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #fff7e9;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .bio-card-stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .bio-stat {
+      min-height: 42px;
+      border-radius: 13px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 5px;
+    }
+    .bio-stat strong { display:block; font-size: 15px; line-height: 1; }
+    .bio-stat span { display:block; font-size: 8px; color: var(--muted); margin-top: 3px; font-weight: 800; }
+    .bio-back-grid { display: grid; gap: 8px; align-content: stretch; height: 100%; min-height: 0; overflow: hidden; }
+    .bio-back-block {
+      border-radius: 16px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.07);
+      padding: 9px 11px;
+      min-height: 0;
+    }
+    .bio-back-block h4 {
+      margin: 0 0 6px;
+      font-size: 10px;
+      color: var(--teal);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .bio-back-block p, .bio-back-block ul {
+      margin: 0;
+      color: #e8fbff;
+      font-size: 11.5px;
+      line-height: 1.52;
+    }
+    .bio-back-block p {
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .bio-back-block ul { padding-left: 18px; }
+    .bio-type-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .bio-type-tag {
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(46,242,222,.09);
+      border: 1px solid rgba(46,242,222,.18);
+      color: #eaffff;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .07em;
+    }
+    .bio-card-copy {
+      display: grid;
+      gap: 18px;
+      align-content: center;
+    }
+    .bio-kicker {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #d6ffff;
+      background: rgba(46,242,222,.08);
+      border: 1px solid rgba(46,242,222,.16);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .bio-title {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 72px);
+      line-height: 1.02;
+      letter-spacing: .02em;
+      font-weight: 950;
+      text-shadow: 0 0 34px rgba(46,242,222,.13);
+    }
+    .bio-title span {
+      display: block;
+      color: var(--teal);
+      font-size: .42em;
+      margin-top: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .bio-manifesto {
+      max-width: 780px;
+      color: #d6f2f5;
+      font-size: 17px;
+      line-height: 1.95;
+      border-left: 2px solid rgba(46,242,222,.28);
+      padding-left: 16px;
+    }
+    .bio-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn.card-action {
+      border-color: rgba(46,242,222,.22);
+      background: rgba(46,242,222,.08);
+      font-weight: 900;
+    }
+    .btn.card-action.hot {
+      background: linear-gradient(90deg, rgba(255,191,102,.18), rgba(46,242,222,.12));
+      border-color: rgba(255,191,102,.30);
+      box-shadow: 0 0 28px rgba(255,191,102,.07);
+    }
+    .bio-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .bio-toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 999;
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: #efffff;
+      background: rgba(7,18,27,.96);
+      border: 1px solid rgba(46,242,222,.24);
+      box-shadow: var(--shadow), 0 0 30px rgba(46,242,222,.12);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: .28s ease;
+      pointer-events: none;
+      font-weight: 800;
+    }
+    .bio-toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 1260px) {
+      .bio-card-layout { grid-template-columns: 1fr; }
+      .bio-card-copy { text-align: center; justify-items: center; }
+      .bio-manifesto { border-left: none; padding-left: 0; }
+    }
+    @media (max-width: 520px) {
+      .bio-card-panel { padding: 14px; border-radius: 22px; }
+      .bio-card-stage { min-height: 650px; }
+      .bio-card { width: min(100%, 350px); aspect-ratio: 2.45 / 4.15; }
+      .bio-card-face { padding: 15px; border-radius: 24px; }
+      .bio-card-code { font-size: 39px; letter-spacing: .045em; }
+      .bio-card-form { font-size: 8.5px; max-width: 125px; }
+      .bio-card-code-row { min-height: 64px; gap: 8px; }
+      .bio-organism-art { min-height: 132px; height: 132px; }
+      .bio-organism-glyph { width: 108px; height: 108px; }
+      .bio-card-organism { font-size: 22px; }
+      .bio-card-role { font-size: 10px; }
+      .bio-edge-box { min-height: 76px; }
+      .bio-edge-text { font-size: 14px; }
+      .bio-stat { min-height: 39px; padding: 4px 2px; }
+      .bio-stat strong { font-size: 13px; }
+      .bio-stat span { font-size: 7px; }
+      .bio-title { font-size: 34px; }
+      .bio-actions { justify-content: center; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="2.4"></circle>
+            <path d="M12 3.2c2.7 0 4.2 1.3 4.6 3.7 2.4-.4 4.1.5 5.2 2.9-2 1.1-3 2.7-3 4.8 0 2.2 1 3.8 3 4.8-1.1 2.4-2.8 3.3-5.2 2.9-.4 2.4-1.9 3.7-4.6 3.7s-4.2-1.3-4.6-3.7c-2.4.4-4.1-.5-5.2-2.9 2-1 3-2.6 3-4.8 0-2.1-1-3.7-3-4.8 1.1-2.4 2.8-3.3 5.2-2.9.4-2.4 1.9-3.7 4.6-3.7Z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>PSY-CODE（仮）</h1>
+          <p>生態系パーソナリティ・マップ</p>
+        </div>
+      </div>
+
+      <div class="side-menu" id="sideMenu"></div>
+
+      <div class="network-art"></div>
+
+      <div class="about-card">
+        <h3>PSY-CODEとは？</h3>
+        <p>Big Fiveのスコアを「生態系メタファー」へ翻訳し、自分と他者の生存戦略を直感的に捉えるための自己理解・対話支援フレームワークです。</p>
+        <button class="mini-btn" id="learnMoreBtn">詳しく見る</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-tabs" id="topTabs"></div>
+        <div class="actions">
+          <button class="btn primary" id="fillDemoBtn">サンプルカードを見る</button>
+          <button class="btn ghost" id="resetBtn">回答をリセット</button>
+          <button class="btn" id="saveBtn">レポート保存</button>
+          <button class="btn" id="shareBtn">テキスト共有</button>
+        </div>
+      </header>
+
+      <section class="section active" id="section-report"></section>
+      <section class="section" id="section-summary"></section>
+      <section class="section" id="section-ecosystem"></section>
+      <section class="section" id="section-growth"></section>
+    </main>
+  </div>
+
+  <script>
+    const NAV_ITEMS = [
+      { id: 'report', label: '質問紙に回答', icon: 'report' },
+      { id: 'summary', label: '結果サマリー', icon: 'summary' },
+      { id: 'ecosystem', label: 'エコシステム図', icon: 'eco' },
+      { id: 'growth', label: '成長ヒント', icon: 'growth' }
+    ];
+
+    const QUESTIONS = [
+      { id: 1, factor: 'O', reverse: false, text: '独創的で、新しいアイデアを思いつくのが得意だ。' },
+      { id: 2, factor: 'C', reverse: false, text: '物事を計画的に進め、細部まで几帳面に行う。' },
+      { id: 3, factor: 'E', reverse: false, text: '社交的で、人と話すことでエネルギーが湧いてくる。' },
+      { id: 4, factor: 'A', reverse: false, text: '他人に対して思いやりがあり、誰にでも親切にする。' },
+      { id: 5, factor: 'N', reverse: false, text: '些細なことでも心配になりやすく、不安を感じやすい。' },
+      { id: 6, factor: 'O', reverse: false, text: '芸術や文学、美しいものに深く感動する。' },
+      { id: 7, factor: 'C', reverse: true, text: 'つい物事を先延ばしにし、だらしなくなってしまう。' },
+      { id: 8, factor: 'E', reverse: true, text: '静かで物静かな方で、あまり自分から前に出ない。' },
+      { id: 9, factor: 'A', reverse: true, text: '他人と衝突しやすく、はっきりと自分の意見を突き通す。' },
+      { id: 10, factor: 'N', reverse: true, text: '感情が安定しており、めったに落ち込んだりしない。' },
+      { id: 11, factor: 'O', reverse: false, text: '抽象的な概念や哲学的な議論を好む。' },
+      { id: 12, factor: 'C', reverse: false, text: '最後まで責任を持って仕事をやり遂げる。' },
+      { id: 13, factor: 'E', reverse: false, text: '賑やかな場所やイベントに参加するのが好きだ。' },
+      { id: 14, factor: 'A', reverse: false, text: '人を信じやすく、他人の意見によく共感する。' },
+      { id: 15, factor: 'N', reverse: false, text: 'ストレスを感じやすく、イライラしたり緊張しやすい。' },
+      { id: 16, factor: 'O', reverse: true, text: 'ルーティンワーク（決まった作業）を好み、変化を嫌う。' },
+      { id: 17, factor: 'C', reverse: false, text: '効率的に行動し、時間を無駄にしない。' },
+      { id: 18, factor: 'E', reverse: true, text: '目立つのが苦手で、大勢の前に出ると疲れてしまう。' },
+      { id: 19, factor: 'A', reverse: true, text: '他人のミスや欠点が気になり、厳しく批判してしまう。' },
+      { id: 20, factor: 'N', reverse: false, text: '気分に波があり、さっきまで元気だったのに急に沈む。' },
+      { id: 21, factor: 'O', reverse: false, text: '好奇心が旺盛で、未知の領域を探索するのが楽しい。' },
+      { id: 22, factor: 'C', reverse: true, text: '整理整頓が苦手で、デスクや部屋が散らかりがちだ。' },
+      { id: 23, factor: 'A', reverse: false, text: 'チームの調和を守るためなら、自分の意見を譲れる。' },
+      { id: 24, factor: 'E', reverse: false, text: '他人をリードしたり、中心になって場を盛り上げる。' },
+      { id: 25, factor: 'N', reverse: false, text: '他人が自分をどう思っているか、非常に気にかかる。' }
+    ];
+
+    const L1_META = {
+      F: { jp: '探索者', en: 'Forager', label: 'エネルギー獲得', summary: '未知の刺激と人との接続からエネルギーを獲得する' },
+      D: { jp: '潜行者', en: 'Diver', label: 'エネルギー獲得', summary: '内的探索や深い思考からエネルギーを得る' },
+      H: { jp: '伝達者', en: 'Herald', label: 'エネルギー獲得', summary: '既知の世界を広く巡回しながら熱量を伝播させる' },
+      P: { jp: '恒常者', en: 'Preserver', label: 'エネルギー獲得', summary: '安定した内的ルーティンをベースに自給自足する' }
+    };
+    const L2_META = {
+      R: { jp: '制御者', en: 'Regulator', label: '環境適応', summary: '計画・構造・制御を通してリスクを管理する' },
+      M: { jp: '監視者', en: 'Monitor', label: '環境適応', summary: '秩序を保ちつつ危険を鋭く監視する' },
+      G: { jp: '滑空者', en: 'Glider', label: '環境適応', summary: '軽やかさと柔軟さで変化を受け流す' },
+      V: { jp: '鋭敏者', en: 'Vigilant', label: '環境適応', summary: '敏感さと即応性で環境変化をくぐり抜ける' }
+    };
+    const L3_META = {
+      S: { jp: '共生者', en: 'Symbiont', label: '他者関係', summary: '他者と栄養や意味を交換しながら場を育てる' },
+      I: { jp: '孤高者', en: 'Isolate', label: '他者関係', summary: '自律性と境界線の明確さで独自の領域を守る' }
+    };
+
+    const TYPE_META = {
+      'F-R-S': { organism:'造礁サンゴ', safeName:'循環を創る環境建築家', edgeName:'海に都市を築く、光合成の支配者', role:'Architect（基盤構築）', niches:['教育','研究','企画','組織開発'] },
+      'F-R-I': { organism:'オオオニバス', safeName:'領域を展開する市場開拓者', edgeName:'水面を覆い光を独占する構造体', role:'Territory Builder（市場独占）', niches:['起業','新規事業','戦略','プロダクト'] },
+      'F-M-S': { organism:'ハエトリソウ', safeName:'機会を捉える戦略的共生者', edgeName:'罠を仕掛け刺激を待つ計算高き狩人', role:'Strategist（機会損失の防止）', niches:['マーケティング','交渉','編集','営業企画'] },
+      'F-M-I': { organism:'粘菌（フィサラム）', safeName:'最適解を導くネットワーク', edgeName:'迷路を最短で突破する効率の魔物', role:'Optimizer（リソース最適化）', niches:['データ分析','業務改善','UX','物流'] },
+      'F-G-S': { organism:'トビウオ', safeName:'境界を越える表現者', edgeName:'潮流を飛び出す楽観的探検家', role:'Glider（アイデアの着火）', niches:['広報','企画','表現','イベント'] },
+      'F-G-I': { organism:'風転草（タンブルウィード）', safeName:'変革の種を撒く放浪者', edgeName:'荒野を転がり混沌をもたらす風雲児', role:'Drifter（ブレイクスルー発想）', niches:['アート','起業','R&D','コンセプト開発'] },
+      'F-V-S': { organism:'菌糸ネットワーク', safeName:'連結するコミュニティ媒介者', edgeName:'地下世界で全てを繋ぐ見えない知性', role:'Connector（組織のハブ）', niches:['コミュニティ','教育','伴走支援','編集'] },
+      'F-V-I': { organism:'ハコクラゲ', safeName:'美を追求する孤高の表現者', edgeName:'触れた者を痺れさせる透明な警告', role:'Boundary Keeper（独自性の死守）', niches:['アート','デザイン','ブランド','批評'] },
+      'D-R-S': { organism:'バオバブ', safeName:'知恵を蓄える精神的守護者', edgeName:'渇いた大地に聳える絶対的指導者', role:'Guardian（理念の維持）', niches:['教育','哲学','人材育成','アーカイブ'] },
+      'D-R-I': { organism:'ウェルウィッチア', safeName:'永続する自立型システム', edgeName:'荒野で数百年ブレない絶対の規律', role:'Anchor（コア技術の守護）', niches:['専門職','設計','品質保証','研究'] },
+      'D-M-S': { organism:'深海サンゴ', safeName:'深層を育てる知的育成者', edgeName:'光の届かない場所で静かに森を創る者', role:'Preserver（深層心理・情緒ケア）', niches:['カウンセリング','教育','研究','育成'] },
+      'D-M-I': { organism:'オウムガイ', safeName:'理論を構築する深海の智者', edgeName:'完璧な対数螺旋にこもる冷徹な頭脳', role:'Analyst（冷徹なデータ分析）', niches:['研究','分析','設計','ドキュメント'] },
+      'D-G-S': { organism:'ネムノキ', safeName:'内省的な共生空想家', edgeName:'夜に静かに葉を閉じる芸術の苗床', role:'Dreamer（ビジョン創出）', niches:['創作','教育','ファシリテーション','物語設計'] },
+      'D-G-I': { organism:'ハルキゲニア', safeName:'既存の枠を超える奇才思想家', edgeName:'独自の進化を遂げた深海の不可解', role:'Enigma（常識の破壊・イノベーション）', niches:['研究開発','思想','アート','未来構想'] },
+      'D-V-S': { organism:'マンドラゴラ', safeName:'土壌を癒す臨床の錬金術師', edgeName:'闇の奥底で毒と薬を調合する者', role:'Alchemist（深いカウンセリング）', niches:['相談支援','臨床教育','伴走','福祉'] },
+      'D-V-I': { organism:'ヤドクガエル', safeName:'独自の世界観を持つ芸術家', edgeName:'強烈な警告色を纏う個性の塊', role:'Independent Artist（エッジの効いた表現）', niches:['表現','創作','批評','独立研究'] },
+      'H-R-S': { organism:'ミツバチ（群）', safeName:'規律を重んじる組織運営者', edgeName:'完璧な絆で富を集める集団の歯車', role:'Organizer（実務・プロジェクト推進）', niches:['PM','組織運営','実務','教育運営'] },
+      'H-R-I': { organism:'葛（クズ）', safeName:'資源を獲得する実務推進者', edgeName:'既存の木々を覆い尽くす実効支配者', role:'Conqueror（競合制圧・営業推進）', niches:['営業','開拓','オペレーション','交渉'] },
+      'H-M-S': { organism:'マングローブ', safeName:'地盤を固める防衛的リーダー', edgeName:'汽水域で境界を守る実権派の砦', role:'Stabilizer（リスクマネジメント）', niches:['リスク管理','法務','ガバナンス','調整'] },
+      'H-M-I': { organism:'竹林', safeName:'秩序を拡大する効率増殖者', edgeName:'地下茎で繋がり一斉に増殖する官僚', role:'Replicator（マニュアル化・スケール）', niches:['仕組み化','標準化','品質','運用'] },
+      'H-G-S': { organism:'イワシ（魚群）', safeName:'時代の潮流に同調する調和者', edgeName:'巨大なうねりを作るトレンドセッター', role:'Synchronizer（流行・熱量の拡散）', niches:['SNS','広報','コミュニティ','イベント'] },
+      'H-G-I': { organism:'宿り木（ヤドリギ）', safeName:'他者と融和する環境適応者', edgeName:'人脈を巧妙に渡り歩く要領主義者', role:'Opportunist（外部リソース調達）', niches:['アライアンス','渉外','営業','プロデュース'] },
+      'H-V-S': { organism:'オオカミ（群）', safeName:'危機に備える防衛的リーダー', edgeName:'強固な結束で群れを守る警戒の牙', role:'Sentinel（外敵からの防衛）', niches:['危機対応','マネジメント','安全管理','教育'] },
+      'H-V-I': { organism:'トゲウオ', safeName:'縄張りを強固に守る自立者', edgeName:'テリトリーへの侵入を許さない防衛棘', role:'Niche Holder（特定領域の防衛）', niches:['専門職','品質保証','知財','技術保守'] },
+      'P-R-S': { organism:'コケ（苔植物）', safeName:'土台を支える静かな基礎', edgeName:'湿った岩肌を静かに覆う環境の祖', role:'Catalyst（新入メンバーの土壌）', niches:['育成支援','サポート','事務','学習支援'] },
+      'P-R-I': { organism:'杉（スギ単一林）', safeName:'規律を継続する忠実な執行者', edgeName:'真っ直ぐに伸び沈黙を守る規律の守護神', role:'Executor（ルーティン・品質維持）', niches:['品質管理','経理','オペレーション','保守'] },
+      'P-M-S': { organism:'オオサンショウウオ', safeName:'秩序を見守る静かな監査官', edgeName:'清流の岩陰に潜みし保守の番人', role:'Auditor（内部統制・コンプライアンス）', niches:['監査','法務','チェック','統制'] },
+      'P-M-I': { organism:'地衣類（レイシゴケ）', safeName:'不毛の地を生き抜く堅実派', edgeName:'菌と藻の契約で極限を生き延びる者', role:'Survivor（倒産・危機時の粘り腰）', niches:['危機対応','再建','保守','現場力'] },
+      'P-G-S': { organism:'クラゲ（ミズクラゲ）', safeName:'流れに逆らわない調和者', edgeName:'自己主張ゼロで漂う無害な調和', role:'Floater（チームの緩衝材）', niches:['サポート','接客','調整','ケア'] },
+      'P-G-I': { organism:'ナマケモノ', safeName:'最小エネルギーの自由人', edgeName:'代謝を削ぎ落とした徹底的ミニマリスト', role:'Minimalist（無駄なコストの徹底削減）', niches:['省力化','効率化','個人作業','研究補助'] },
+      'P-V-S': { organism:'オジギソウ', safeName:'違和感を察知する超感度センサー', edgeName:'微風に怯え瞬時に閉じる危険アラート', role:'Sensor（組織のエラー検知）', niches:['品質管理','ケア','安全管理','相談支援'] },
+      'P-V-I': { organism:'深海アンコウ', safeName:'狭い専門領域の深い観測者', edgeName:'漆黒の闇に灯を掲げる孤独な狩人', role:'Solitary（超ニッチな専門職・デバッグ）', niches:['デバッグ','専門研究','保守','検証'] }
+    };
+
+    const DETAIL_OVERRIDES = {
+      'F-R-S': {
+        overview: 'あなたは、バラバラな要素を「構造」として束ね、循環する場へ変えるタイプです。未来のイメージを描くだけで終わらず、実際に人・仕組み・役割を設計して、長く機能する生態系へ育てていく力があります。',
+        strengths: ['システム思考と構造化力','創造性と未来を描くビジョン','調整力と合意形成力','粘り強くやり切る実行力'],
+        risks: ['理想の構築に時間をかけすぎる','コントロールしすぎて硬直化する','他者の課題を抱え込みやすい','完璧主義でエネルギーを消耗する'],
+        recovery: ['自然や水辺でのリフレッシュ','手放す練習と余白の確保','信頼できる仲間との対話','小さな成功体験で循環を再起動する'],
+        niche:['教育','研究','企画','組織開発'],
+        quote:'世界を支配するのではなく、持続する環境を設計する。'
+      },
+      'F-V-S': {
+        overview: 'あなたは世界を「孤立した個体」ではなく、目に見えないつながりのネットワークとして捉える人です。環境の微細な変化や他者の感情の動きを察知しながら、それぞれをつなぎ直し、場のインフラになる力を持ちます。',
+        strengths: ['異分野の翻訳力','場の空気や文脈の感知','裏方としての連結力','コミュニティを育てる媒介性'],
+        risks: ['他者の感情を吸い込みすぎる','境界線が曖昧になり疲弊する','多方向へ広がりすぎて軸がぼやける','不穏な兆候に反応し続けて消耗する'],
+        recovery: ['一人で静かに整理する時間を持つ','情報の遮断時間を意図的に設ける','信頼できる相手に感情を言語化する','役割を絞ってコミット範囲を定める'],
+        niche:['教育','編集','コミュニティ','対話設計'],
+        quote:'世界を動かすのは、見える権力よりも、見えない接続だ。'
+      },
+      'D-M-S': {
+        overview: 'あなたは派手に目立つよりも、深い場所で人や知識を育てることに長けたタイプです。光が届きにくい領域であっても、静かに土壌を耕し、長期的な信頼や成熟を生み出します。',
+        strengths: ['深い観察と傾聴','長期育成への適性','情緒的な安全基地づくり','知的蓄積を支える持続性'],
+        risks: ['抱え込みすぎて消耗する','外部への発信が不足しやすい','慎重さゆえに機会を逃す','危険予知が強く悲観に寄る'],
+        recovery: ['成果を可視化する','短い発信を習慣化する','相談相手を固定して安心を確保する','休息を「責務」として予定化する'],
+        niche:['教育','研究','育成','相談支援'],
+        quote:'深海で育つ森は、静けさの中で最も強くなる。'
+      },
+      'D-V-I': {
+        overview: 'あなたは感受性と境界線の鋭さを両方持つタイプです。独自の世界観に深く潜り、その内部で強い色彩や意味を醸成します。誰にでも開くのではなく、必要な相手にだけ強烈な表現を届けます。',
+        strengths: ['独自世界の構築力','強い表現衝動','感情の深掘り','美意識と批評性'],
+        risks: ['刺激過多で疲れやすい','孤立が長引きやすい','防衛反応が強くなりすぎる','誤解されることへの痛みが大きい'],
+        recovery: ['表現と休息のリズムを分ける','安心できる少人数の場を持つ','作品化・言語化で内圧を逃がす','物理的に刺激を減らす'],
+        niche:['アート','デザイン','創作','批評'],
+        quote:'毒は危険の印ではなく、境界線を知らせる光でもある。'
+      },
+      'H-R-S': {
+        overview: 'あなたは人と仕組みを回し、チームを前へ進める実務中枢です。既存のルールや手順を活かしながら、多くの人が迷わず動けるオペレーションを作ることに強みがあります。',
+        strengths: ['実行と運営の安定感','人を巻き込む推進力','段取りと役割整理','継続的な改善'],
+        risks: ['効率優先で余白が減る','形式が目的化しやすい','他者に合わせすぎて疲れる','抱え込み型のリーダーになりやすい'],
+        recovery: ['目的と手段を定期的に見直す','役割委譲を練習する','遊びや余白を設計に戻す','短期的な達成を祝う'],
+        niche:['PM','運営','実務','教育運営'],
+        quote:'組織を前へ進めるのは、熱意だけではなく、回る仕組みだ。'
+      },
+      'H-V-S': {
+        overview: 'あなたは場に潜む脅威や綻びをいち早く察知し、集団を守るために行動するタイプです。危機時の頼もしさが際立ち、普段から境界とルールを意識しながら共同体の安全を守ります。',
+        strengths: ['危機察知','防衛的リーダーシップ','結束形成','責任感'],
+        risks: ['警戒が強くなりすぎる','外部を敵視しやすい','緊張状態が続き疲れやすい','安心を得るまでコントロールが強まる'],
+        recovery: ['安全確認の基準を明文化する','休止モードを意図的に作る','信頼できる相手と不安を共有する','脅威以外のポジティブ情報を取り入れる'],
+        niche:['安全管理','危機対応','マネジメント','教育'],
+        quote:'群れを守る牙は、恐れではなく責任感から生まれる。'
+      },
+      'P-R-I': {
+        overview: 'あなたは無駄を嫌い、安定した品質を高い再現性で維持できるタイプです。派手さはなくても、継続と規律を重ねることで、チームや組織の信頼性を下支えします。',
+        strengths: ['再現性と安定感','品質維持','ルーティン耐性','静かな集中力'],
+        risks: ['変化への抵抗が強まりやすい','自分の方法への固着','融通が利かなくなる','孤立した努力になりやすい'],
+        recovery: ['小さな変化に慣れる','改善提案を定例化する','一人で抱えず相談する','成果を見える化して自己効力感を保つ'],
+        niche:['品質管理','経理','保守','運用'],
+        quote:'沈黙の継続が、最後に最も強い信用を生む。'
+      },
+      'P-V-S': {
+        overview: 'あなたは一見静かでも、場の違和感や小さなエラーを誰より早く察知するタイプです。組織や共同体の“センサー”として機能し、危機が大きくなる前に注意を促す価値があります。',
+        strengths: ['違和感の早期察知','小さな異常への反応性','周囲への配慮','守りの感受性'],
+        risks: ['不安を抱え込みやすい','過敏さが疲労へ直結する','周囲の温度差に傷つきやすい','自信を失いやすい'],
+        recovery: ['体調と情報量のセルフモニタリング','安心できる人へ早めに共有','静かな回復空間を確保する','気づきをメモ化して整理する'],
+        niche:['ケア','安全管理','品質管理','相談支援'],
+        quote:'世界を守るのは、大きな声だけではなく、小さな違和感に気づく感性だ。'
+      }
+    };
+
+    const FACTOR_NOTES = {
+      O: '新しい知識・美・アイデアへの感受性',
+      C: '計画・責任・秩序への統制力',
+      E: '社交性・外部刺激・報酬への感受性',
+      A: '共感性・利他性・対人調和への志向',
+      N: '不安・緊張・環境変化への警戒感度'
+    };
+
+    const DEMO_CODES = ['F-R-S','F-V-S','D-M-S','D-V-I','H-R-S','H-V-S','P-R-I','P-V-S'];
+    const SCALE_LABELS = ['1', '2', '3', '4', '5'];
+    const SCALE_HINTS = ['全く当てはまらない','あまり当てはまらない','どちらともいえない','やや当てはまる','非常に当てはまる'];
+
+    const STATE = {
+      currentSection: 'report',
+      answers: JSON.parse(localStorage.getItem('psy_code_answers') || '{}'),
+      demoIndex: 0
+    };
+
+    function saveState() {
+      localStorage.setItem('psy_code_answers', JSON.stringify(STATE.answers));
+    }
+
+    function getIcon(name) {
+      const map = {
+        summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l4-5 4 3 5-7 3 4"></path><path d="M4 20h16"></path></svg>',
+        report: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6M10 17h6"></path></svg>',
+        eco: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.9 2.9M16.2 16.2l2.9 2.9M4.9 19.1l2.9-2.9M16.2 7.8l2.9-2.9"></path></svg>',
+        growth: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20V10"></path><path d="M8 14l4-4 4 4"></path><path d="M6 21h12"></path></svg>',
+        box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4-8 4-8-4 8-4Z"></path><path d="M4 7v10l8 4 8-4V7"></path><path d="M12 11v10"></path></svg>',
+        person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3"></circle><path d="M5 20c1.7-3.3 4.1-5 7-5s5.3 1.7 7 5"></path></svg>',
+        star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 18l-5.8 3 1.1-6.5L2.6 10l6.5-1L12 3Z"></path></svg>',
+        warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2.7 19h18.6L12 3Z"></path><path d="M12 9v4"></path><circle cx="12" cy="16.5" r=".8" fill="currentColor"></circle></svg>',
+        leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 5c-6 0-10 3.5-10 8.5A5.5 5.5 0 0 0 13.5 19C18.5 19 22 15 22 9c0-1.5-.2-2.8-.6-4H18Z"></path><path d="M8 20c0-5 3-8 9-11"></path></svg>',
+        niche: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h16"></path><path d="M12 4v16"></path><circle cx="12" cy="12" r="9"></circle></svg>',
+        compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="m15.7 8.3-2.4 7.4-7.4 2.4 2.4-7.4 7.4-2.4Z"></path></svg>'
+      };
+      return map[name] || map.summary;
+    }
+
+    function coralSVG() {
+      return `
+      <svg class="reef" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#d8fff8" stop-opacity=".95"/>
+            <stop offset="48%" stop-color="#53f1e0" stop-opacity=".88"/>
+            <stop offset="100%" stop-color="#089bab" stop-opacity=".8"/>
+          </linearGradient>
+        </defs>
+        <path d="M23 182c8-19 10-33 10-51 0-17 13-29 15-47 1-8 7-15 10-25 4 8 4 22 3 35-1 16 2 31 7 40 7-16 8-36 12-52 4-16 13-28 17-38 2 14 1 25 3 38 3 18 9 33 15 42 5-12 3-33 8-47 4-11 11-18 16-28 5 8 8 22 9 35 1 14 6 26 13 35 6-10 6-25 8-37 2-14 10-25 17-36 6 11 7 22 7 33 0 18 6 34 15 49 9-7 15-18 24-24 10-7 20-9 29-15-5 14-10 20-16 29-9 13-11 28-13 42H23Z" fill="url(#g1)" fill-opacity=".34"/>
+        <path d="M53 180c2-20 7-33 7-49 0-23 10-37 18-59M82 180c1-16 1-27 5-43 4-18 13-32 18-49M113 180c0-18 4-34 8-48 4-16 13-33 22-49M145 180c2-18 4-25 8-40 4-18 4-34 3-52M180 180c2-16 8-24 11-40 3-17 3-32 6-50M212 180c4-18 12-31 16-49" stroke="url(#g1)" stroke-width="7" stroke-linecap="round" opacity=".9"/>
+      </svg>`;
+    }
+
+    function getDetailedCopy(code, result) {
+      const meta = TYPE_META[code];
+      const override = DETAIL_OVERRIDES[code];
+      const strengths = [];
+      const risks = [];
+      const recovery = [];
+      const topPairs = Object.entries(result.scores).sort((a,b)=>b[1]-a[1]);
+      const lowPairs = Object.entries(result.scores).sort((a,b)=>a[1]-b[1]);
+
+      if (override) return {
+        overview: override.overview,
+        strengths: override.strengths,
+        risks: override.risks,
+        recovery: override.recovery,
+        niche: override.niche,
+        quote: override.quote
+      };
+
+      const strengthMap = {
+        O:'新規性への感受性と発想力', C:'実行の再現性と計画性', E:'対外発信と巻き込み力', A:'共感と協働のしなやかさ', N:'危険予知と感受性'
+      };
+      const riskMap = {
+        O:'アイデアが広がりすぎて焦点がぼやける', C:'構造や手順に固着しやすい', E:'刺激過多でエネルギーを使い切りやすい', A:'他者に合わせすぎて境界が薄くなる', N:'不安や警戒が過剰になりやすい'
+      };
+      const recoveryMap = {
+        O:'思考を一度図式化してアイデアを絞る', C:'優先順位を三つまでに限定する', E:'一人で回復する静かな時間を確保する', A:'自分の意思を短く言語化しておく', N:'安心を回復するルーティンを作る'
+      };
+      strengths.push(strengthMap[topPairs[0][0]], strengthMap[topPairs[1][0]], `${meta.role.split('（')[0]}としての機能発揮`, `${meta.organism}らしい独自の生存戦略`);
+      risks.push(riskMap[topPairs[0][0]], riskMap[topPairs[1][0]], `${L1_META[result.layer1.primary].jp}と${L2_META[result.layer2.primary].jp}の特性がぶつかると疲労しやすい`, '役割の固定化による視野の狭まり');
+      recovery.push(recoveryMap[lowPairs[0][0]], recoveryMap[lowPairs[1][0]], '役割期待から少し距離を置く時間をつくる', '信頼できる相手に状態を言語化する');
+      const overview = `あなたは「${meta.organism}」に象徴されるように、${L1_META[result.layer1.primary].summary}、${L2_META[result.layer2.primary].summary}、そして${L3_META[result.layer3.primary].summary}タイプです。${meta.safeName}として、場の中で${meta.role.split('（')[0]}の役割を自然に担いやすい傾向があります。`;
+      return {
+        overview,
+        strengths,
+        risks,
+        recovery,
+        niche: meta.niches,
+        quote: `${meta.organism}のように、あなたの強さは「らしさ」を守りながら機能することにある。`
+      };
+    }
+
+    
+
+    // ==========================================
+    // 32タイプ全文言：追加詳細コピー v0.2
+    // ==========================================
+    Object.assign(DETAIL_OVERRIDES, {
+      "F-R-I": {
+            "overview": "あなたは、まだ誰も十分に使っていない水面へ大きな葉を広げ、そこを自分の活動領域へ変えていくタイプです。新しい機会に素早く反応し、強い構造化力でアイデアを現実の市場や場へ展開します。協調よりも、自分のビジョンと境界を明確にすることで成果を生み出します。",
+            "strengths": [
+                  "未開拓領域を見抜く視野",
+                  "構想を形にする実装力",
+                  "自分の軸を保つ境界線",
+                  "場の主導権を握る推進力"
+            ],
+            "risks": [
+                  "周囲のペースを置き去りにしやすい",
+                  "光を独占しすぎて反発を招く",
+                  "協力者の感情を軽視しやすい",
+                  "勝ち筋に集中しすぎて柔軟性が落ちる"
+            ],
+            "recovery": [
+                  "成果ではなく関係性を確認する時間を持つ",
+                  "他者の小さな貢献を可視化する",
+                  "支配ではなく共存可能な境界を設計する",
+                  "短期勝利より長期的な生態系を意識する"
+            ],
+            "niche": [
+                  "起業",
+                  "新規事業",
+                  "ブランド開発",
+                  "市場開拓"
+            ],
+            "quote": "光を奪うだけでは森は続かない。あなたの構造が、次の生態系を生む。"
+      },
+      "F-M-S": {
+            "overview": "あなたは、刺激や機会をただ受け取るのではなく、状況を読み、最も効果的なタイミングで動く戦略的な共生者です。人との関係性を大切にしながらも、成果につながる導線を設計し、偶然をチャンスへ変える力があります。",
+            "strengths": [
+                  "機会を逃さない観察力",
+                  "相手の欲求を読む対人感度",
+                  "準備と即応のバランス",
+                  "勝ち筋を設計する戦略性"
+            ],
+            "risks": [
+                  "計算高さが誤解されやすい",
+                  "警戒しすぎて自然な交流が固くなる",
+                  "期待に応えようとして疲弊する",
+                  "成果を急ぎすぎて余白を失う"
+            ],
+            "recovery": [
+                  "損得を離れた対話時間を作る",
+                  "勝つためでなく味わうための活動を入れる",
+                  "緊張を緩める身体的休息を取る",
+                  "相手の反応を読みすぎない練習をする"
+            ],
+            "niche": [
+                  "マーケティング",
+                  "交渉",
+                  "編集",
+                  "営業企画"
+            ],
+            "quote": "罠ではなく、準備された優しさが機会をつかまえる。"
+      },
+      "F-M-I": {
+            "overview": "あなたは、複雑な迷路のような環境から最短ルートを見つけ、資源を最も効率よく流すタイプです。外の世界へ積極的にアクセスしつつ、感情的な同調よりも構造・効率・成果を優先します。独自のネットワーク感覚で、混乱を最適化へ変えていきます。",
+            "strengths": [
+                  "リソース配分の最適化",
+                  "複雑な状況のルート発見",
+                  "実験と改善の速さ",
+                  "他者に流されない判断軸"
+            ],
+            "risks": [
+                  "人間関係を手段化して見られやすい",
+                  "効率優先で情緒的ケアが不足する",
+                  "最短経路に固執して迂回の価値を見落とす",
+                  "疲労に気づかず走り続ける"
+            ],
+            "recovery": [
+                  "効率化しない遊びを意図的に入れる",
+                  "関係性そのものを味わう時間を持つ",
+                  "最適解ではなく納得解を探す",
+                  "身体の疲労サインを記録する"
+            ],
+            "niche": [
+                  "データ分析",
+                  "業務改善",
+                  "UX設計",
+                  "プロダクト運用"
+            ],
+            "quote": "最短距離を知る者は、ときに遠回りの意味も学ぶ。"
+      },
+      "F-G-S": {
+            "overview": "あなたは、境界を軽やかに飛び越え、場に新しい空気を運ぶタイプです。深く固定されるよりも、流れに乗って人やアイデアをつなぎ、楽観的な熱量で周囲の創造性に火をつけます。自由さと共感性が、チームの停滞を動かします。",
+            "strengths": [
+                  "場を明るくする表現力",
+                  "新しい流れへの適応力",
+                  "人を巻き込む軽やかさ",
+                  "アイデアを試すフットワーク"
+            ],
+            "risks": [
+                  "継続や定着が弱くなりやすい",
+                  "楽しさを優先して細部が抜ける",
+                  "流れに乗りすぎて自分の核が薄くなる",
+                  "約束や締切への意識が甘くなる"
+            ],
+            "recovery": [
+                  "一つだけ継続する小さな習慣を決める",
+                  "盛り上がり後の着地担当を決める",
+                  "感情の波が落ち着く時間を待つ",
+                  "自分の本当に好きなテーマへ戻る"
+            ],
+            "niche": [
+                  "イベント",
+                  "広報",
+                  "表現活動",
+                  "コミュニティづくり"
+            ],
+            "quote": "水面を跳ねる一瞬が、停滞した海に新しい波紋を広げる。"
+      },
+      "F-G-I": {
+            "overview": "あなたは、定住よりも移動、安定よりも変化を好む放浪する発想家です。周囲に合わせすぎず、自分の直感に従って新しい場所へ種を撒きます。秩序化されすぎた環境では力が弱まりますが、未知の荒野では独自の突破口を見つけます。",
+            "strengths": [
+                  "常識外の発想",
+                  "変化への耐性",
+                  "独立した行動力",
+                  "新しい可能性を撒く力"
+            ],
+            "risks": [
+                  "継続責任から逃げたように見られやすい",
+                  "周囲との合意形成が不足する",
+                  "アイデアが散らばり成果に残りにくい",
+                  "孤立と自由を混同しやすい"
+            ],
+            "recovery": [
+                  "着地させるプロジェクトを一つ選ぶ",
+                  "最低限の共有ルールを作る",
+                  "自由を守るための生活基盤を整える",
+                  "成果物として種を残す"
+            ],
+            "niche": [
+                  "コンセプト開発",
+                  "創作",
+                  "R&D",
+                  "新規企画"
+            ],
+            "quote": "風に転がる者だけが、まだ名のない場所に種を置ける。"
+      },
+      "F-V-I": {
+            "overview": "あなたは、強い感受性と魅力を持ちながら、自分の境界を侵されることには鋭く反応するタイプです。新しい刺激や表現へ向かう力は高い一方で、安易な同調を拒みます。美しさと警告を同時に放ち、近づく者に距離感を学ばせます。",
+            "strengths": [
+                  "強烈な美意識",
+                  "境界線を守る力",
+                  "刺激への鋭い反応性",
+                  "惹きつける表現力"
+            ],
+            "risks": [
+                  "防衛反応が攻撃に見えやすい",
+                  "感情の揺れが創作や関係に影響する",
+                  "近づきたい人まで遠ざける",
+                  "刺激過多で消耗しやすい"
+            ],
+            "recovery": [
+                  "境界線を言葉で先に伝える",
+                  "安全な表現場所を確保する",
+                  "刺激を減らす回復日を作る",
+                  "信頼できる少人数にだけ本音を開く"
+            ],
+            "niche": [
+                  "アート",
+                  "デザイン",
+                  "ブランド表現",
+                  "批評"
+            ],
+            "quote": "透明な美しさは、弱さではない。境界を守る光でもある。"
+      },
+      "D-R-S": {
+            "overview": "あなたは、表面的な流行に振り回されず、深い知恵と長期的な視野で人や場を支える精神的守護者です。外へ派手に広がるよりも、内面に蓄えた経験や理念をもとに、乾いた大地へ水を届けるように周囲を支えます。",
+            "strengths": [
+                  "長期的な視野",
+                  "理念を保つ力",
+                  "静かな包容力",
+                  "知恵を蓄積する習慣"
+            ],
+            "risks": [
+                  "自分の価値観に固まりやすい",
+                  "若い変化や軽さを受け入れにくい",
+                  "支える役割を背負いすぎる",
+                  "助けを求めるのが遅くなる"
+            ],
+            "recovery": [
+                  "守るべき理念と変えてよい方法を分ける",
+                  "年下や異質な相手から学ぶ",
+                  "相談される時間と休む時間を切り分ける",
+                  "自分自身の乾きを満たす"
+            ],
+            "niche": [
+                  "教育",
+                  "人材育成",
+                  "思想設計",
+                  "アーカイブ"
+            ],
+            "quote": "大樹の影は、誰かを隠すためではなく、育つ時間を与えるためにある。"
+      },
+      "D-R-I": {
+            "overview": "あなたは、外の流行や騒がしさに左右されず、限られた資源で長く機能する自立型システムを築くタイプです。変化を追い続けるより、自分の中に確立した構造を磨き続けることで、年月に耐える専門性を育てます。",
+            "strengths": [
+                  "極めて高い継続力",
+                  "自律した専門性",
+                  "少ない資源で維持する力",
+                  "ぶれない判断基準"
+            ],
+            "risks": [
+                  "新しい環境への適応が遅れやすい",
+                  "他者の助言を拒みやすい",
+                  "孤立が固定化する",
+                  "自分のやり方を更新しにくい"
+            ],
+            "recovery": [
+                  "小さな実験として変化を取り入れる",
+                  "専門外の人に説明してみる",
+                  "守るものと捨てるものを棚卸しする",
+                  "休息をシステムに組み込む"
+            ],
+            "niche": [
+                  "専門研究",
+                  "品質保証",
+                  "設計",
+                  "職人型業務"
+            ],
+            "quote": "荒野で生き残るのは、強さだけでなく、無駄を削ぎ落とした設計だ。"
+      },
+      "D-M-I": {
+            "overview": "あなたは、内側の深海に潜り、複雑な構造を冷静に読み解く分析者です。感情的な盛り上がりよりも、整合性・理論・美しい構造を重視します。自分の殻の中で思考を熟成させ、精密な解を生み出します。",
+            "strengths": [
+                  "論理構築力",
+                  "深い分析力",
+                  "冷静な観察",
+                  "複雑な情報を整理する力"
+            ],
+            "risks": [
+                  "他者に冷たく見られやすい",
+                  "考えすぎて行動が遅れる",
+                  "完璧な理屈にこもりやすい",
+                  "感情表現が不足する"
+            ],
+            "recovery": [
+                  "不完全な仮説を早めに出す",
+                  "感情もデータとして扱う",
+                  "身体を動かして思考を外に出す",
+                  "説明相手を想定して言語化する"
+            ],
+            "niche": [
+                  "研究",
+                  "分析",
+                  "設計",
+                  "ドキュメント作成"
+            ],
+            "quote": "殻にこもることは逃避ではない。深海で理論を磨くための実験室だ。"
+      },
+      "D-G-S": {
+            "overview": "あなたは、内面に豊かな物語やイメージを育て、それを人とのやさしい共有へつなげる空想的共生者です。強い統制よりも、余白・夢・感性を大切にし、場に柔らかなビジョンをもたらします。",
+            "strengths": [
+                  "物語を生む想像力",
+                  "やさしい共感性",
+                  "場を和ませる柔らかさ",
+                  "既存の枠を緩める力"
+            ],
+            "risks": [
+                  "現実の締切や細部が抜けやすい",
+                  "夢の中に退避しすぎる",
+                  "対立を避けて曖昧にしやすい",
+                  "実装担当がいないと形になりにくい"
+            ],
+            "recovery": [
+                  "小さな成果物へ落とし込む",
+                  "締切をやさしく支える相手を見つける",
+                  "夢と現実の橋渡しメモを作る",
+                  "余白を罪悪感なく守る"
+            ],
+            "niche": [
+                  "創作",
+                  "教育",
+                  "物語設計",
+                  "ファシリテーション"
+            ],
+            "quote": "夜に閉じる葉は、夢を見るためにある。"
+      },
+      "D-G-I": {
+            "overview": "あなたは、既存の分類に収まりにくい問いや視点を持つ奇才思想家です。外界への過剰な適応よりも、自分の内側で独自の進化を進めます。周囲からは不可解に見えても、常識の外から新しい可能性を差し出します。",
+            "strengths": [
+                  "常識を疑う力",
+                  "独自進化する思考",
+                  "枠外の発想",
+                  "孤独に耐える創造性"
+            ],
+            "risks": [
+                  "理解されない感覚が強まりやすい",
+                  "実用化まで距離がある",
+                  "協働の言語化が不足する",
+                  "奇抜さ自体が目的化する"
+            ],
+            "recovery": [
+                  "アイデアの用途を一つ決める",
+                  "理解者に翻訳を手伝ってもらう",
+                  "小さな実験で外界と接続する",
+                  "自分の異質さを責めない"
+            ],
+            "niche": [
+                  "未来構想",
+                  "研究開発",
+                  "思想",
+                  "アート"
+            ],
+            "quote": "不可解さは欠点ではない。まだ世界が名前を持たないだけだ。"
+      },
+      "D-V-S": {
+            "overview": "あなたは、深い感受性で人の痛みや場の毒素を察知し、それを癒しや変化の材料へ変える錬金術師です。表面では静かでも、内側では複雑な感情や意味を扱い、毒にも薬にもなる洞察を育てています。",
+            "strengths": [
+                  "深い傾聴力",
+                  "痛みの意味を汲み取る力",
+                  "感情の変化への敏感さ",
+                  "癒しと変容を促す関わり"
+            ],
+            "risks": [
+                  "他者の苦しみを抱え込みすぎる",
+                  "境界が曖昧になり消耗する",
+                  "ネガティブ情報に沈みやすい",
+                  "自分のケアを後回しにする"
+            ],
+            "recovery": [
+                  "相談を受ける時間に境界を設ける",
+                  "身体的な安心を回復する",
+                  "感情を創作や記録へ移す",
+                  "毒と薬を分けて整理する"
+            ],
+            "niche": [
+                  "相談支援",
+                  "福祉",
+                  "臨床教育",
+                  "伴走支援"
+            ],
+            "quote": "毒を知る者だけが、薬の深さを知っている。"
+      },
+      "H-R-I": {
+            "overview": "あなたは、既存の場やルールを活用しながら、資源を獲得し、実務的に勢力を広げていく推進者です。人前で動く力と実行力を持ちますが、調和よりも成果や主導権を優先しやすい傾向があります。",
+            "strengths": [
+                  "営業的な突破力",
+                  "実務を前へ進める力",
+                  "主導権を握る判断力",
+                  "既存資源の活用力"
+            ],
+            "risks": [
+                  "押しが強く見られやすい",
+                  "他者の余白を奪いやすい",
+                  "短期成果を優先しすぎる",
+                  "協力者の納得形成が不足する"
+            ],
+            "recovery": [
+                  "相手の利益を先に確認する",
+                  "勢いより合意形成を優先する場を作る",
+                  "勝ち負け以外の指標を持つ",
+                  "支配ではなく貢献の言葉で伝える"
+            ],
+            "niche": [
+                  "営業",
+                  "開拓",
+                  "事業推進",
+                  "交渉"
+            ],
+            "quote": "覆い尽くす力は、育てる方向へ使えば森の推進力になる。"
+      },
+      "H-M-S": {
+            "overview": "あなたは、境界が揺らぎやすい場所に根を張り、集団が崩れないよう安定させるリーダーです。外部との接点やリスクを監視しながら、内部の調和を守る実権派の支え役として機能します。",
+            "strengths": [
+                  "リスクマネジメント",
+                  "境界調整",
+                  "集団の安定化",
+                  "現実的な判断"
+            ],
+            "risks": [
+                  "守りが強くなり変化を止めやすい",
+                  "責任を背負い込みやすい",
+                  "警戒が周囲へ伝染する",
+                  "曖昧さに疲れやすい"
+            ],
+            "recovery": [
+                  "リスクと可能性を同じ紙に書く",
+                  "守る範囲を明確化する",
+                  "一人で防波堤にならない",
+                  "安全が確認できたら緩める合図を作る"
+            ],
+            "niche": [
+                  "リスク管理",
+                  "法務",
+                  "組織調整",
+                  "ガバナンス"
+            ],
+            "quote": "境界を守る根があるから、潮の変わる場所にも森は育つ。"
+      },
+      "H-M-I": {
+            "overview": "あなたは、既存の仕組みを速く広げ、同じ品質で再現できる形に整えるタイプです。人と接しながらも、個別の感情より標準化・効率・拡張性を重視し、組織をスケールさせる力があります。",
+            "strengths": [
+                  "標準化とマニュアル化",
+                  "拡張性の設計",
+                  "ルールを運用に落とす力",
+                  "現場を速く整える力"
+            ],
+            "risks": [
+                  "画一化しすぎて多様性を失う",
+                  "個別事情への配慮が薄れる",
+                  "ルールが硬直化する",
+                  "効率化のために反発を生む"
+            ],
+            "recovery": [
+                  "例外を許す余白を設計する",
+                  "現場の声を定期的に拾う",
+                  "標準化の目的を言語化する",
+                  "人間らしい遊びを運用に残す"
+            ],
+            "niche": [
+                  "運用設計",
+                  "標準化",
+                  "品質管理",
+                  "スケール支援"
+            ],
+            "quote": "増殖する秩序は、柔らかい節を持つと折れにくい。"
+      },
+      "H-G-S": {
+            "overview": "あなたは、場のノリや時代の空気に敏感に同調し、大きなうねりを作るタイプです。堅い秩序よりも、その場の熱量や共感の波を重視し、人の気持ちをそろえて流行やムーブメントを生み出します。",
+            "strengths": [
+                  "トレンド感度",
+                  "場を盛り上げる力",
+                  "共感の波を作る力",
+                  "柔軟な対人適応"
+            ],
+            "risks": [
+                  "流行に流されやすい",
+                  "本音より空気を優先する",
+                  "継続や検証が弱くなりやすい",
+                  "集団の熱に飲まれやすい"
+            ],
+            "recovery": [
+                  "流行から一度離れて自分の好きを確認する",
+                  "盛り上がりを記録に残す",
+                  "少人数で本音を話す",
+                  "継続担当と組む"
+            ],
+            "niche": [
+                  "SNS",
+                  "広報",
+                  "イベント",
+                  "コミュニティ運営"
+            ],
+            "quote": "群れのうねりは、ひとりでは届かない場所へ人を運ぶ。"
+      },
+      "H-G-I": {
+            "overview": "あなたは、外部の人脈や環境を軽やかに渡り歩き、必要な資源を調達する適応者です。関係を作る力は高い一方で、深い同調や長期的責任よりも、柔軟な移動と機会活用を重視します。",
+            "strengths": [
+                  "外部リソース調達",
+                  "人脈形成",
+                  "環境適応",
+                  "軽やかな交渉力"
+            ],
+            "risks": [
+                  "都合よく見られやすい",
+                  "深い信頼関係が育ちにくい",
+                  "責任の所在が曖昧になる",
+                  "短期的な得に寄りやすい"
+            ],
+            "recovery": [
+                  "長く関わる相手を少数選ぶ",
+                  "受け取った資源を返す仕組みを作る",
+                  "関係の目的を明確にする",
+                  "移動しすぎた後は定着時間を持つ"
+            ],
+            "niche": [
+                  "アライアンス",
+                  "渉外",
+                  "営業",
+                  "プロデュース"
+            ],
+            "quote": "寄りかかる力は、返す循環を持つと共生へ変わる。"
+      },
+      "H-V-I": {
+            "overview": "あなたは、外界と関わる力を持ちながらも、自分の縄張りや専門領域への侵入には強く反応する防衛者です。社交性があるからこそ、自分の領域を守る必要性を深く理解しており、境界線の番人として機能します。",
+            "strengths": [
+                  "専門領域の防衛",
+                  "危険への即応",
+                  "率直な主張",
+                  "境界線の明確さ"
+            ],
+            "risks": [
+                  "反応が過剰に見えやすい",
+                  "他者の助言を侵入と感じやすい",
+                  "対立が長引きやすい",
+                  "防衛にエネルギーを使いすぎる"
+            ],
+            "recovery": [
+                  "何を守りたいのかを言語化する",
+                  "侵入と協力を区別する",
+                  "安心できるルールを先に共有する",
+                  "防衛を解除できる相手を作る"
+            ],
+            "niche": [
+                  "知財",
+                  "品質保証",
+                  "専門職",
+                  "技術保守"
+            ],
+            "quote": "棘は攻撃のためだけでなく、大切な領域を知らせる標識でもある。"
+      },
+      "P-R-S": {
+            "overview": "あなたは、目立たない場所で場の土台を整え、次の成長を可能にする基礎づくりの人です。新しい刺激よりも安定した関係や継続を大切にし、静かな協調性で周囲が安心して根を張れる環境を作ります。",
+            "strengths": [
+                  "安心感のある支援",
+                  "地道な継続",
+                  "周辺メンバーを支える力",
+                  "場を荒らさない穏やかさ"
+            ],
+            "risks": [
+                  "自分の貢献が見えにくい",
+                  "変化への一歩が遅れやすい",
+                  "支えるだけで終わりやすい",
+                  "意見を飲み込みすぎる"
+            ],
+            "recovery": [
+                  "自分の貢献を記録する",
+                  "小さな自己主張を練習する",
+                  "支える相手を選ぶ",
+                  "環境を整えることを価値として認める"
+            ],
+            "niche": [
+                  "学習支援",
+                  "サポート",
+                  "事務",
+                  "育成補助"
+            ],
+            "quote": "苔がなければ、岩肌に次の森は始まらない。"
+      },
+      "P-M-S": {
+            "overview": "あなたは、静かな場所から秩序の乱れを見守る監査官タイプです。派手な主張は少なくても、長期的に場の清潔さや公正さを保つことに力を発揮します。安心できる環境を守るため、細かな違和感にも気づきます。",
+            "strengths": [
+                  "内部統制",
+                  "静かな観察力",
+                  "ルール遵守",
+                  "長期的な信頼維持"
+            ],
+            "risks": [
+                  "変化を警戒しすぎる",
+                  "厳しさが伝わりにくい形で出る",
+                  "問題を一人で抱えやすい",
+                  "発信が遅れて事後対応になる"
+            ],
+            "recovery": [
+                  "気づきを早めに共有する",
+                  "ルールの背景を説明する",
+                  "休むことで観察力を保つ",
+                  "完璧な清流を求めすぎない"
+            ],
+            "niche": [
+                  "監査",
+                  "コンプライアンス",
+                  "校正",
+                  "安全確認"
+            ],
+            "quote": "清流を守る者は、岩陰からでも生態系を支えている。"
+      },
+      "P-M-I": {
+            "overview": "あなたは、厳しい環境でも自分の内部システムを保ち、粘り強く生き抜く堅実派です。外部との交流や変化に大きく頼らず、限られた資源と確かな警戒心を使って、危機の中でも崩れにくい基盤を作ります。",
+            "strengths": [
+                  "極限環境への耐性",
+                  "自己完結力",
+                  "危機時の粘り",
+                  "堅実なリスク管理"
+            ],
+            "risks": [
+                  "閉じた世界に固まりやすい",
+                  "新しい助けを受け入れにくい",
+                  "慎重さが停滞へ変わる",
+                  "自分だけで耐えすぎる"
+            ],
+            "recovery": [
+                  "支援を受ける条件を決めておく",
+                  "危機以外の楽しみを持つ",
+                  "閉じた仕組みを定期的に換気する",
+                  "小さな外部接続を維持する"
+            ],
+            "niche": [
+                  "危機対応",
+                  "保守",
+                  "現場再建",
+                  "継続業務"
+            ],
+            "quote": "不毛の地で生きる力は、静かな契約と粘りから生まれる。"
+      },
+      "P-G-S": {
+            "overview": "あなたは、強く主張するよりも、場の流れを乱さずに漂いながら調和を保つタイプです。大きな野心や強い統制よりも、穏やかな共存と柔らかな存在感によって、チームの緊張を和らげます。",
+            "strengths": [
+                  "場を和ませる柔らかさ",
+                  "対立を大きくしない力",
+                  "自然な調和",
+                  "受容的な存在感"
+            ],
+            "risks": [
+                  "自分の意見が見えにくい",
+                  "流されすぎて責任が曖昧になる",
+                  "成長機会を逃しやすい",
+                  "無害さを期待されすぎる"
+            ],
+            "recovery": [
+                  "小さな希望を一つ言葉にする",
+                  "流れに乗る前に目的を確認する",
+                  "役割を明確にする",
+                  "ひとりの時間で本音を拾う"
+            ],
+            "niche": [
+                  "サポート",
+                  "接客",
+                  "ケア",
+                  "緩衝役"
+            ],
+            "quote": "漂うことも、場を濁らせないひとつの才能だ。"
+      },
+      "P-G-I": {
+            "overview": "あなたは、最小限のエネルギーで自分の生活や作業を保つミニマリストです。外界の刺激や過剰な義務に巻き込まれず、必要なものだけを選び取ります。省エネに見えても、無駄を削る感覚は大きな価値になります。",
+            "strengths": [
+                  "無駄の削減",
+                  "省エネ設計",
+                  "自分のペースを守る力",
+                  "必要最小限を見極める力"
+            ],
+            "risks": [
+                  "怠けと誤解されやすい",
+                  "機会への反応が遅い",
+                  "関係や責任を避けすぎる",
+                  "成長刺激が不足する"
+            ],
+            "recovery": [
+                  "最小行動を一つ決める",
+                  "省エネの目的を説明する",
+                  "必要な刺激だけを選んで入れる",
+                  "得意な効率化を他者に共有する"
+            ],
+            "niche": [
+                  "省力化",
+                  "効率化",
+                  "個人作業",
+                  "研究補助"
+            ],
+            "quote": "少なく動くことは、何もしていないことではない。資源を守る戦略だ。"
+      },
+      "P-V-I": {
+            "overview": "あなたは、狭く深い専門領域に灯りを掲げ、静かに観測する孤独な探究者です。外界への広い交流よりも、自分の領域の中で微細な変化や獲物を確実に捉えることに長けています。暗闇を恐れず、深さを武器にします。",
+            "strengths": [
+                  "ニッチ領域への集中",
+                  "微細な異常検知",
+                  "孤独に耐える観察力",
+                  "深い専門性"
+            ],
+            "risks": [
+                  "孤立が固定化しやすい",
+                  "不安を内側に溜め込みやすい",
+                  "視野が狭まりやすい",
+                  "発信不足で価値が伝わりにくい"
+            ],
+            "recovery": [
+                  "小さな成果を外に出す",
+                  "専門外の人へ一文で説明する",
+                  "暗い場所から出る時間を予定化する",
+                  "信頼できる観測仲間を作る"
+            ],
+            "niche": [
+                  "デバッグ",
+                  "専門研究",
+                  "検証",
+                  "保守"
+            ],
+            "quote": "暗闇に灯る小さな光が、誰にも見えない世界を観測している。"
+      }
+});
+
+    function generateDemoAnswers(code) {
+      const [l1, l2, l3] = code.split('-');
+      const targetO = (l1 === 'F' || l1 === 'D') ? 5 : 1;
+      const targetE = (l1 === 'F' || l1 === 'H') ? 5 : 1;
+      const targetC = (l2 === 'R' || l2 === 'M') ? 5 : 1;
+      const targetN = (l2 === 'M' || l2 === 'V') ? 5 : 1;
+      const targetA = (l3 === 'S') ? 5 : 1;
+      const vals = {O: targetO, C: targetC, E: targetE, A: targetA, N: targetN};
+      const answers = {};
+      QUESTIONS.forEach(q => {
+        let base = vals[q.factor];
+        if (q.id % 5 === 0) base = Math.max(1, Math.min(5, base - 1));
+        if (q.id % 7 === 0) base = Math.max(1, Math.min(5, base + 1));
+        answers[q.id] = q.reverse ? (6 - base) : base;
+      });
+      return answers;
+    }
+
+    function calcScale(values) {
+      const sorted = Object.entries(values).sort((a,b)=>b[1]-a[1]);
+      const diff = sorted[0][1] - sorted[1][1];
+      const label = diff === 0 ? '同率型' : diff >= 20 ? '明確なタイプ' : diff >= 10 ? 'やや混合型' : 'ハイブリッド型';
+      return {
+        primary: sorted[0][0],
+        primaryScore: Math.round(sorted[0][1]),
+        secondary: sorted[1][0],
+        secondaryScore: Math.round(sorted[1][1]),
+        diff: Math.round(diff),
+        label,
+        all: values
+      };
+    }
+
+    function runCalculations(answers) {
+      const complete = QUESTIONS.every(q => answers[q.id] !== undefined && answers[q.id] !== null && answers[q.id] !== '');
+      if (!complete) return null;
+      const transformed = {};
+      QUESTIONS.forEach(q => transformed[q.id] = q.reverse ? (6 - Number(answers[q.id])) : Number(answers[q.id]));
+      const scoreOf = ids => ((ids.reduce((sum,id)=>sum + transformed[id], 0) - 5) / 20) * 100;
+      const O = scoreOf([1,6,11,16,21]);
+      const C = scoreOf([2,7,12,17,22]);
+      const E = scoreOf([3,8,13,18,24]);
+      const A = scoreOf([4,9,14,19,23]);
+      const N = scoreOf([5,10,15,20,25]);
+      const scores = { O: Math.round(O), C: Math.round(C), E: Math.round(E), A: Math.round(A), N: Math.round(N) };
+
+      const layer1 = calcScale({ F:(O+E)/2, D:(O+(100-E))/2, H:((100-O)+E)/2, P:((100-O)+(100-E))/2 });
+      const layer2 = calcScale({ R:(C+(100-N))/2, M:(C+N)/2, G:((100-C)+(100-N))/2, V:((100-C)+N)/2 });
+      const layer3 = calcScale({ S:A, I:100-A });
+      const code = `${layer1.primary}-${layer2.primary}-${layer3.primary}`;
+      const targetO = ['F','D'].includes(layer1.primary) ? O : 100-O;
+      const targetE = ['F','H'].includes(layer1.primary) ? E : 100-E;
+      const targetC = ['R','M'].includes(layer2.primary) ? C : 100-C;
+      const targetN = ['M','V'].includes(layer2.primary) ? N : 100-N;
+      const targetA = layer3.primary === 'S' ? A : 100-A;
+      const matchScore = Math.round((targetO + targetE + targetC + targetN + targetA)/5);
+      const meta = TYPE_META[code] || { organism: code, safeName:'未定義', edgeName:'未定義', role:'Unknown', niches:['検討中'] };
+      const copy = getDetailedCopy(code, { layer1, layer2, layer3, scores });
+      return { scores, layer1, layer2, layer3, code, meta, matchScore, copy };
+    }
+
+    function percentBar(value, amber = false) {
+      return `<div class="bar ${amber ? 'amber' : ''}"><span style="width:${Math.max(0,Math.min(100,value))}%"></span></div>`;
+    }
+
+
+    // ==========================================
+    // BIO-CARD Edge UI Add-on v3
+    // ==========================================
+    const CARD_STAT_LABELS = {
+      O: '探索力',
+      C: '実装力',
+      E: '発信力',
+      A: '共鳴力',
+      N: '警戒力'
+    };
+    const L1_ATTR = { F:'EXPLORE', D:'DEEP', H:'SIGNAL', P:'STABLE' };
+    const L2_ATTR = { R:'CONTROL', M:'WATCH', G:'FLOW', V:'ALERT' };
+    const L3_ATTR = { S:'SYMBIOSIS', I:'ISOLATE' };
+
+    function escHTML(value) {
+      return String(value ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+    }
+
+    function formLabel(label) {
+      return ({
+        '明確なタイプ': 'PURE FORM',
+        'やや混合型': 'DUAL FORM',
+        'ハイブリッド型': 'HYBRID FORM',
+        '同率型': 'MIRROR FORM'
+      })[label] || 'BIO FORM';
+    }
+
+    function roleMain(role) {
+      return String(role || '').split('（')[0].trim();
+    }
+
+    function buildOrganismGlyph(code) {
+      const glyphs = {
+        F: '<path d="M54 128c0-42 24-74 74-74 50 0 74 32 74 74"/><path d="M66 128c18-22 38-32 62-32s44 10 62 32"/><path d="M128 54v120"/><path d="M88 76c12 18 24 34 40 52 16-18 28-34 40-52"/><circle cx="128" cy="128" r="18"/>',
+        D: '<path d="M128 34c34 30 52 62 52 96 0 34-21 58-52 58s-52-24-52-58c0-34 18-66 52-96Z"/><path d="M98 122c19 7 41 7 60 0"/><path d="M105 151c15 7 31 7 46 0"/>',
+        H: '<path d="M48 118c38-38 92-38 130 0"/><path d="M78 148c27-25 63-25 90 0"/><path d="M128 58v130"/><circle cx="128" cy="118" r="22"/><path d="M182 78l28-18M196 128h36M182 178l28 18"/>',
+        P: '<path d="M58 162c18-52 46-80 70-80s52 28 70 80"/><path d="M74 162h108"/><path d="M102 162c-4-38 3-74 26-108 23 34 30 70 26 108"/><path d="M86 112c30 9 54 9 84 0"/>'
+      };
+      const first = String(code || 'F')[0];
+      return `<svg viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">${glyphs[first] || glyphs.F}</svg>`;
+    }
+
+    function bioCardHTML(result) {
+      const { meta, code, matchScore, scores, layer1, layer2, layer3, copy } = result;
+      const attrs = [L1_ATTR[layer1.primary], L2_ATTR[layer2.primary], L3_ATTR[layer3.primary]];
+      const topStrengths = copy.strengths.slice(0, 3);
+      const topRisks = copy.risks.slice(0, 2);
+      const topRecovery = copy.recovery.slice(0, 2);
+      return `
+        <div class="bio-card-panel">
+          <div class="bio-card-layout">
+            <div class="bio-card-stage reveal">
+              <div class="bio-card" id="bioCard" role="button" tabindex="0" aria-label="BIO-CARDを表裏反転">
+                <div class="bio-card-face bio-card-front">
+                  <div class="bio-card-inner">
+                    <div class="bio-card-minihead">
+                      <span>PSY-CODE BIO-CARD</span>
+                      <span class="bio-sync">SYNC ${matchScore}%</span>
+                    </div>
+                    <div class="bio-card-code-row">
+                      <div class="bio-card-code">${escHTML(code)}</div>
+                      <div class="bio-card-form">${formLabel(layer1.label)}<br>${escHTML(attrs.join(' / '))}</div>
+                    </div>
+                    <div>
+                      <div class="bio-organism-art"><div class="bio-organism-glyph">${buildOrganismGlyph(code)}</div></div>
+                      <div class="bio-card-organism">${escHTML(meta.organism)}</div>
+                      <div class="bio-card-role">${escHTML(roleMain(meta.role))} / ${escHTML(meta.safeName)}</div>
+                    </div>
+                    <div>
+                      <div class="bio-edge-box">
+                        <div class="bio-edge-label">TRUE EDGE</div>
+                        <div class="bio-edge-text">${escHTML(meta.edgeName)}</div>
+                      </div>
+                      <div class="bio-card-stats">
+                        ${Object.entries(scores).map(([k,v]) => `<div class="bio-stat"><strong>${v}</strong><span>${escHTML(CARD_STAT_LABELS[k])}</span></div>`).join('')}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bio-card-face bio-card-back">
+                  <div class="bio-card-inner">
+                    <div class="bio-card-minihead">
+                      <span>DETAILED BACK PROFILE</span>
+                      <span class="bio-sync">${escHTML(code)}</span>
+                    </div>
+                    <div class="bio-card-code-row">
+                      <div>
+                        <div class="bio-card-organism" style="text-align:left">${escHTML(meta.organism)}</div>
+                        <div class="bio-card-role" style="text-align:left">${escHTML(meta.role)}</div>
+                      </div>
+                      <div class="bio-card-form">${formLabel(layer2.label)}<br>${formLabel(layer3.label)}</div>
+                    </div>
+                    <div class="bio-back-grid">
+                      <div class="bio-back-block"><h4>Core Strategy</h4><p>${escHTML(copy.overview)}</p></div>
+                      <div class="bio-back-block"><h4>Core Skill</h4><ul>${topStrengths.map(x=>`<li>${escHTML(x)}</li>`).join('')}</ul></div>
+                      <div class="bio-back-block"><h4>Overdrive Risk</h4><ul>${topRisks.map(x=>`<li>${escHTML(x)}</li>`).join('')}</ul></div>
+                      <div class="bio-back-block"><h4>Recovery</h4><ul>${topRecovery.map(x=>`<li>${escHTML(x)}</li>`).join('')}</ul></div>
+                      <div class="bio-back-block"><h4>Best Field</h4><div class="bio-type-tags">${copy.niche.map(x=>`<span class="bio-type-tag">${escHTML(x)}</span>`).join('')}</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bio-card-copy">
+              <div class="bio-kicker">CARD ACQUIRED</div>
+              <h2 class="bio-title">${escHTML(meta.organism)}<span>${escHTML(code)} / ${escHTML(roleMain(meta.role))}</span></h2>
+              <div class="bio-manifesto">
+                <strong>${escHTML(meta.safeName)}</strong><br>
+                ${escHTML(meta.edgeName)}<br>
+                <span class="muted">${escHTML(copy.quote)}</span>
+              </div>
+              <div class="bio-actions">
+                <button class="btn card-action hot" id="saveCardBtn">カード画像を保存</button>
+                <button class="btn card-action" id="shareCardBtn">友だちに見せる</button>
+                <button class="btn card-action" id="flipCardBtn">裏面を見る</button>
+              </div>
+              <div class="bio-note">カードをクリックして表裏を切り替えられます。保存画像はSNS共有しやすい縦長PNGとして生成します。</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function bindBioCardInteractions(result) {
+      const card = document.getElementById('bioCard');
+      const flipBtn = document.getElementById('flipCardBtn');
+      const saveBtn = document.getElementById('saveCardBtn');
+      const shareBtn = document.getElementById('shareCardBtn');
+      const stage = card?.closest('.bio-card-stage');
+      if (card && stage?.classList.contains('reveal')) {
+        card.addEventListener('animationend', () => stage.classList.remove('reveal'), { once: true });
+      }
+      const syncFlipUI = () => {
+        const flipped = !!card?.classList.contains('flipped');
+        if (flipBtn) {
+          flipBtn.textContent = flipped ? '表面を見る' : '裏面を見る';
+          flipBtn.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+        }
+        if (card) card.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+      };
+      const flip = () => {
+        if (!card) return;
+        stage?.classList.remove('reveal');
+        card.classList.toggle('flipped');
+        syncFlipUI();
+      };
+      syncFlipUI();
+      card?.addEventListener('click', flip);
+      card?.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+      flipBtn?.addEventListener('click', e => { e.stopPropagation(); flip(); });
+      saveBtn?.addEventListener('click', () => saveBioCardImage(result));
+      shareBtn?.addEventListener('click', () => shareBioCardImage(result));
+    }
+
+    function showBioToast(message) {
+      let toast = document.querySelector('.bio-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'bio-toast';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.clearTimeout(showBioToast._timer);
+      showBioToast._timer = window.setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function drawRoundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      ctx.closePath();
+    }
+
+    function canvasTextWrap(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+      const chars = String(text || '').split('');
+      let line = '';
+      let lines = [];
+      chars.forEach(ch => {
+        const test = line + ch;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line);
+          line = ch;
+        } else {
+          line = test;
+        }
+      });
+      if (line) lines.push(line);
+      if (maxLines && lines.length > maxLines) {
+        lines = lines.slice(0, maxLines);
+        lines[lines.length - 1] = lines[lines.length - 1].replace(/.{2}$/, '…');
+      }
+      lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+      return y + lines.length * lineHeight;
+    }
+
+    function createBioCardCanvas(result) {
+      const { meta, code, matchScore, scores, layer1, layer2, layer3, copy } = result;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1600;
+      const ctx = canvas.getContext('2d');
+      const bg = ctx.createLinearGradient(0, 0, 1080, 1600);
+      bg.addColorStop(0, '#081827');
+      bg.addColorStop(.52, '#030812');
+      bg.addColorStop(1, '#101022');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, 1080, 1600);
+
+      for (let i = 0; i < 80; i++) {
+        ctx.fillStyle = `rgba(46,242,222,${0.035 + Math.random() * 0.07})`;
+        ctx.beginPath();
+        ctx.arc(Math.random()*1080, Math.random()*1600, Math.random()*2.6 + .6, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      const border = ctx.createLinearGradient(80, 80, 1000, 1520);
+      border.addColorStop(0, '#2ef2de');
+      border.addColorStop(.55, '#c58dff');
+      border.addColorStop(1, '#ffbf66');
+      drawRoundRect(ctx, 72, 72, 936, 1456, 58);
+      ctx.fillStyle = border;
+      ctx.fill();
+      drawRoundRect(ctx, 88, 88, 904, 1424, 48);
+      ctx.fillStyle = '#06111c';
+      ctx.fill();
+      drawRoundRect(ctx, 114, 114, 852, 1372, 38);
+      ctx.strokeStyle = 'rgba(232,251,255,.18)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#bdfcff';
+      ctx.font = '900 34px Inter, Noto Sans JP, sans-serif';
+      ctx.letterSpacing = '4px';
+      ctx.fillText('PSY-CODE BIO-CARD', 142, 170);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 34px Inter, Noto Sans JP, sans-serif';
+      ctx.fillText(`SYNC ${matchScore}%`, 938, 170);
+      ctx.textAlign = 'left';
+
+      ctx.fillStyle = '#f3ffff';
+      ctx.font = '950 132px Inter, Noto Sans JP, sans-serif';
+      ctx.shadowColor = 'rgba(46,242,222,.55)';
+      ctx.shadowBlur = 34;
+      ctx.fillText(code, 142, 310);
+      ctx.shadowBlur = 0;
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#ffbf66';
+      ctx.font = '900 28px Inter, Noto Sans JP, sans-serif';
+      ctx.fillText(formLabel(layer1.label), 938, 255);
+      ctx.fillText(`${L1_ATTR[layer1.primary]} / ${L2_ATTR[layer2.primary]} / ${L3_ATTR[layer3.primary]}`, 938, 300);
+      ctx.textAlign = 'left';
+
+      const artGrad = ctx.createRadialGradient(540, 600, 30, 540, 600, 360);
+      artGrad.addColorStop(0, 'rgba(46,242,222,.24)');
+      artGrad.addColorStop(.45, 'rgba(197,141,255,.10)');
+      artGrad.addColorStop(1, 'rgba(255,255,255,.02)');
+      drawRoundRect(ctx, 150, 365, 780, 450, 42);
+      ctx.fillStyle = artGrad;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(46,242,222,.22)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(46,242,222,.54)';
+      ctx.lineWidth = 10;
+      ctx.beginPath(); ctx.arc(540, 590, 150, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(540, 590, 230, 0, Math.PI*2); ctx.strokeStyle = 'rgba(197,141,255,.20)'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.strokeStyle = 'rgba(232,251,255,.70)';
+      ctx.lineWidth = 12;
+      ctx.lineCap = 'round';
+      const first = code[0];
+      if (first === 'F') {
+        ctx.beginPath(); ctx.moveTo(390, 690); ctx.bezierCurveTo(430, 490, 650, 490, 690, 690); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(540, 450); ctx.lineTo(540, 735); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(440, 525); ctx.bezierCurveTo(500, 645, 580, 645, 640, 525); ctx.stroke();
+      } else if (first === 'D') {
+        ctx.beginPath(); ctx.moveTo(540, 430); ctx.bezierCurveTo(700, 600, 630, 750, 540, 750); ctx.bezierCurveTo(450, 750, 380, 600, 540, 430); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(450, 610); ctx.bezierCurveTo(510, 650, 570, 650, 630, 610); ctx.stroke();
+      } else if (first === 'H') {
+        ctx.beginPath(); ctx.moveTo(330, 610); ctx.bezierCurveTo(455, 485, 625, 485, 750, 610); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(540, 430); ctx.lineTo(540, 760); ctx.stroke();
+        ctx.beginPath(); ctx.arc(540, 610, 60, 0, Math.PI*2); ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.moveTo(360, 715); ctx.bezierCurveTo(430, 510, 650, 510, 720, 715); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(540, 430); ctx.bezierCurveTo(610, 560, 610, 660, 540, 760); ctx.bezierCurveTo(470, 660, 470, 560, 540, 430); ctx.stroke();
+      }
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '950 74px Inter, Noto Sans JP, sans-serif';
+      ctx.fillText(meta.organism, 540, 900);
+      ctx.fillStyle = '#2ef2de';
+      ctx.font = '900 34px Inter, Noto Sans JP, sans-serif';
+      ctx.fillText(`${roleMain(meta.role)} / ${meta.safeName}`, 540, 955);
+
+      ctx.textAlign = 'left';
+      drawRoundRect(ctx, 150, 1010, 780, 170, 32);
+      ctx.fillStyle = 'rgba(0,0,0,.28)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,191,102,.25)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#ffbf66';
+      ctx.font = '950 25px Inter, Noto Sans JP, sans-serif';
+      ctx.fillText('TRUE EDGE', 190, 1060);
+      ctx.fillStyle = '#fff2df';
+      ctx.font = '700 42px Georgia, Noto Sans JP, serif';
+      canvasTextWrap(ctx, meta.edgeName, 190, 1122, 700, 50, 2);
+
+      const keys = Object.keys(scores);
+      keys.forEach((k, i) => {
+        const x = 150 + i * 156;
+        drawRoundRect(ctx, x, 1230, 132, 132, 24);
+        ctx.fillStyle = 'rgba(255,255,255,.045)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(46,242,222,.20)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '950 43px Inter, sans-serif';
+        ctx.fillText(scores[k], x + 66, 1288);
+        ctx.fillStyle = '#9fbec5';
+        ctx.font = '900 24px Inter, Noto Sans JP, sans-serif';
+        ctx.fillText(CARD_STAT_LABELS[k], x + 66, 1332);
+      });
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#a9c4ca';
+      ctx.font = '700 26px Inter, Noto Sans JP, sans-serif';
+      canvasTextWrap(ctx, copy.quote, 540, 1430, 790, 36, 2);
+      return canvas;
+    }
+
+    function downloadCanvas(canvas, filename) {
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function saveBioCardImage(result) {
+      const canvas = createBioCardCanvas(result);
+      downloadCanvas(canvas, `PSY-CODE_BIO-CARD_${result.code}.png`);
+      showBioToast('BIO-CARD画像を保存しました。');
+    }
+
+    async function shareBioCardImage(result) {
+      const canvas = createBioCardCanvas(result);
+      const filename = `PSY-CODE_BIO-CARD_${result.code}.png`;
+      canvas.toBlob(async blob => {
+        if (!blob) { saveBioCardImage(result); return; }
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+          try {
+            await navigator.share({
+              title: `PSY-CODE ${result.code} ${result.meta.organism}`,
+              text: `${result.code} / ${result.meta.organism} / ${result.meta.safeName}`,
+              files: [file]
+            });
+            showBioToast('共有メニューを開きました。');
+          } catch (e) {
+            if (e.name !== 'AbortError') saveBioCardImage(result);
+          }
+        } else {
+          downloadCanvas(canvas, filename);
+          showBioToast('このブラウザでは直接共有できないため、画像を保存しました。');
+        }
+      }, 'image/png');
+    }
+
+    function renderNav() {
+      document.getElementById('sideMenu').innerHTML = NAV_ITEMS.map(item => `
+        <button class="side-item ${STATE.currentSection === item.id ? 'active' : ''}" data-nav="${item.id}">
+          <span class="icon">${getIcon(item.icon)}</span>
+          <span class="label">${item.label}</span>
+        </button>
+      `).join('');
+      document.getElementById('topTabs').innerHTML = NAV_ITEMS.map(item => `
+        <button class="top-tab ${STATE.currentSection === item.id ? 'active' : ''}" data-nav="${item.id}">${item.label}</button>
+      `).join('');
+      document.querySelectorAll('[data-nav]').forEach(btn => btn.addEventListener('click', () => {
+        STATE.currentSection = btn.dataset.nav;
+        render();
+      }));
+    }
+
+    function renderSummary(result) {
+      const el = document.getElementById('section-summary');
+      if (!result) {
+        el.innerHTML = `
+          <div class="panel" style="padding:26px">
+            <div class="empty-state">
+              <h2 style="margin-top:0">まだ生態系カードが生成されていません</h2>
+              <p>「サンプルカードを見る」か、「質問紙に回答」タブで25項目に回答すると、あなたの“生存戦略カード”が生成されます。</p>
+              <div style="margin-top:16px">
+                <button class="btn primary" id="summaryDemoBtn">サンプルカードを見る</button>
+              </div>
+            </div>
+          </div>`;
+        document.getElementById('summaryDemoBtn')?.addEventListener('click', cycleDemo);
+        return;
+      }
+
+      const { meta, code, matchScore, scores, layer1, layer2, layer3, copy } = result;
+      const l1 = L1_META[layer1.primary], l2 = L2_META[layer2.primary], l3 = L3_META[layer3.primary];
+      el.innerHTML = `
+        ${bioCardHTML(result)}
+
+        <div class="layout-grid">
+          <div class="stack">
+            <div class="cards3">
+              ${layerCardHTML('01', 'エネルギー獲得', layer1.primary, l1.en, l1.jp, layer1.primaryScore, layer1.secondary, layer1.label, false)}
+              ${layerCardHTML('02', '環境適応', layer2.primary, l2.en, l2.jp, layer2.primaryScore, layer2.secondary, layer2.label, false)}
+              ${layerCardHTML('03', '他者関係', layer3.primary, l3.en, l3.jp, layer3.primaryScore, layer3.secondary, layer3.label, layer3.primary === 'S')}
+            </div>
+
+            <div class="insights-wrap">
+              ${insightCard('teal', getIcon('compass'), 'あなたの生存戦略', copy.overview, true)}
+              ${insightCard('green', getIcon('star'), '強み', copy.strengths)}
+              ${insightCard('amber', getIcon('warn'), '過剰適応時のリスク', copy.risks)}
+              ${insightCard('violet', getIcon('leaf'), '回復戦略', copy.recovery)}
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="card bigfive">
+              <h3>カードステータス <span class="info-help">?</span></h3>
+              ${Object.entries(scores).map(([k,v]) => `
+                <div class="bf-row">
+                  <div class="bf-dot">${k}</div>
+                  <div class="bf-label">${CARD_STAT_LABELS[k]}</div>
+                  ${percentBar(v)}
+                  <div class="bf-value">${v}</div>
+                </div>
+              `).join('')}
+              <div class="tiny muted">探索力=開放性、実装力=誠実性、発信力=外向性、共鳴力=協調性、警戒力=神経症傾向をカード用に言い換えた表示です。</div>
+            </div>
+
+            <div class="card niche-panel">
+              <h3>${getIcon('niche')} <span style="vertical-align:middle;margin-left:6px">最適なフィールド</span></h3>
+              <div class="niche-grid">
+                ${copy.niche.map(item => `<div class="niche-item">${getIcon('box')}<span>${item}</span></div>`).join('')}
+              </div>
+              <div class="quote">${copy.quote}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">この結果は自己理解と対話支援のためのツールであり、医学的診断や採用・評価を目的としたものではありません。</div>
+      `;
+      bindBioCardInteractions(result);
+    }
+
+    function layerCardHTML(no, title, letter, en, jp, purity, secondary, label, amber) {
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div><span class="layer-badge">${no}</span><span class="card-title">${title}</span></div>
+            <div class="faint-art">${getIcon('eco')}</div>
+          </div>
+          <div class="layer-main">
+            <div class="big-circle ${amber ? 'amber' : ''}">${letter}</div>
+            <div class="layer-names"><strong>${en}</strong><span>${jp}</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-row"><div class="label">純度</div>${percentBar(purity, amber)}<div class="value">${purity}</div></div>
+            <div class="metric-row"><div class="label">補助傾向</div><div style="color:var(--muted)">${secondary}</div><div class="value"></div></div>
+            <div class="metric-row"><div class="label">判定ラベル</div><div></div><div class="value"><span class="pill ${label === '同率型' ? 'amber' : ''}">${label}</span></div></div>
+          </div>
+        </div>`;
+    }
+
+    function insightCard(theme, icon, title, content, isParagraph = false) {
+      return `
+        <div class="insight-card ${theme}">
+          <h3><span class="icon-sm">${icon}</span><span>${title}</span></h3>
+          ${isParagraph ? `<div style="font-size:14px;line-height:1.95;color:#e6f7fa">${content}</div>` : `<ul>${content.map(x=>`<li>${x}</li>`).join('')}</ul>`}
+        </div>`;
+    }
+
+    function renderReport(result) {
+      const answeredCount = Object.keys(STATE.answers).length;
+      const questionList = QUESTIONS.map(q => `
+        <div class="question-card">
+          <div class="q-top">
+            <div>
+              <div class="q-id">Q${q.id}</div>
+              <div class="q-title">${q.text}</div>
+            </div>
+            <div class="factor-chip ${q.reverse ? 'reverse' : ''}">${q.factor}${q.reverse ? ' / 逆転' : ''}</div>
+          </div>
+          <div class="scale">
+            ${SCALE_LABELS.map((label, idx) => {
+              const val = idx + 1;
+              const active = Number(STATE.answers[q.id]) === val ? 'active' : '';
+              return `<button class="${active}" data-answer="${q.id}:${val}">${label}<small>${SCALE_HINTS[idx]}</small></button>`;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('section-report').innerHTML = `
+        <div class="question-toolbar">
+          <div class="panel" style="padding:14px 18px">
+            <strong>回答進捗：</strong> ${answeredCount} / 25
+            <span class="muted" style="margin-left:10px">回答すると自動でダッシュボードが更新されます。</span>
+          </div>
+          <div class="inline-controls">
+            <select class="select" id="demoSelect">
+              ${DEMO_CODES.map(code => `<option value="${code}">${code} - ${TYPE_META[code].organism}</option>`).join('')}
+            </select>
+            <button class="btn small" id="applyDemoBtn">選択デモを反映</button>
+            <button class="btn small" id="clearAnswersBtn">クリア</button>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="panel report-card">
+            <h3 class="section-title">質問紙に回答（25項目）</h3>
+            <div class="question-list">${questionList}</div>
+          </div>
+          <div class="stack">
+            <div class="panel report-card">
+              <h3 class="section-title">スコアの読み取り</h3>
+              ${result ? Object.entries(result.scores).map(([k,v]) => `
+                <div class="summary-row">
+                  <div><strong>${k}：${factorJP(k)}</strong><div class="muted tiny">${FACTOR_NOTES[k]}</div></div>
+                  <div>${percentBar(v)}<div class="bf-value" style="margin-top:8px">${v}</div></div>
+                </div>`).join('') : `<div class="empty-state">まだ全項目が埋まっていません。</div>`}
+            </div>
+            <div class="panel report-card">
+              <h3 class="section-title">判定ロジック</h3>
+              <div class="muted" style="line-height:1.9;font-size:14px">
+                <p>第1コードは <strong>O × E</strong>、第2コードは <strong>C × N</strong>、第3コードは <strong>A</strong> をもとに算出します。</p>
+                <p>「純度」は主コードの適合度、「補助傾向」は2位コード、「判定ラベル」は1位と2位の差から自動的に決まります。</p>
+                <p>タイプ一致度は、選ばれた3コードに対応するBig Fiveの方向性との整合度を平均した値です。</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      document.querySelectorAll('[data-answer]').forEach(btn => btn.addEventListener('click', () => {
+        const [id, val] = btn.dataset.answer.split(':');
+        STATE.answers[id] = Number(val);
+        saveState();
+        render();
+      }));
+      document.getElementById('applyDemoBtn').addEventListener('click', () => {
+        const code = document.getElementById('demoSelect').value;
+        STATE.answers = generateDemoAnswers(code);
+        saveState();
+        render();
+      });
+      document.getElementById('clearAnswersBtn').addEventListener('click', resetAnswers);
+    }
+
+    function renderEcosystem(result) {
+      const el = document.getElementById('section-ecosystem');
+      if (!result) {
+        el.innerHTML = `<div class="panel" style="padding:26px"><div class="empty-state">まずは質問紙への回答またはデモ入力を行ってください。</div></div>`;
+        return;
+      }
+      const l1x = result.scores.O, l1y = 100 - result.scores.E;
+      const l2x = result.scores.C, l2y = 100 - result.scores.N;
+      const aPos = result.scores.A;
+      el.innerHTML = `
+        <div class="eco-grid">
+          <div class="panel report-card">
+            <h3 class="section-title">エネルギー獲得マップ（O × E）</h3>
+            ${matrixHTML('探索・内省 →', '外向・内向 ↕', l1x, l1y, result.layer1.primary, {tl:'D',tr:'F',bl:'P',br:'H'}, ['潜行者','探索者','恒常者','伝達者'])}
+            <p class="muted tiny">右上ほど「高O・高E（F）」、左下ほど「低O・低E（P）」に近づきます。</p>
+          </div>
+          <div class="panel report-card">
+            <h3 class="section-title">環境適応マップ（C × N）</h3>
+            ${matrixHTML('秩序・柔軟 →', '警戒・安定 ↕', l2x, l2y, result.layer2.primary, {tl:'M',tr:'R',bl:'V',br:'G'}, ['監視者','制御者','鋭敏者','滑空者'])}
+            <p class="muted tiny">右上ほど「高C・低N（R）」、左下ほど「低C・高N（V）」に近づきます。</p>
+          </div>
+        </div>
+        <div class="eco-grid" style="margin-top:18px">
+          <div class="panel report-card">
+            <h3 class="section-title">他者関係メーター（A）</h3>
+            <div style="padding:18px 10px 6px">
+              <div class="metric-row" style="grid-template-columns: 72px 1fr 72px">
+                <div class="label">I / 孤高</div>
+                ${percentBar(aPos)}
+                <div class="label" style="text-align:right">S / 共生</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;color:var(--muted)"><span>0</span><span>50</span><span>100</span></div>
+              <div style="margin-top:16px;font-size:15px;line-height:1.8">現在の他者関係軸は <strong>${result.layer3.primary}</strong> 優勢ですが、補助傾向は <strong>${result.layer3.secondary}</strong> です。差は <strong>${result.layer3.diff}</strong> ポイントで、判定は <strong>${result.layer3.label}</strong> です。</div>
+            </div>
+          </div>
+          <div class="panel report-card">
+            <h3 class="section-title">チーム内役割の読み解き</h3>
+            <div style="line-height:1.9;font-size:15px">
+              <p><strong>${result.meta.organism}</strong> は、チームの中で <strong>${result.meta.role}</strong> として機能しやすいタイプです。</p>
+              <p>「${result.meta.safeName}」としての社会的な見え方と、「${result.meta.edgeName}」という尖った物語性の両方を持ちます。</p>
+              <p class="muted">ワークショップでは、役割固定ではなく「今の自分にどの生存戦略が強く出ているか」を話し合う材料として使ってください。</p>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function matrixHTML(xLabel, yLabel, x, y, label, quadrantLetters, quadNames) {
+      const left = Math.max(4, Math.min(96, x));
+      const top = Math.max(4, Math.min(96, y));
+      return `
+        <div class="matrix">
+          <div class="matrix-grid"></div>
+          <div class="matrix-center-x"></div>
+          <div class="matrix-center-y"></div>
+          <div class="matrix-label" style="left:14px;top:10px">${quadrantLetters.tl} / ${quadNames[0]}</div>
+          <div class="matrix-label" style="right:14px;top:10px">${quadrantLetters.tr} / ${quadNames[1]}</div>
+          <div class="matrix-label" style="left:14px;bottom:10px">${quadrantLetters.bl} / ${quadNames[2]}</div>
+          <div class="matrix-label" style="right:14px;bottom:10px">${quadrantLetters.br} / ${quadNames[3]}</div>
+          <div class="matrix-point" data-label="${label}" style="left:${left}%; top:${top}%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px;color:var(--muted);font-size:12px"><span>${xLabel}</span><span>${yLabel}</span></div>`;
+    }
+
+    function renderGrowth(result) {
+      const el = document.getElementById('section-growth');
+      if (!result) {
+        el.innerHTML = `<div class="panel" style="padding:26px"><div class="empty-state">まずは結果を生成してください。</div></div>`;
+        return;
+      }
+      const highs = Object.entries(result.scores).sort((a,b)=>b[1]-a[1]).slice(0,2);
+      const lows = Object.entries(result.scores).sort((a,b)=>a[1]-b[1]).slice(0,2);
+      const growthBullets = lows.map(([k]) => `低めの「${factorJP(k)}」を補う小さな実験を設定する`).concat([
+        `${result.layer2.primary === 'R' ? 'コントロールを手放す' : '最低限の構造を持つ'}練習を週1回入れる`,
+        `${result.layer3.primary === 'S' ? '境界線を引く' : '信頼して頼る'}行動を意図的に試す`
+      ]);
+      const leverageBullets = highs.map(([k]) => `高い「${factorJP(k)}」を価値化できる場面を増やす`)
+        .concat([`${result.meta.role.split('（')[0]}として期待される役割を言語化する`, '得意さと疲労ポイントの両方を周囲と共有する']);
+
+      el.innerHTML = `
+        <div class="growth-grid">
+          <div class="panel report-card">
+            <h3 class="section-title">今の強みを伸ばす</h3>
+            <ul style="line-height:1.9;margin:0 0 0 18px">
+              ${leverageBullets.map(x=>`<li>${x}</li>`).join('')}
+            </ul>
+            <div class="quote">${result.copy.quote}</div>
+          </div>
+          <div class="panel report-card">
+            <h3 class="section-title">成長のための次の一手</h3>
+            <ul style="line-height:1.9;margin:0 0 0 18px">
+              ${growthBullets.map(x=>`<li>${x}</li>`).join('')}
+            </ul>
+            <p class="muted">成長は「真逆の人になること」ではなく、今の生存戦略の可動域を少し広げることです。</p>
+          </div>
+        </div>
+        <div class="growth-grid" style="margin-top:18px">
+          <div class="panel report-card">
+            <h3 class="section-title">高スコア因子</h3>
+            ${highs.map(([k,v]) => `<div class="summary-row"><div><strong>${k}：${factorJP(k)}</strong><div class="muted tiny">${FACTOR_NOTES[k]}</div></div><div>${percentBar(v)}<div class="bf-value" style="margin-top:8px">${v}</div></div></div>`).join('')}
+          </div>
+          <div class="panel report-card">
+            <h3 class="section-title">伸びしろ因子</h3>
+            ${lows.map(([k,v]) => `<div class="summary-row"><div><strong>${k}：${factorJP(k)}</strong><div class="muted tiny">${FACTOR_NOTES[k]}</div></div><div>${percentBar(v)}<div class="bf-value" style="margin-top:8px">${v}</div></div></div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    function factorJP(key) {
+      return ({ O:'開放性', C:'誠実性', E:'外向性', A:'協調性', N:'神経症傾向' })[key] || key;
+    }
+
+    function cycleDemo() {
+      const code = DEMO_CODES[STATE.demoIndex % DEMO_CODES.length];
+      STATE.demoIndex += 1;
+      STATE.answers = generateDemoAnswers(code);
+      saveState();
+      render();
+    }
+    function resetAnswers() {
+      STATE.answers = {};
+      saveState();
+      render();
+    }
+
+    function buildShareText(result) {
+      if (!result) return 'PSY-CODE（仮）：まだ結果が生成されていません。';
+      return [
+        `PSY-CODE（仮）結果`,
+        `コード：${result.code}`,
+        `タイプ：${result.meta.organism}`,
+        `安全名称：${result.meta.safeName}`,
+        `Role：${result.meta.role}`,
+        `タイプ一致度：${result.matchScore}%`,
+        `Big Five：O ${result.scores.O} / C ${result.scores.C} / E ${result.scores.E} / A ${result.scores.A} / N ${result.scores.N}`,
+        `生存戦略：${result.copy.overview}`,
+        `強み：${result.copy.strengths.join('、')}`,
+        `リスク：${result.copy.risks.join('、')}`,
+        `回復戦略：${result.copy.recovery.join('、')}`,
+        `最適なニッチ：${result.copy.niche.join('、')}`,
+        `注記：この結果は自己理解と対話支援のためのツールです。`
+      ].join('\n');
+    }
+
+    function wireGlobalButtons(result) {
+      document.getElementById('fillDemoBtn').onclick = cycleDemo;
+      document.getElementById('resetBtn').onclick = resetAnswers;
+      document.getElementById('learnMoreBtn').onclick = () => alert('PSY-CODE（仮）は、Big Fiveを生態系メタファーへ翻訳する自己理解・対話支援ツールです。採用・評価・診断用途には使用しません。');
+      document.getElementById('saveBtn').onclick = () => {
+        const text = buildShareText(result);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `PSY-CODE_report_${(result?.code || 'draft')}.txt`;
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(a.href);
+      };
+      document.getElementById('shareBtn').onclick = async () => {
+        const text = buildShareText(result);
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('共有用テキストをコピーしました。カード画像は結果サマリーの「友だちに見せる」から共有できます。');
+        } catch (e) {
+          alert('クリップボードへのコピーに失敗しました。');
+        }
+      };
+    }
+
+    function showSection() {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(`section-${STATE.currentSection}`).classList.add('active');
+    }
+
+    function render() {
+      const result = runCalculations(STATE.answers);
+      renderNav();
+      renderSummary(result);
+      renderReport(result);
+      renderEcosystem(result);
+      renderGrowth(result);
+      showSection();
+      wireGlobalButtons(result);
+    }
+
+    // 初回は質問紙に回答しやすいよう、デモ回答を自動投入しない。
+    // サンプルは「サンプルカードを見る」ボタンから任意で表示する。
+    render();
+  </script>
+</body>
+</html>
