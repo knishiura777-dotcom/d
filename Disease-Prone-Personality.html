@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【授業用・限定】健康リスク・パーソナリティ自己アセスメント</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for beautiful visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#1E293B',    // ネイビー
+              gold: '#D97706',    // アクセントのゴールド
+              cream: '#FDFBF7',   // 背景リネン色
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: #F8FAF5;
+      /* ユーザー選択を禁止（コピー抑止） */
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+    .academic-serif {
+      font-family: 'Noto Serif JP', serif;
+    }
+    
+    /* 画面全体に無断転載・拡散禁止の透かしをオーバーレイ */
+    .watermark-bg {
+      position: relative;
+    }
+    .watermark-bg::after {
+      content: "宮城学院女子大学 授業資料 / 再配布・無断転載・WEB公開厳禁  MIYAGI GAKUIN WOMEN'S UNIVERSITY  INTERNAL USE ONLY";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      z-index: 9999;
+      pointer-events: none; /* 下の要素をクリックできるようにする */
+      font-size: 14px;
+      font-weight: 900;
+      color: rgba(220, 38, 38, 0.04); /* 極めて薄い赤色の透かし（印刷やスクショ対策） */
+      transform: rotate(-25deg);
+      transform-origin: 0 0;
+      line-height: 120px;
+      letter-spacing: 2px;
+      white-space: pre-wrap;
+    }
+  </style>
+  <script>
+    // ------------------------------------------------------------------
+    // 【教員用セキュリティ設定】
+    // ------------------------------------------------------------------
+    const SECURE_PASSCODES = ["mgu8", "95021"]; // 授業用の認証コード（複数設定可能）
+    const EXPIRY_DATE = new Date("2026-09-30"); // 利用期限（2026年度前期終了時まで）
+    // ------------------------------------------------------------------
+
+    // 1. コピー・右クリック・F12開発者ツールのガード
+    document.addEventListener('contextmenu', e => e.preventDefault()); // 右クリック禁止
+    document.addEventListener('keydown', e => {
+      // コピー（Ctrl+C）や開発者ツール（F12、Ctrl+Shift+I）などのショートカットを禁止
+      if (e.key === 'F12' || 
+          (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+          (e.ctrlKey && e.key === 'u') || 
+          (e.ctrlKey && e.key === 's') || 
+          (e.ctrlKey && e.key === 'c')) {
+        e.preventDefault();
+        alert("【警告】本アセスメントのソースコード表示、複製、および検証機能は、大学講義ライセンスの保護規約により制限されています。");
+        return false;
+      }
+    });
+  </script>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col watermark-bg">
+
+  <!-- ヘッダー -->
+  <header class="bg-brand-navy text-white py-5 px-4 shadow-md border-b-4 border-red-700">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="bg-red-700 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">学内専用・転載厳禁</span>
+          <span class="text-slate-400 text-xs">健康心理学特殊講義 (基礎)</span>
+        </div>
+        <h1 class="text-lg md:text-xl font-bold tracking-tight academic-serif flex items-center gap-2">
+          <i data-lucide="shield-alert" class="text-red-500 w-5 h-5"></i>
+          健康リスク・パーソナリティ自己アセスメント（セキュア受講用）
+        </h1>
+      </div>
+      <div class="text-center sm:text-right">
+        <p class="text-[11px] text-slate-300">宮城学院女子大学 大学院</p>
+        <p class="text-xs font-semibold text-amber-400 academic-serif">西浦 和樹 教授（EAPカウンセラー）</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="flex-grow max-w-4xl w-full mx-auto p-4 md:p-8 flex flex-col justify-center">
+
+    <!-- 1. パスコードロック画面 -->
+    <div id="lock-screen" class="bg-white rounded-2xl shadow-xl p-6 md:p-10 border-2 border-red-200 max-w-md mx-auto w-full my-8 text-center">
+      <div class="bg-red-50 text-red-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-200">
+        <i data-lucide="lock" class="w-8 h-8"></i>
+      </div>
+      <h2 class="text-xl font-bold text-brand-navy academic-serif mb-2">学内セキュリティ認証</h2>
+      <p class="text-xs text-slate-500 leading-relaxed mb-6">
+        このツールは宮城学院女子大学大学院の授業用資料です。先生から提示された「受講用パスコード」を入力してください。
+      </p>
+
+      <!-- エラー・警告メッセージ -->
+      <div id="auth-error" class="hidden bg-red-100 text-red-800 text-xs py-2 px-3 rounded-lg font-bold mb-4">
+        パスコードが正しくありません。
+      </div>
+
+      <div class="space-y-4">
+        <input type="password" id="passcode-input" placeholder="パスコードを入力" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-center font-bold tracking-widest text-lg focus:border-red-600 focus:outline-none transition-all">
+        <button onclick="checkPasscode()" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
+          認証してアセスメントを開く
+          <i data-lucide="unlock" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="mt-8 pt-4 border-t border-slate-100 text-[10px] text-slate-400 leading-normal">
+        <p>※ 利用有効期限: <span id="expiry-label"></span>まで</p>
+        <p>※ 本アプリの複製・二次配布・インターネット上への無断転載・SNS拡散は著作権法及び大学コンプライアンスに基づき固く禁じられています。</p>
+      </div>
+    </div>
+
+    <!-- 2. 期限切れ画面（デフォルトは非表示） -->
+    <div id="expiry-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 border-2 border-slate-200 max-w-md mx-auto w-full my-8 text-center">
+      <div class="bg-slate-100 text-slate-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-200">
+        <i data-lucide="calendar-off" class="w-8 h-8"></i>
+      </div>
+      <h2 class="text-xl font-bold text-slate-800 academic-serif mb-2">利用期限が終了しました</h2>
+      <p class="text-xs text-slate-500 leading-relaxed mb-6">
+        この自己診断ツールは2026年度前期の講義限定アセットです。設定された利用期限を経過したため、セキュリティ保護により自動ロックされました。
+      </p>
+      <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 text-[11px] text-slate-400 text-left">
+        <p class="font-bold text-slate-600 mb-1">■ 継続利用を希望される場合</p>
+        <p>大学院担当教員、またはシステム管理者へ利用再開のコード更新をご相談ください。</p>
+      </div>
+    </div>
+
+    <!-- 3. イントロダクション（認証成功後に表示） -->
+    <div id="intro-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-200 mb-8">
+      <div class="max-w-2xl mx-auto">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">認証成功</span>
+          <span class="text-xs text-slate-400">宮城学院女子大学 大学院授業アセット</span>
+        </div>
+        <h2 class="text-2xl font-bold text-brand-navy academic-serif mb-4 flex items-center gap-2">
+          診断の趣旨と心理学的背景
+        </h2>
+        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+          心身の健康や病気の罹患（りかん）リスクは、私たちの日常的な物事の捉え方や行動様式、すなわち<strong>「パーソナリティ（人格特性）」</strong>と深く結びついています。
+        </p>
+        <p class="text-slate-600 text-sm leading-relaxed mb-6">
+          本アセスメントでは、健康心理学において長年研究されている4つの主要なパーソナリティパターン（<strong>タイプA・タイプB・タイプC・タイプD</strong>）の傾向を簡易的に測定します。
+        </p>
+        <div class="bg-amber-50 border-l-4 border-amber-600 p-4 rounded-r mb-6 text-xs text-amber-900 leading-relaxed">
+          <h3 class="font-bold mb-1 flex items-center gap-1">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-700"></i>
+            受講生の皆様へ（倫理的配慮とお願い）
+          </h3>
+          このアセスメントは医学的診断を行うものではありません。自己の性格傾向を知り、ストレスに対する脆弱性を知ることで、自己セルフケアやEAP（従業員支援）の場面における心理的理解を深めることが目的です。個人データが外部に送信されることはありません。また、スクリーンショットの無断アップロードは行わないでください。
+        </div>
+        <button id="start-btn" class="w-full bg-brand-navy hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-base">
+          アセスメントを開始する (全20問)
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. 診断質問画面 -->
+    <div id="quiz-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-200 mb-8">
+      <div class="mb-6">
+        <div class="flex justify-between items-center text-xs text-slate-500 mb-2">
+          <span>回答進行状況: <strong id="progress-text" class="text-brand-navy">1 / 20</strong></span>
+          <span id="category-badge" class="bg-slate-100 px-2 py-1 rounded text-slate-700 font-semibold">パーソナリティ尺度</span>
+        </div>
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+          <div id="progress-bar" class="bg-amber-600 h-full transition-all duration-300" style="width: 5%"></div>
+        </div>
+      </div>
+
+      <div id="question-container" class="my-6 text-center px-2 md:px-10">
+        <span class="text-sm font-bold text-amber-600 uppercase tracking-wider block mb-2" id="q-number">Q 1.</span>
+        <h3 id="q-text" class="text-lg md:text-xl font-bold text-brand-navy academic-serif leading-relaxed min-h-[4rem]">
+          質問文
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 gap-2.5 max-w-lg mx-auto my-6" id="options-container">
+        <button onclick="selectOption(5)" class="w-full text-left py-3.5 px-5 rounded-xl border-2 border-slate-200 hover:border-amber-600 hover:bg-amber-50 active:bg-amber-100 transition-all font-medium flex items-center justify-between text-xs md:text-sm text-slate-700">
+          <span>非常によく当てはまる</span>
+          <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">5点</span>
+        </button>
+        <button onclick="selectOption(4)" class="w-full text-left py-3.5 px-5 rounded-xl border-2 border-slate-200 hover:border-amber-600 hover:bg-amber-50 active:bg-amber-100 transition-all font-medium flex items-center justify-between text-xs md:text-sm text-slate-700">
+          <span>やや当てはまる</span>
+          <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">4点</span>
+        </button>
+        <button onclick="selectOption(3)" class="w-full text-left py-3.5 px-5 rounded-xl border-2 border-slate-200 hover:border-amber-600 hover:bg-amber-50 active:bg-amber-100 transition-all font-medium flex items-center justify-between text-xs md:text-sm text-slate-700">
+          <span>どちらともいえない</span>
+          <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">3点</span>
+        </button>
+        <button onclick="selectOption(2)" class="w-full text-left py-3.5 px-5 rounded-xl border-2 border-slate-200 hover:border-amber-600 hover:bg-amber-50 active:bg-amber-100 transition-all font-medium flex items-center justify-between text-xs md:text-sm text-slate-700">
+          <span>あまり当てはまらない</span>
+          <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">2点</span>
+        </button>
+        <button onclick="selectOption(1)" class="w-full text-left py-3.5 px-5 rounded-xl border-2 border-slate-200 hover:border-amber-600 hover:bg-amber-50 active:bg-amber-100 transition-all font-medium flex items-center justify-between text-xs md:text-sm text-slate-700">
+          <span>全く当てはまらない</span>
+          <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">1点</span>
+        </button>
+      </div>
+
+      <div class="flex justify-between items-center max-w-lg mx-auto mt-6 pt-3 border-t border-slate-100">
+        <button id="prev-btn" onclick="previousQuestion()" class="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 font-medium" disabled>
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> 前へ戻る
+        </button>
+        <span class="text-[11px] text-slate-400">タップすると自動で進みます</span>
+      </div>
+    </div>
+
+    <!-- 5. 診断結果画面 -->
+    <div id="result-screen" class="hidden space-y-6">
+      
+      <!-- 結果概要 -->
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-200">
+        <div class="text-center mb-6">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Analysis Complete</span>
+          <h2 class="text-2xl font-bold text-brand-navy mt-1 mb-1 academic-serif">あなたのアセスメント結果</h2>
+          <p class="text-xs text-slate-500">宮城学院女子大学 大学院健康心理学特殊講義 (第8回演習用)</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-5 flex flex-col items-center">
+            <div class="w-full max-w-[280px] aspect-square">
+              <canvas id="resultChart"></canvas>
+            </div>
+            <p class="text-[10px] text-slate-400 text-center mt-3">※各因子5〜25点。18点以上は傾向が強く健康リスクへの自覚とケアが必要なレベルを意味します。</p>
+          </div>
+
+          <!-- 各スコア -->
+          <div class="md:col-span-7 space-y-3.5">
+            <h3 class="font-bold text-slate-800 text-sm border-b pb-1.5 flex items-center gap-1.5">
+              <i data-lucide="bar-chart-3" class="text-amber-600 w-4.5 h-4.5"></i> 得点詳細
+            </h3>
+            
+            <!-- Type A -->
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-slate-800 flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                  タイプA (精力・闘争型)
+                </span>
+                <span class="font-bold text-slate-900"><span id="score-A" class="text-sm">0</span> / 25点</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-A" class="bg-red-500 h-full rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Type B -->
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-slate-800 flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                  タイプB (穏和・マイペース型)
+                </span>
+                <span class="font-bold text-slate-900"><span id="score-B" class="text-sm">0</span> / 25点</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-B" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Type C -->
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-slate-800 flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
+                  タイプC (自己犠牲・過剰同調型)
+                </span>
+                <span class="font-bold text-slate-900"><span id="score-C" class="text-sm">0</span> / 25点</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-C" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Type D -->
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-slate-800 flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span>
+                  タイプD (憂うつ・社会的抑制型)
+                </span>
+                <span class="font-bold text-slate-900"><span id="score-D" class="text-sm">0</span> / 25点</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-D" class="bg-purple-500 h-full rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 健康リスクと予防介入の処方箋 -->
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-200">
+        <h3 class="text-xl font-bold text-brand-navy academic-serif mb-5 flex items-center gap-2 border-b pb-2">
+          <i data-lucide="shield-check" class="text-emerald-600 w-5 h-5"></i>
+          健康心理学的フィードバック & セルフケア処方箋
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="feedback-container">
+          <!-- JSでパーソナライズ結果を流し込む -->
+        </div>
+      </div>
+
+      <!-- 大学院 PBLディスカッション課題 -->
+      <div class="bg-amber-50 rounded-2xl p-6 border border-amber-200">
+        <h3 class="text-lg font-bold text-amber-900 academic-serif mb-3 flex items-center gap-2">
+          <i data-lucide="users" class="w-5 h-5 text-amber-700"></i>
+          授業内ディスカッションテーマ（PBL）
+        </h3>
+        <p class="text-xs text-amber-800 mb-4 leading-relaxed">
+          アセスメント終了後、3〜4人のグループに分かれ、以下のいずれかのテーマについて討議してください。個人の結果を開示し合う必要はありません。
+        </p>
+        <div class="space-y-3.5 text-xs text-slate-700 leading-relaxed">
+          <div class="bg-white/95 p-4 rounded-lg border border-amber-200/50">
+            <strong>テーマ A: タイプAと産業組織のメンタルヘルス</strong><br>
+            成果主義や競争の激しい組織では、タイプA行動パターン（高い目標志向、時間的切迫）を持つ人材が重宝されます。しかし、彼らは突然死や過労死、心筋梗塞のリスクと隣り合わせです。EAP（従業員支援）の立場から、彼らの高いモチベーションを維持しつつ、健康破壊を防ぐために、組織のルールやタスク配分をどう変えるべきか議論してください。
+          </div>
+          <div class="bg-white/95 p-4 rounded-lg border border-amber-200/50">
+            <strong>テーマ B: タイプC（同調型）と日本の組織文化</strong><br>
+            協調や波風を立てないことを尊ぶ日本の社会的文化的文脈では、「自分の本音や不平不満を言うべきではない」という感情抑制（タイプC傾向）が美徳と見なされがちです。この抑圧が従業員自身の免疫機能を損ない、がん罹患やうつ発症リスクを高めるメカニズムについて、健康心理学（PNI領域）の立場から論理的介入案（アサーショントレーニング等）を提案してください。
+          </div>
+        </div>
+        <div class="mt-6 flex justify-between items-center">
+          <span class="text-[10px] text-amber-800 font-semibold italic">※ 本画面情報の二次利用、およびスクリーンショットの第三者・ネット共有は規約上禁止です。</span>
+          <button onclick="restartTest()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 最初からやり直す
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="bg-brand-navy text-slate-500 py-5 text-center text-[10px] border-t border-slate-800">
+    <p class="mb-1">© 2026 Miyagi Gakuin Women's University Graduate School. Department of Health Psychology.</p>
+    <p>UNIVERSAL PASSPORT RX & EAP - Academic Research Only. Reproduction or Distribution is Strictly Prohibited.</p>
+  </footer>
+
+  <script>
+    // 質問データ定義
+    const questions = [
+      // Type A (精力・闘争・せっかち)
+      { id: 1, type: 'A', text: "常に時間に追われているように感じ、何をするのも急いで行動してしまう。" },
+      { id: 2, type: 'A', text: "他者との競争や仕事・学業の成果（勝つこと）に、人一倍強いこだわりがある。" },
+      { id: 3, type: 'A', text: "他人の仕事が遅いとイライラし、つい自分で割り込んで引き受けてしまいがちだ。" },
+      { id: 4, type: 'A', text: "一度に複数のタスクを並行してこなそうとし、休んでいる間も仕事のことを考えてしまう。" },
+      { id: 5, type: 'A', text: "話し方が早口になったり、他人が話している途中で言葉を遮ってしまう傾向がある。" },
+
+      // Type B (リラックス・穏和・マイペース)
+      { id: 6, type: 'B', text: "自分のペース（マイペース）を乱されることなく、物事を落ち着いて進められる。" },
+      { id: 7, type: 'B', text: "休暇や休息をとることに罪悪感を感じず、心からくつろぎ、エネルギーを充填できる。" },
+      { id: 8, type: 'B', text: "人と比較して競争するよりも、自分の内面的な満足や「楽しむプロセス」を重視する。" },
+      { id: 9, type: 'B', text: "計画通りに進行しなくても慌てず、「まあ、なんとかなるさ」と柔軟に捉えられる。" },
+      { id: 10, type: 'B', text: "穏やかな性格であり、他者に対してイライラや敵意をむき出しにすることは滅多にない。" },
+
+      // Type C (がんリスク・自己犠牲・過剰同調)
+      { id: 11, type: 'C', text: "人に嫌われることを恐れ、怒りや不満といったネガティブな感情を内に押し殺してしまう。" },
+      { id: 12, type: 'C', text: "人間関係での葛藤や衝突を避けるために、自分が我慢し過剰に同調することが多い。" },
+      { id: 13, type: 'C', text: "断りにくい頼みごとを受けると、自分の限界を超えていても「いいよ」と引き受けてしまう。" },
+      { id: 14, type: 'C', text: "常に周囲の人間（上司、家族、友人）の期待に応えるため、従順かつ自己犠牲的に振る舞う。" },
+      { id: 15, type: 'C', text: "自分自身の本当のニーズ（何を望み、何に傷ついているか）がわからなくなることがある。" },
+
+      // Type D (心疾患予後悪化・憂うつ・社会的抑制)
+      { id: 16, type: 'D', text: "日常生活の中で、理由の有無に関わらず、不安や心配、あるいは憂うつな気分を抱きやすい。" },
+      { id: 17, type: 'D', text: "物事を常にネガティブ（最悪の事態や失敗のケース）に予測し、クヨクヨ悩んでしまう。" },
+      { id: 18, type: 'D', text: "初対面の人や他人の輪に入るとき、極端に緊張して本来の自分をうまく表現できない。" },
+      { id: 19, type: 'D', text: "他者から嫌われたり、否定されたり、恥をかいたりすることを極度に恐れて距離を置く。" },
+      { id: 20, type: 'D', text: "不機嫌や葛藤を抱えていても、それを他人に打ち明けたり愚痴をこぼしたりしない。" }
+    ];
+
+    let currentQuestionIndex = 0;
+    const userAnswers = {};
+    let chartInstance = null;
+
+    // 初期起動時のセキュリティチェック
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      
+      // 有効期限チェック
+      document.getElementById('expiry-label').textContent = EXPIRY_DATE.toLocaleDateString('ja-JP');
+      const now = new Date();
+      if (now > EXPIRY_DATE) {
+        document.getElementById('lock-screen').classList.add('hidden');
+        document.getElementById('expiry-screen').classList.remove('hidden');
+        return;
+      }
+    });
+
+    // パスコードチェック
+    function checkPasscode() {
+      const inputVal = document.getElementById('passcode-input').value.trim();
+      const errorDiv = document.getElementById('auth-error');
+
+      if (SECURE_PASSCODES.includes(inputVal)) {
+        errorDiv.classList.add('hidden');
+        document.getElementById('lock-screen').classList.add('hidden');
+        document.getElementById('intro-screen').classList.remove('hidden');
+        
+        // 開始イベント紐付け
+        document.getElementById('start-btn').addEventListener('click', startQuiz);
+      } else {
+        errorDiv.classList.remove('hidden');
+        // 入力フォームを揺らす等のアテンション
+        const inputField = document.getElementById('passcode-input');
+        inputField.classList.add('border-red-500');
+        setTimeout(() => inputField.classList.remove('border-red-500'), 500);
+      }
+    }
+
+    function startQuiz() {
+      document.getElementById('intro-screen').classList.add('hidden');
+      document.getElementById('quiz-screen').classList.remove('hidden');
+      currentQuestionIndex = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById('q-number').textContent = `質問 ${currentQuestionIndex + 1} / ${questions.length}`;
+      document.getElementById('q-text').textContent = q.text;
+      
+      const badge = document.getElementById('category-badge');
+      if (q.type === 'A') {
+        badge.textContent = "特性 A：精力・焦燥パターン";
+        badge.className = "bg-red-50 text-red-800 border border-red-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
+      } else if (q.type === 'B') {
+        badge.textContent = "特性 B：穏和・レジリエンスパターン";
+        badge.className = "bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
+      } else if (q.type === 'C') {
+        badge.textContent = "特性 C：同調・自己犠牲パターン";
+        badge.className = "bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
+      } else if (q.type === 'D') {
+        badge.textContent = "特性 D：憂うつ・対人抑制パターン";
+        badge.className = "bg-purple-50 text-purple-800 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
+      }
+
+      const percent = ((currentQuestionIndex + 1) / questions.length) * 100;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+      document.getElementById('progress-text').textContent = `${currentQuestionIndex + 1} / ${questions.length}`;
+
+      document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
+    }
+
+    function selectOption(score) {
+      const q = questions[currentQuestionIndex];
+      userAnswers[q.id] = score;
+
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+
+      let scoreA = 0; let scoreB = 0; let scoreC = 0; let scoreD = 0;
+
+      questions.forEach(q => {
+        const score = userAnswers[q.id] || 3;
+        if (q.type === 'A') scoreA += score;
+        if (q.type === 'B') scoreB += score;
+        if (q.type === 'C') scoreC += score;
+        if (q.type === 'D') scoreD += score;
+      });
+
+      document.getElementById('score-A').textContent = scoreA;
+      document.getElementById('score-B').textContent = scoreB;
+      document.getElementById('score-C').textContent = scoreC;
+      document.getElementById('score-D').textContent = scoreD;
+
+      document.getElementById('bar-A').style.width = `${(scoreA / 25) * 100}%`;
+      document.getElementById('bar-B').style.width = `${(scoreB / 25) * 100}%`;
+      document.getElementById('bar-C').style.width = `${(scoreC / 25) * 100}%`;
+      document.getElementById('bar-D').style.width = `${(scoreD / 25) * 100}%`;
+
+      generateFeedback(scoreA, scoreB, scoreC, scoreD);
+      drawRadarChart(scoreA, scoreB, scoreC, scoreD);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function drawRadarChart(a, b, c, d) {
+      const ctx = document.getElementById('resultChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['タイプA (精力型)', 'タイプB (穏和型)', 'タイプC (同調型)', 'タイプD (憂うつ型)'],
+          datasets: [{
+            label: '得点分布',
+            data: [a, b, c, d],
+            backgroundColor: 'rgba(217, 119, 6, 0.15)',
+            borderColor: '#D97706',
+            borderWidth: 2,
+            pointBackgroundColor: '#1E293B',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              min: 0,
+              max: 25,
+              ticks: { stepSize: 5, showLabelBackdrop: false, font: { size: 9 } },
+              grid: { color: 'rgba(0, 0, 0, 0.05)' },
+              pointLabels: { font: { family: 'Noto Sans JP', size: 10, weight: 'bold' }, color: '#1E293B' }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function generateFeedback(a, b, c, d) {
+      const container = document.getElementById('feedback-container');
+      container.innerHTML = '';
+
+      const list = [
+        {
+          type: 'A', name: 'タイプA（精力・闘争）', score: a, threshold: 18, icon: 'flame', iconColor: 'text-red-500', bgColor: 'border-red-100 bg-red-50/25',
+          risk: '高血圧、虚血性心疾患。敵意（Hostility）や常にせっかちな時間切迫が交感神経を興奮させ、慢性的に血管を傷つける傾向が指摘されています。',
+          solution: '<strong>行動ブレーキの自覚：</strong> 早口で話す、割り込んで仕事をする衝動に気付き、あえて会話や歩くペースを「1段階落とす」マインドフル呼吸が重要です。'
+        },
+        {
+          type: 'B', name: 'タイプB（穏和・マイペース）', score: b, threshold: 18, icon: 'sun', iconColor: 'text-emerald-500', bgColor: 'border-emerald-100 bg-emerald-50/25',
+          risk: 'きわめて低リスク。時間的な切迫感が少なく、自律神経や精神的回復力（レジリエンス特性）が良好なストレス緩衝要因です。',
+          solution: '良好な自律状態を維持してください。ただし、激しいタスクを主体的に推進したり、自分の意見を主張するアサーションを補完すると組織推進力が高まります。'
+        },
+        {
+          type: 'C', name: 'タイプC（同調・感情抑制）', score: c, threshold: 18, icon: 'heart-handshake', iconColor: 'text-blue-500', bgColor: 'border-blue-100 bg-blue-50/25',
+          risk: '免疫系機能低下、うつ病リスク。他者に対して怒り等の否定的感情を慢性的に抑制し、限界以上に自己犠牲的に他者を優先するパターンです。',
+          solution: '<strong>「No」という健全な自己境界：</strong> 自分自身の疲労や本当のニーズにアンテナを張り、適度な主張（アサーショントレーニング）を行う訓練が免疫系回復に寄与します。'
+        },
+        {
+          type: 'D', name: 'タイプD（憂うつ・対人抑制）', score: d, threshold: 18, icon: 'cloud-lightning', iconColor: 'text-purple-500', bgColor: 'border-purple-100 bg-purple-50/25',
+          risk: '心臓疾患の予後悪化、慢性的抑うつ。否定的感情を抱きやすく（NA）、かつそれを表現したり他人に繋がることを社会的に制限（SI）する傾向。',
+          solution: '<strong>本音を打ち明ける安全な関係：</strong> 自分を拒絶しない、信頼できる家族や産業医・カウンセラーなどと「安全に対話」し、感情を言葉にして吐き出す外在化が回復の足がかりです。'
+        }
+      ];
+
+      list.forEach(item => {
+        const isHigh = item.score >= item.threshold;
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border ${item.bgColor} flex flex-col justify-between text-xs`;
+
+        const statusBadge = isHigh 
+          ? `<span class="bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">強傾向</span>`
+          : `<span class="bg-slate-200 text-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">標準</span>`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <span class="font-bold text-slate-800 flex items-center gap-1">
+                <i data-lucide="${item.icon}" class="${item.iconColor} w-4 h-4"></i>
+                ${item.name}
+              </span>
+              ${statusBadge}
+            </div>
+            
+            <div class="space-y-2">
+              <p class="text-slate-600 leading-relaxed">
+                <strong class="text-slate-800 block text-[10px] font-semibold mb-0.5">■ 健康心理学的特性</strong>
+                ${isHigh ? item.risk : '現在のところ、リスクとなる高い傾向は見られません。'}
+              </p>
+              
+              <p class="text-slate-600 leading-relaxed">
+                <strong class="text-slate-800 block text-[10px] font-semibold mb-0.5">■ 介入処方箋</strong>
+                ${isHigh ? item.solution : '自身のありのままの感覚や感情を大切にすること。'}
+              </p>
+            </div>
+          </div>
+          <div class="border-t border-slate-200/50 mt-3 pt-1.5 text-right font-bold text-slate-500 text-[10px]">
+            スコア: ${item.score}点
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function restartTest() {
+      questions.forEach(q => { userAnswers[q.id] = null; });
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('intro-screen').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
