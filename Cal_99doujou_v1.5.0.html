@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爆笑！九九お笑い道場 / Funny Multiplication Dojo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: #fefce8; /* yellow-50 */
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes scroll-up {
+            from { transform: translateY(100%); }
+            to { transform: translateY(-200%); }
+        }
+        .animate-wiggle { animation: wiggle 0.5s infinite ease-in-out; }
+        .animate-spin-slow { animation: spin-slow 4s linear infinite; }
+        .animate-bounce-short { animation: bounce-short 0.3s infinite ease-in-out; }
+        .animate-scroll-up { animation: scroll-up 20s linear infinite; }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-15%) rotate(10deg); }
+            50% { transform: translateY(0) rotate(-10deg); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 3s infinite ease-in-out; }
+        
+        .collection-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .collection-scroll::-webkit-scrollbar-track {
+            background: #f3e8ff;
+            border-radius: 10px;
+        }
+        .collection-scroll::-webkit-scrollbar-thumb {
+            background: #a855f7;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
+
+    <div id="app" class="w-full max-w-2xl flex flex-col items-center">
+        <!-- Header -->
+        <header class="w-full flex justify-between items-center mb-6">
+            <h1 id="app-title" class="text-xl md:text-3xl font-black text-purple-600 flex items-center gap-2 transform -rotate-2">
+                <i data-lucide="laugh" class="text-yellow-500 animate-bounce"></i>
+                九九お笑い道場
+            </h1>
+            <div class="flex gap-2">
+                <button id="lang-toggle" class="px-4 py-2 bg-white rounded-full shadow-lg font-bold text-purple-600 hover:bg-purple-50 transition-colors border-2 border-purple-100 text-sm">
+                    EN / JP
+                </button>
+                <button id="home-btn" class="hidden p-2 bg-white rounded-full shadow-lg hover:rotate-12 transition-transform border-2 border-purple-100">
+                    <i data-lucide="home" class="text-purple-600"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Card -->
+        <main id="main-card" class="w-full bg-white rounded-[40px] shadow-2xl p-6 md:p-10 min-h-[550px] flex flex-col items-center relative border-8 border-purple-100 overflow-hidden">
+            <!-- Content will be injected here by JavaScript -->
+        </main>
+
+        <footer id="app-footer" class="mt-8 w-full max-w-2xl flex flex-col md:flex-row justify-between items-center text-purple-400 font-bold gap-4">
+            <div class="flex items-center gap-2 text-center md:text-left">
+                <i data-lucide="camera" class="w-4 h-4"></i> 
+                <span id="footer-text">300枚の写真をコンプして、伝説のエンディングを見よう！</span>
+            </div>
+            <div id="version-info" class="text-xs opacity-60">
+                Version 1.5.0
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // --- Constants ---
+        const APP_VERSION = "1.5.0";
+        const TOTAL_REWARDS_COUNT = 300; // Updated target
+
+        // --- Translations & Generators ---
+        const I18N = {
+            ja: {
+                title: "九九お笑い道場",
+                footer: "300枚の写真をコンプして、伝説のエンディングを見よう！",
+                version: "バージョン",
+                menuPrompt: "どのネタ（段）で遊ぶ？",
+                levelLabel: "ネタNo.",
+                miniGame: "ミニゲーム",
+                challenge: "ムチャ振り",
+                readPrompt: "読んでみて！",
+                next: "つぎ！",
+                prev: "まえ",
+                goPlay: "遊びに行くぜ！",
+                stage: "ステージ",
+                successTitle: "お笑い大成功！",
+                starsLabel: "あつめた星",
+                rewardLabel: "🎉 激レア・ヘンテコ写真 ゲット！",
+                playAgain: "もう一回！",
+                back: "戻る",
+                collection: "コレクション",
+                collectionTitle: "ヘンテコ写真館",
+                emptyCollection: "まだ写真がないよ。ミニゲームであそぼう！",
+                locked: "???",
+                progress: "あつめた数",
+                skip: "スキップ",
+                startApp: "修行をはじめる！",
+                introTitle: "九九お笑い道場の門が開く...",
+                introText: "九九という呪文を「笑い」に変えて、世界を救う修行が始まる。300枚のヘンテコ写真をすべて集めし時、君は伝説の九九マスターとなるだろう。覚悟はいいか？",
+                endingTitle: "🎉 九九マスターへの登竜門 突破！",
+                endingMsg: "おめでとう！300枚のヘンテコ写真をコンプリートした君は、もう立派な九九マスターだ。これからも九九で世界を笑わせてくれ！",
+                credits: [
+                    "監督：君",
+                    "笑い提供：ヘンテコな仲間たち",
+                    "九九指導：道場の師範",
+                    "写真撮影：魔法のカメラ",
+                    "Special Thanks：あなた"
+                ],
+                readings: {
+                    1: ['いんいちが', 'いんにが', 'いんさんが', 'いんしが', 'いんごが', 'いんろくが', 'いんしちが', 'いんはちが', 'いんくが'],
+                    2: ['にいちが', 'ににんが', 'にさんが', 'にしが', 'にご', 'にろく', 'にしち', 'にはち', 'にく'],
+                    3: ['さんいちが', 'さんにが', 'さざんが', 'さんし', 'さんご', 'さぶろく', 'さんしち', 'さんぱ', 'さんく'],
+                    4: ['しいちが', 'しにが', 'しさんが', 'しし', 'しご', 'しろく', 'ししち', 'しは', 'しく'],
+                    5: ['ごいちが', 'ごに', 'ごさん', 'ごし', 'ごご', 'ごろく', 'ごしち', 'ごは', 'ごく'],
+                    6: ['ろくいちが', 'ろくに', 'ろくさん', 'ろくし', 'ろくご', 'ろくろく', 'ろくしち', 'ろくは', 'ろっく'],
+                    7: ['しちいちが', 'しちに', 'しちさん', 'しちし', 'しちご', 'しちろく', 'しちしち', 'しちは', 'しちく'],
+                    8: ['はちいちが', 'はちに', 'はちさん', 'はちし', 'はちご', 'はちろく', 'はちしち', 'はっぱ', 'はっく'],
+                    9: ['くいちが', 'くに', 'くさん', 'くし', 'くご', 'くろく', 'くしち', 'くは', 'くく']
+                },
+                styles: [
+                    'ロボットみたいに', '忍者っぽくささやいて', 'オペラ歌手のように', 
+                    '怒ってる人みたいに', '赤ちゃん言葉で', 'ヒップホップのリズムで', 
+                    'カラスの鳴き声まじりで', '寝起きでボーッとしながら', 'ものすごく格好つけて'
+                ],
+                fbCorrectPrefix: [
+                    "ギガ", "超", "銀河系最強の", "伝説の", "100年に一人の", "神レベルの", "全米が泣いた", "異次元の", "爆速の", 
+                    "ミラクル", "天才すぎて草な", "光の速さの", "宇宙規模の", "歴史に残る", "教科書に載せたい", "おったまげの", 
+                    "スーパー", "ハイパー", "究極の", "芸術的な", "魔法のような", "鳥肌モノの", "腰が抜ける", "衝撃の", "至高の"
+                ],
+                fbCorrectSuffix: [
+                    "正解！", "天才！", "才能！", "スピード！", "計算！", "記憶！", "ひらめき！", "勇者！", "王様！", "ひらめき！", 
+                    "数学王！", "神業！", "大金星！", "大成功！", "パワー！", "エナジー！", "スマイル！", "ラッキー！", "テクニック！", "勝利！"
+                ],
+                fbWrongPrefix: [
+                    "ズコーッ！", "おっとっと！", "あらら！", "どんまい！", "惜しい！", "あれれ？", "おろろ？", "おっと！", "ガクッ！", 
+                    "ひぇ〜！", "うそ〜ん！", "むむむ！", "およよ！", "あちゃー！", "わわわ！", "どっひゃ〜！", "はうっ！", "ぎょえ〜！", 
+                    "なんたること！", "事件発生！", "おっとどっこい！", "ありゃりゃ！", "あらま！", "そりゃないぜ！", "びっくり！"
+                ],
+                fbWrongSuffix: [
+                    "時空が歪んだ！", "計算機が壊れた！", "明日があるさ！", "誤差だよ誤差！", "宇宙の法則が乱れた！", "睡魔のせいだ！", 
+                    "指が滑った！", "今は練習中！", "惜しすぎて涙が出るぜ！", "次は絶対いける！", "幻が見えた！", "妖精のいたずらだ！", 
+                    "ボタンが遠かった！", "重力のせいだ！", "運勢のせいだ！", "平行世界では正解！", "まだ本気出してない！", "伸びしろですね！", 
+                    "良いチャレンジだ！", "これも勉強だ！"
+                ],
+                genPrefixes: [
+                    "ムキムキの", "空飛ぶ", "透明な", "伝説の", "100円の", "かっこいい", "泣き虫な", "ダンスが得意な", 
+                    "リーゼントの", "サングラスをかけた", "寝起きの", "社長になった", "未来から来た", "お腹ペコペコの", 
+                    "光り輝く", "怒り狂った", "親切すぎる", "超高速の", "のんびり屋の", "オシャレな", "巨大な", 
+                    "極小の", "宇宙最強の", "恥ずかしがり屋の", "魔法が使える"
+                ],
+                genSubjects: [
+                    { name: "イカ", emoji: "🦑" }, { name: "犬", emoji: "🐕" }, { name: "ウサギ", emoji: "🐰" }, 
+                    { name: "大仏", emoji: "🗿" }, { name: "おにぎり", emoji: "🍙" }, { name: "猫", emoji: "🐈" }, 
+                    { name: "宇宙人", emoji: "👽" }, { name: "おじさん", emoji: "👴" }, { name: "トイレ", emoji: "🚽" }, 
+                    { name: "バナナ", emoji: "🍌" }, { name: "幽霊", emoji: "👻" }, { name: "カエル", emoji: "🐸" }, 
+                    { name: "サメ", emoji: "🦈" }, { name: "パンダ", emoji: "🐼" }, { name: "恐竜", emoji: "🦖" }, 
+                    { name: "ロボット", emoji: "🤖" }, { name: "サボテン", emoji: "🌵" }, { name: "カニ", emoji: "🦀" }, 
+                    { name: "キノコ", emoji: "🍄" }, { name: "ハンバーグ", emoji: "🍔" }
+                ],
+                genDesc: "たまに街で見かける不思議な存在。"
+            },
+            en: {
+                title: "Funny Multi-Dojo",
+                footer: "Collect 300 photos to see the legendary ending!",
+                version: "Version",
+                menuPrompt: "Pick a level to start the show!",
+                levelLabel: "Level",
+                miniGame: "Mini Game",
+                challenge: "Random Challenge",
+                readPrompt: "Read it out loud!",
+                next: "Next!",
+                prev: "Back",
+                goPlay: "Let's Play!",
+                stage: "Stage",
+                successTitle: "Comedy Gold!",
+                starsLabel: "Stars Collected",
+                rewardLabel: "🎉 Rare Funny Photo Unlocked!",
+                playAgain: "Try Again!",
+                back: "Menu",
+                collection: "Collection",
+                collectionTitle: "Funny Photo Gallery",
+                emptyCollection: "No photos yet. Play mini games!",
+                locked: "Locked",
+                progress: "Collected",
+                skip: "Skip",
+                startApp: "Start Dojo!",
+                introTitle: "The Gates are Opening...",
+                introText: "Turn the magic of multiplication into laughter to save the world. Once you collect all 300 photos, you shall be the Legendary Multi-Master. Are you ready?",
+                endingTitle: "🎉 Legendary Master Status Unlocked!",
+                endingMsg: "Congratulations! You collected all 300 photos. You are now a true Multiplication Master. Keep making the world laugh with numbers!",
+                credits: [
+                    "Director: YOU",
+                    "Laughter by: Weird Objects",
+                    "Sensei: Multiplication Dojo",
+                    "Photography: Magic Camera",
+                    "Special Thanks: Your Brain"
+                ],
+                readings: {
+                    1: Array(9).fill(""), 2: Array(9).fill(""), 3: Array(9).fill(""), 4: Array(9).fill(""), 5: Array(9).fill(""),
+                    6: Array(9).fill(""), 7: Array(9).fill(""), 8: Array(9).fill(""), 9: Array(9).fill("")
+                },
+                styles: [
+                    'Like a Robot', 'Whispering like a Ninja', 'Like an Opera Singer', 
+                    'Like you are really ANGRY', 'In Baby Talk', 'With a Hip-hop Beat', 
+                    'Like a Crow cawing', 'Like you just woke up', 'Like a Cool Movie Star'
+                ],
+                fbCorrectPrefix: [
+                    "Mega", "Ultra", "Cosmic", "Legendary", "Once-a-Century", "God-like", "Hollywood-Level", "Multidimensional", "Sonic", 
+                    "Miraculous", "Crazy", "Light-Speed", "Universal", "Historical", "Textbook", "Mind-Blowing", 
+                    "Super", "Hyper", "Ultimate", "Artistic", "Magical", "Chilling", "Stunning", "Shocking", "Supreme"
+                ],
+                fbCorrectSuffix: [
+                    "Correct!", "Genius!", "Talent!", "Speed!", "Math!", "Memory!", "Insight!", "Hero!", "King!", "Smart!", 
+                    "Math Lord!", "Pro Move!", "Victory!", "Success!", "Power!", "Energy!", "Smile!", "Lucky!", "Skill!", "Champ!"
+                ],
+                fbWrongPrefix: [
+                    "D'oh!", "Oops!", "Uh-oh!", "Nice try!", "So close!", "Wait what?", "Huh?", "Whoops!", "Slip!", 
+                    "Yikes!", "No way!", "Hmm!", "Gasp!", "Ack!", "Whoa!", "Zapped!", "Ouch!", "Yowl!", 
+                    "Oh my!", "Emergency!", "Bamboozled!", "Tricky!", "Goodness!", "No luck!", "Shock!"
+                ],
+                fbWrongSuffix: [
+                    "Time twisted!", "Calculator broke!", "Tomorrow's a new day!", "Just a small error!", "Laws of physics failed!", "Sleepy brain!", 
+                    "Finger slipped!", "Just practicing!", "So close it hurts!", "Next one is yours!", "Ghost did it!", "Fairy trick!", 
+                    "Button was far!", "Gravity shifted!", "Bad luck today!", "Correct in parallel world!", "Holding back power!", "Room to grow!", 
+                    "Great challenge!", "Keep learning!"
+                ],
+                genPrefixes: [
+                    "Buff", "Flying", "Invisible", "Legendary", "$1", "Cool", "Crybaby", "Dancing", 
+                    "Pompadour", "Cool Shades", "Sleepy", "CEO", "Future", "Hungry", 
+                    "Glowing", "Furious", "Too Kind", "High Speed", "Lazy", "Fancy", "Giant", 
+                    "Tiny", "Cosmic", "Shy", "Magical"
+                ],
+                genSubjects: [
+                    { name: "Squid", emoji: "🦑" }, { name: "Dog", emoji: "🐕" }, { name: "Rabbit", emoji: "🐰" }, 
+                    { name: "Buddha", emoji: "🗿" }, { name: "Rice Ball", emoji: "🍙" }, { name: "Cat", emoji: "🐈" }, 
+                    { name: "Alien", emoji: "👽" }, { name: "Old Man", emoji: "👴" }, { name: "Toilet", emoji: "🚽" }, 
+                    { name: "Banana", emoji: "🍌" }, { name: "Ghost", emoji: "👻" }, { name: "Frog", emoji: "🐸" }, 
+                    { name: "Shark", emoji: "🦈" }, { name: "Panda", emoji: "🐼" }, { name: "Dinosaur", emoji: "🦖" }, 
+                    { name: "Robot", emoji: "🤖" }, { name: "Cactus", emoji: "🌵" }, { name: "Crab", emoji: "🦀" }, 
+                    { name: "Mushroom", emoji: "🍄" }, { name: "Burger", emoji: "🍔" }
+                ],
+                genDesc: "A mysterious being sometimes seen in town."
+            }
+        };
+
+        // --- State ---
+        let state = {
+            view: localStorage.getItem('kuku_intro_seen') ? 'menu' : 'opening',
+            lang: 'ja',
+            currentDan: 2,
+            currentIndex: 1,
+            stars: 0,
+            gameQuestion: null,
+            options: [],
+            feedback: null,
+            reward: null,
+            collectedIds: JSON.parse(localStorage.getItem('kuku_collected_ids') || '[]'),
+            endingSeen: false
+        };
+
+        const mainCard = document.getElementById('main-card');
+        const homeBtn = document.getElementById('home-btn');
+        const langToggle = document.getElementById('lang-toggle');
+        const appTitle = document.getElementById('app-title');
+        const footerText = document.getElementById('footer-text');
+        const versionInfo = document.getElementById('version-info');
+
+        // --- Generator Functions ---
+        function getRewardById(id, lang) {
+            const t = I18N[lang];
+            const prefixIdx = Math.floor(id / t.genSubjects.length);
+            const subjectIdx = id % t.genSubjects.length;
+            const prefix = t.genPrefixes[prefixIdx];
+            const subject = t.genSubjects[subjectIdx];
+            return {
+                id: id,
+                name: lang === 'ja' ? `${prefix}${subject.name}` : `${prefix} ${subject.name}`,
+                emoji: subject.emoji,
+                desc: t.genDesc
+            };
+        }
+
+        function generateFeedback(isCorrect, lang) {
+            const t = I18N[lang];
+            const pIdx = Math.floor(Math.random() * 25);
+            const sIdx = Math.floor(Math.random() * 20);
+            
+            if (isCorrect) {
+                const prefix = t.fbCorrectPrefix[pIdx];
+                const suffix = t.fbCorrectSuffix[sIdx];
+                return lang === 'ja' ? `${prefix}${suffix}` : `${prefix} ${suffix}`;
+            } else {
+                const prefix = t.fbWrongPrefix[pIdx];
+                const suffix = t.fbWrongSuffix[sIdx];
+                return `${prefix} ${suffix}`;
+            }
+        }
+
+        // --- Core Functions ---
+        function setView(newView) {
+            state.view = newView;
+            if (newView === 'menu' || newView === 'opening') {
+                homeBtn.classList.add('hidden');
+            } else {
+                homeBtn.classList.remove('hidden');
+            }
+            render();
+        }
+
+        function toggleLanguage() {
+            state.lang = state.lang === 'ja' ? 'en' : 'ja';
+            render();
+        }
+
+        function handleAnswer(ans) {
+            if (state.feedback) return;
+            const isCorrect = ans === state.gameQuestion.correct;
+            const t = I18N[state.lang];
+
+            if (isCorrect) {
+                state.feedback = { type: 'correct', text: generateFeedback(true, state.lang) };
+                state.stars++;
+            } else {
+                state.feedback = { type: 'wrong', text: generateFeedback(false, state.lang) };
+            }
+            render();
+
+            setTimeout(() => {
+                if (state.currentIndex < 5) {
+                    state.currentIndex++;
+                    generateQuestion(state.currentDan);
+                    render();
+                } else {
+                    const rewardId = Math.floor(Math.random() * TOTAL_REWARDS_COUNT);
+                    state.reward = getRewardById(rewardId, state.lang);
+                    if (!state.collectedIds.includes(rewardId)) {
+                        state.collectedIds.push(rewardId);
+                        localStorage.setItem('kuku_collected_ids', JSON.stringify(state.collectedIds));
+                    }
+                    
+                    // Check if 100% reached
+                    if (state.collectedIds.length >= TOTAL_REWARDS_COUNT && !state.endingSeen) {
+                        setView('ending');
+                    } else {
+                        setView('result');
+                    }
+                }
+            }, 1500);
+        }
+
+        function generateQuestion(dan) {
+            const num2 = Math.floor(Math.random() * 9) + 1;
+            const correct = dan * num2;
+            let choices = new Set([correct]);
+            while (choices.size < 4) {
+                const offset = Math.floor(Math.random() * 5) - 2;
+                const wrong = Math.max(1, correct + (offset * dan) || Math.floor(Math.random() * 81) + 1);
+                choices.add(wrong);
+            }
+            state.gameQuestion = { dan, num2, correct };
+            state.options = Array.from(choices).sort((a, b) => a - b);
+            state.feedback = null;
+        }
+
+        function startStudy(dan) {
+            state.currentDan = dan;
+            state.currentIndex = 1;
+            setView('study');
+        }
+
+        function startGame(dan) {
+            state.currentDan = dan;
+            state.stars = 0;
+            state.currentIndex = 1;
+            generateQuestion(dan);
+            setView('game');
+        }
+
+        function skipToMenu() {
+            localStorage.setItem('kuku_intro_seen', 'true');
+            setView('menu');
+        }
+
+        // --- Render Helpers ---
+        function renderVisualGrid(rows, cols) {
+            let gridHtml = `<div class="grid gap-1 p-2 bg-white rounded-xl shadow-inner inline-grid border-4 border-yellow-100">`;
+            for (let r = 0; r < 9; r++) {
+                gridHtml += `<div class="flex gap-1">`;
+                for (let c = 0; c < 9; c++) {
+                    const isActive = r < rows && c < cols;
+                    gridHtml += `
+                        <div class="w-5 h-5 md:w-7 md:h-7 rounded transition-all duration-300 flex items-center justify-center text-[10px] 
+                            ${isActive ? 'bg-yellow-400 shadow-sm scale-100' : 'bg-gray-100 scale-75 opacity-10'}">
+                            ${isActive ? '🍭' : ''}
+                        </div>`;
+                }
+                gridHtml += `</div>`;
+            }
+            gridHtml += `</div>`;
+            return gridHtml;
+        }
+
+        function render() {
+            const t = I18N[state.lang];
+            
+            appTitle.innerHTML = `<i data-lucide="laugh" class="text-yellow-500 animate-bounce"></i> ${t.title}`;
+            footerText.innerText = t.footer;
+            versionInfo.innerText = `${t.version} ${APP_VERSION}`;
+            langToggle.innerText = state.lang === 'ja' ? 'EN / 日本語' : '日本語 / EN';
+
+            mainCard.innerHTML = '';
+            mainCard.className = "w-full bg-white rounded-[40px] shadow-2xl p-6 md:p-10 min-h-[550px] flex flex-col items-center relative border-8 border-purple-100 overflow-hidden";
+
+            // --- View: Opening ---
+            if (state.view === 'opening') {
+                mainCard.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center space-y-8 py-10">
+                        <div class="relative">
+                            <i data-lucide="sparkles" class="w-16 h-16 text-yellow-400 absolute -top-8 -right-8 animate-pulse"></i>
+                            <h2 class="text-4xl font-black text-purple-700 italic drop-shadow-md leading-tight">${t.introTitle}</h2>
+                        </div>
+                        <p class="text-lg text-gray-600 font-bold leading-relaxed max-w-md">
+                            ${t.introText}
+                        </p>
+                        <div class="flex flex-col gap-4 w-full max-w-xs">
+                            <button onclick="skipToMenu()" class="p-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-3xl font-black text-xl shadow-xl hover:scale-105 transition-all border-b-8 border-purple-800 active:translate-y-2 active:border-b-4">
+                                ${t.startApp}
+                            </button>
+                        </div>
+                        <button onclick="skipToMenu()" class="text-gray-400 font-bold hover:text-purple-400 underline underline-offset-4">
+                            ${t.skip}
+                        </button>
+                    </div>`;
+            }
+
+            // --- View: Ending ---
+            else if (state.view === 'ending') {
+                state.endingSeen = true;
+                mainCard.className += " bg-gray-900 border-yellow-400";
+                mainCard.innerHTML = `
+                    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                        <div class="animate-scroll-up absolute top-0 left-0 w-full text-center text-yellow-200 opacity-80 space-y-10 font-bold">
+                            <h3 class="text-5xl font-black text-yellow-400 mb-20">END ROLL</h3>
+                            ${t.credits.map(c => `<p class="text-2xl">${c}</p>`).join('')}
+                            <div class="text-6xl py-20">👑</div>
+                            <p class="text-3xl">FIN</p>
+                        </div>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-6">
+                        <i data-lucide="trophy" class="w-24 h-24 text-yellow-400 animate-bounce"></i>
+                        <h2 class="text-3xl font-black text-white italic leading-tight">${t.endingTitle}</h2>
+                        <p class="text-white font-bold px-4">${t.endingMsg}</p>
+                        <button onclick="setView('menu')" class="px-10 py-4 bg-yellow-400 text-gray-900 rounded-full font-black shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            ${t.back}
+                        </button>
+                    </div>
+                    <button onclick="setView('menu')" class="absolute top-4 right-4 text-white/50 hover:text-white font-bold underline underline-offset-4 z-20">
+                        ${t.skip}
+                    </button>`;
+            }
+
+            // --- View: Menu ---
+            else if (state.view === 'menu') {
+                const percent = Math.floor((state.collectedIds.length / TOTAL_REWARDS_COUNT) * 100);
+                mainCard.innerHTML = `
+                    <div class="w-full text-center">
+                        <div class="mb-6 flex flex-col md:flex-row justify-between items-center px-2 gap-4">
+                             <div class="animate-pulse text-gray-500 font-bold italic">${t.menuPrompt}</div>
+                             <button onclick="setView('collection')" class="flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-2 rounded-full font-bold hover:bg-purple-200 transition-all shadow-sm">
+                                <i data-lucide="camera" class="w-4 h-4"></i> ${t.collection} (${percent}%)
+                             </button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(dan => `
+                                <div class="flex flex-col gap-2">
+                                    <button onclick="startStudy(${dan})" class="h-24 bg-gradient-to-b from-purple-400 to-purple-600 text-white rounded-3xl text-3xl font-black shadow-[0_8px_0_rgb(126,34,206)] transform active:translate-y-1 active:shadow-none transition-all flex flex-col items-center justify-center">
+                                        <span class="text-[10px] bg-white text-purple-600 px-2 rounded-full mb-1">${t.levelLabel}</span>
+                                        ${dan}
+                                    </button>
+                                    <button onclick="startGame(${dan})" class="h-10 bg-pink-500 text-white rounded-full text-xs font-bold shadow-md hover:scale-105 transition-transform">
+                                        ${t.miniGame}
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            }
+
+            else if (state.view === 'collection') {
+                mainCard.innerHTML = `
+                    <div class="w-full flex flex-col items-center h-full max-h-[500px]">
+                        <h2 class="text-2xl font-black text-purple-600 flex items-center gap-2 mb-2">
+                            <i data-lucide="camera"></i> ${t.collectionTitle}
+                        </h2>
+                        <p class="text-xs text-purple-400 font-bold mb-4">${t.progress}: ${state.collectedIds.length} / ${TOTAL_REWARDS_COUNT}</p>
+                        
+                        <div class="collection-scroll flex-1 overflow-y-auto w-full grid grid-cols-2 md:grid-cols-3 gap-3 pr-2">
+                            ${Array.from({length: TOTAL_REWARDS_COUNT}).map((_, i) => {
+                                const isCollected = state.collectedIds.includes(i);
+                                const reward = getRewardById(i, state.lang);
+                                return `
+                                    <div class="bg-white p-3 rounded-2xl border-4 ${isCollected ? 'border-purple-200' : 'border-gray-50 grayscale opacity-20'} shadow-sm flex flex-col items-center text-center">
+                                        <div class="text-3xl mb-1">${isCollected ? reward.emoji : '❓'}</div>
+                                        <h3 class="font-bold text-[10px] leading-tight text-purple-700">${isCollected ? reward.name : t.locked}</h3>
+                                    </div>`;
+                            }).join('')}
+                        </div>
+                        
+                        <button onclick="setView('menu')" class="mt-4 px-10 py-3 bg-purple-500 text-white rounded-full font-bold shadow-lg border-b-4 border-purple-700 active:translate-y-1 transition-all">
+                            ${t.back}
+                        </button>
+                    </div>`;
+            }
+
+            else if (state.view === 'study') {
+                const styleStr = t.styles[state.currentDan - 1];
+                const readingStr = state.lang === 'ja' 
+                    ? t.readings[state.currentDan][state.currentIndex - 1] 
+                    : `${state.currentDan} times ${state.currentIndex} is `;
+
+                mainCard.innerHTML = `
+                    <div class="flex flex-col items-center w-full space-y-4">
+                        <div class="bg-purple-50 p-3 rounded-2xl border-2 border-purple-100 text-purple-700 font-bold animate-bounce text-xs">
+                            ${t.challenge}: 「${styleStr}」${t.readPrompt}
+                        </div>
+                        <div class="text-center space-y-4">
+                            <div class="flex items-center justify-center gap-4 text-5xl md:text-8xl font-black text-gray-800 drop-shadow-lg">
+                                <span>${state.currentDan}</span>
+                                <span class="text-pink-500">×</span>
+                                <span>${state.currentIndex}</span>
+                                <span class="text-gray-300">=</span>
+                                <span class="text-purple-600">${state.currentDan * state.currentIndex}</span>
+                            </div>
+                            <div class="text-2xl bg-yellow-300 text-purple-900 font-black rounded-2xl px-6 py-3 rotate-1 shadow-lg border-4 border-white inline-block">
+                                ${readingStr}
+                                <span class="text-red-600 ml-1">${state.currentDan * state.currentIndex}</span>!
+                            </div>
+                        </div>
+
+                        ${renderVisualGrid(state.currentDan, state.currentIndex)}
+
+                        <div class="flex justify-between w-full pt-4">
+                            <button onclick="state.currentIndex--; render()" class="px-6 py-3 rounded-full font-bold transition-all ${state.currentIndex === 1 ? 'invisible' : 'bg-gray-100 hover:bg-gray-200'}">
+                                ${t.prev}
+                            </button>
+                            ${state.currentIndex < 9 ? `
+                                <button onclick="state.currentIndex++; render()" class="px-10 py-3 bg-purple-500 text-white rounded-full text-xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all border-b-4 border-purple-700">
+                                    ${t.next}
+                                </button>
+                            ` : `
+                                <button onclick="startGame(${state.currentDan})" class="px-10 py-3 bg-pink-500 text-white rounded-full text-xl font-black shadow-xl animate-pulse border-b-4 border-pink-700">
+                                    ${t.goPlay}
+                                </button>
+                            `}
+                        </div>
+                    </div>`;
+            }
+
+            else if (state.view === 'game') {
+                mainCard.innerHTML = `
+                    <div class="flex flex-col items-center w-full space-y-8">
+                        <div class="flex items-center gap-2 text-purple-600 font-black">
+                            <i data-lucide="ghost" class="animate-wiggle"></i> ${t.stage} ${state.currentIndex} / 5
+                        </div>
+
+                        <div class="text-center">
+                            <div class="text-6xl md:text-8xl font-black text-gray-800 p-8 rounded-[50px] bg-yellow-50 border-8 border-dashed border-yellow-200 relative inline-block">
+                                ${state.gameQuestion.dan} × ${state.gameQuestion.num2} = <span class="text-pink-500">?</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
+                            ${state.options.map((opt) => `
+                                <button onclick="handleAnswer(${opt})" ${state.feedback ? 'disabled' : ''} 
+                                    class="h-20 text-4xl font-black rounded-[30px] shadow-lg transition-all transform active:scale-90 border-b-8
+                                    ${state.feedback?.type === 'correct' && opt === state.gameQuestion.correct ? 'bg-green-400 text-white border-green-600 scale-105' :
+                                      state.feedback?.type === 'wrong' && opt === state.gameQuestion.correct ? 'bg-green-400 text-white border-green-600' :
+                                      state.feedback?.type === 'wrong' && opt !== state.gameQuestion.correct ? 'bg-gray-200 text-gray-400 border-gray-300 grayscale opacity-50' :
+                                      'bg-white text-purple-800 hover:bg-purple-50 border-purple-200'}">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        ${state.feedback ? `
+                            <div class="text-2xl font-black animate-bounce-short text-center px-4 leading-snug py-4 bg-purple-50 rounded-2xl border-2 border-purple-100 shadow-sm ${state.feedback.type === 'correct' ? 'text-pink-600' : 'text-gray-500'}">
+                                ${state.feedback.text}
+                            </div>
+                        ` : ''}
+                    </div>`;
+            }
+
+            else if (state.view === 'result') {
+                mainCard.innerHTML = `
+                    <div class="flex flex-col items-center w-full space-y-4 text-center">
+                        <i data-lucide="trophy" class="w-16 h-16 text-yellow-400 animate-bounce"></i>
+                        <h2 class="text-3xl font-black text-purple-600 italic leading-tight">${t.successTitle}</h2>
+                        
+                        <div class="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-[40px] border-4 border-white shadow-xl w-full">
+                            <div class="flex justify-center gap-1 mb-3">
+                                ${[0, 1, 2, 3, 4].map(i => `
+                                    <i data-lucide="star" class="w-6 h-6 ${i < state.stars ? 'text-yellow-400 fill-current' : 'text-gray-200'}"></i>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-3xl shadow-inner border-2 border-dashed border-purple-200">
+                                <p class="text-gray-400 text-[10px] font-bold mb-1">${t.rewardLabel}</p>
+                                <div class="text-7xl mb-1 hover:scale-110 transition-transform cursor-pointer">${state.reward.emoji}</div>
+                                <h3 class="text-xl font-black text-purple-700">${state.reward.name}</h3>
+                                <p class="text-[10px] text-gray-400">${state.reward.desc}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4 w-full pt-2">
+                            <button onclick="startGame(${state.currentDan})" class="flex-1 p-4 bg-pink-500 text-white rounded-3xl font-black shadow-lg border-b-4 border-pink-700 active:translate-y-1">${t.playAgain}</button>
+                            <button onclick="setView('menu')" class="flex-1 p-4 bg-purple-500 text-white rounded-3xl font-black shadow-lg border-b-4 border-purple-700 active:translate-y-1">${t.back}</button>
+                        </div>
+                    </div>`;
+            }
+
+            lucide.createIcons();
+        }
+
+        // --- Event Listeners ---
+        homeBtn.addEventListener('click', () => setView('menu'));
+        langToggle.addEventListener('click', toggleLanguage);
+
+        // Init
+        render();
+    </script>
+</body>
+</html>

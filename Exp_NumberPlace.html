@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Number Place - Final Fix</title>
+    <style>
+        :root {
+            --bg-body: #f4f5f7;
+            --bg-board: #e2e8f0;
+            --bg-cell: #ffffff;
+            --bg-cell-fixed: #f8fafc;
+            
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --text-accent: #3b82f6;
+            
+            --color-primary: #0f172a;
+            --color-secondary: #3b82f6;
+            --color-highlight: #eff6ff;
+            --color-error: #ef4444;
+            --color-success: #10b981;
+            
+            --shadow-soft: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            --shadow-sharp: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            
+            --radius-l: 24px;
+            --radius-m: 12px;
+            --radius-s: 8px;
+
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px 40px 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- Header & Stats --- */
+        header {
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap; /* 修正2: タイトルが長い場合に折り返しを許可 */
+            gap: 10px;
+        }
+
+        h1 {
+            margin: 0;
+            /* 修正3: 文字数が増えたためフォントサイズを少し縮小 */
+            font-size: 2.0rem; 
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--color-primary);
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .stats-badge {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .stat-value {
+            color: var(--color-primary);
+            font-weight: 800;
+            margin-left: 4px;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        select {
+            appearance: none;
+            background-color: transparent;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            padding-right: 20px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        select:hover {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            background-color: #f1f5f9;
+            border-color: var(--text-sub);
+        }
+        .btn-action:active {
+            transform: translateY(1px);
+        }
+
+        .btn-new-game {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: var(--shadow-sharp);
+        }
+
+        .btn-new-game:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -2px rgba(0,0,0,0.15);
+        }
+
+        .btn-new-game:active {
+            transform: translateY(0);
+        }
+
+        .btn-new-game:disabled {
+            background-color: var(--text-sub);
+            cursor: wait;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Game Board --- */
+        .game-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius-l);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 24px;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .numplace-board { /* 修正4: クラス名も念のため変更 */
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            gap: 1px;
+            background-color: var(--bg-board);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-m);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .cell {
+            background-color: var(--bg-cell);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1rem, 4.5vw, 1.5rem);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden; 
+        }
+
+        .cell:nth-child(3n) {
+            border-right: 2px solid var(--bg-board);
+        }
+        .cell:nth-child(9n) {
+            border-right: none;
+        }
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 2px solid var(--bg-board);
+        }
+
+        .cell.fixed {
+            background-color: var(--bg-cell-fixed);
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .cell.user-input {
+            color: var(--text-accent);
+            font-weight: 600;
+        }
+
+        .cell.selected {
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+        }
+
+        .cell.same-number {
+            background-color: var(--color-highlight);
+        }
+        .cell.same-number.selected {
+            background-color: var(--color-secondary) !important;
+        }
+
+        .cell.error {
+            color: var(--color-error) !important;
+            background-color: #fee2e2 !important;
+        }
+
+        @keyframes cell-pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .cell span {
+            animation: cell-pop 0.2s ease-out;
+            display: block;
+            line-height: 1;
+        }
+
+        /* --- Numpad --- */
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 30px;
+        }
+
+        .num-btn {
+            aspect-ratio: 1;
+            border: none;
+            background-color: white;
+            color: var(--text-main);
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        .num-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            color: var(--color-secondary);
+        }
+
+        .num-btn:active {
+            transform: scale(0.95);
+        }
+
+        .num-btn.delete {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+        .num-btn.delete:hover {
+            color: var(--color-error);
+            background-color: #fef2f2;
+        }
+
+        .status-area {
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .status-area.visible {
+            opacity: 1;
+        }
+
+        .win-state .game-wrapper {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--color-success);
+        }
+        
+        @keyframes pop-stats {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop-stats 0.3s ease;
+        }
+
+        footer {
+            margin-top: auto;
+            color: var(--text-sub);
+            font-size: 0.75rem;
+            text-align: center;
+            width: 100%;
+            padding-top: 20px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 500px) {
+            body { padding: 20px 10px 40px 10px; }
+            /* 修正5: スマホでのフォントサイズ調整 */
+            h1 { font-size: 1.75rem; }
+            .numplace-board { max-width: 100%; }
+            .numpad { gap: 8px; }
+            .num-btn { font-size: 1.1rem; }
+            .game-wrapper { padding: 10px; border-radius: var(--radius-m); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="title-row">
+            <h1>Number Place</h1>
+            <div class="stats-badge" id="stats-container">
+                <div>LV <span class="stat-value" id="level-display">1</span></div>
+                <div>PTS <span class="stat-value" id="score-display">0</span></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="select-wrapper">
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-action" onclick="saveGame()">Save</button>
+                <button class="btn-action" onclick="loadGame()">Load</button>
+            </div>
+
+            <button class="btn-new-game" id="btn-new" onclick="newGame()">New</button>
+        </div>
+    </header>
+
+    <div class="status-area" id="message"></div>
+
+    <div class="game-wrapper" id="game-wrapper">
+        <div class="numplace-board" id="board">
+            </div>
+    </div>
+
+    <div class="numpad">
+        <button class="num-btn" onclick="inputNumber(1)">1</button>
+        <button class="num-btn" onclick="inputNumber(2)">2</button>
+        <button class="num-btn" onclick="inputNumber(3)">3</button>
+        <button class="num-btn" onclick="inputNumber(4)">4</button>
+        <button class="num-btn" onclick="inputNumber(5)">5</button>
+        <button class="num-btn" onclick="inputNumber(6)">6</button>
+        <button class="num-btn" onclick="inputNumber(7)">7</button>
+        <button class="num-btn" onclick="inputNumber(8)">8</button>
+        <button class="num-btn" onclick="inputNumber(9)">9</button>
+        <button class="num-btn delete" onclick="inputNumber(null)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
+        </button>
+    </div>
+
+    <footer id="app-footer"></footer>
+
+    <script>
+        // Configuration
+        const APP_VERSION = '1.4.0'; // Version Up
+        // 修正8: ローカルストレージのキー名を変更して内部的にも配慮
+        const SAVE_DATA_KEY = 'numplace_save_data_v1';
+
+        // State
+        let solution = [];
+        let puzzle = [];
+        let initialPuzzle = [];
+        let selectedCellIndex = null;
+        let isGameActive = true;
+        
+        // Stats
+        let playerLevel = 1;
+        let playerScore = 0;
+
+        const boardElement = document.getElementById('board');
+        const messageElement = document.getElementById('message');
+        const difficultySelect = document.getElementById('difficulty');
+        const levelDisplay = document.getElementById('level-display');
+        const scoreDisplay = document.getElementById('score-display');
+        const statsContainer = document.getElementById('stats-container');
+        const gameWrapper = document.getElementById('game-wrapper');
+        const footerElement = document.getElementById('app-footer');
+        const btnNew = document.getElementById('btn-new');
+
+        // Display Version
+        footerElement.textContent = `v${APP_VERSION}`;
+
+        // --- Core Logic ---
+
+        // Check if placing num at board[row][col] is valid
+        function isValid(boardToCheck, row, col, num) {
+            for (let i = 0; i < 9; i++) {
+                // Check Row & Column
+                if (boardToCheck[row][i] === num && i !== col) return false;
+                if (boardToCheck[i][col] === num && i !== row) return false;
+                
+                // Check Box
+                const boxRow = 3 * Math.floor(row / 3) + Math.floor(i / 3);
+                const boxCol = 3 * Math.floor(col / 3) + i % 3;
+                if (boardToCheck[boxRow][boxCol] === num && (boxRow !== row || boxCol !== col)) return false;
+            }
+            return true;
+        }
+
+        function fillBoard(boardToFill) {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (boardToFill[row][col] === 0) {
+                        const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                        nums.sort(() => Math.random() - 0.5);
+
+                        for (let num of nums) {
+                            if (isValid(boardToFill, row, col, num)) {
+                                boardToFill[row][col] = num;
+                                if (fillBoard(boardToFill)) return true;
+                                boardToFill[row][col] = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Validate entire board for any duplicates
+        function isBoardValid(boardToCheck) {
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const val = boardToCheck[r][c];
+                    if (val !== 0) {
+                        boardToCheck[r][c] = 0;
+                        const valid = isValid(boardToCheck, r, c, val);
+                        boardToCheck[r][c] = val; 
+                        if (!valid) return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Count solutions
+        function countSolutions(inputBoard, limit = 2) {
+            const boardCopy = inputBoard.map(r => [...r]);
+            
+            let count = 0;
+            let emptyCells = [];
+            for(let r=0; r<9; r++){
+                for(let c=0; c<9; c++){
+                    if(boardCopy[r][c] === 0) emptyCells.push({r, c});
+                }
+            }
+
+            function solve(idx) {
+                if (count >= limit) return;
+                if (idx >= emptyCells.length) {
+                    count++;
+                    return;
+                }
+
+                const {r, c} = emptyCells[idx];
+
+                for (let num = 1; num <= 9; num++) {
+                    if (isValid(boardCopy, r, c, num)) {
+                        boardCopy[r][c] = num;
+                        solve(idx + 1);
+                        if (count >= limit) return;
+                        boardCopy[r][c] = 0;
+                    }
+                }
+            }
+            
+            solve(0);
+            return count;
+        }
+
+        function generateBoard() {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 20;
+                const difficulty = difficultySelect.value;
+                
+                let targetClues;
+                if (difficulty === 'easy') targetClues = 40;
+                else if (difficulty === 'medium') targetClues = 32;
+                else targetClues = 26;
+
+                while (attempts < maxAttempts) {
+                    attempts++;
+                    
+                    const board = Array.from({ length: 9 }, () => Array(9).fill(0));
+                    
+                    let nums = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
+                    let k = 0;
+                    for(let i=0; i<3; i++) {
+                        for(let j=0; j<3; j++) {
+                            board[i][j] = nums[k++];
+                        }
+                    }
+                    
+                    fillBoard(board);
+                    
+                    if (!isBoardValid(board)) {
+                        continue;
+                    }
+
+                    let tempPuzzle = board.map(r => [...r]);
+                    let cells = [];
+                    for (let r = 0; r < 9; r++) {
+                        for (let c = 0; c < 9; c++) {
+                            cells.push({r, c});
+                        }
+                    }
+                    cells.sort(() => Math.random() - 0.5);
+
+                    let currentClues = 81;
+                    
+                    for (let cell of cells) {
+                        if (currentClues <= targetClues) break;
+
+                        let r = cell.r;
+                        let c = cell.c;
+                        let backup = tempPuzzle[r][c];
+
+                        tempPuzzle[r][c] = 0;
+
+                        if (countSolutions(tempPuzzle) !== 1) {
+                            tempPuzzle[r][c] = backup;
+                        } else {
+                            currentClues--;
+                        }
+                    }
+
+                    if (currentClues <= targetClues + 4) {
+                        solution = board.map(r => [...r]);
+                        puzzle = tempPuzzle.map(r => [...r]);
+                        resolve();
+                        return;
+                    }
+                }
+                
+                reject("Could not generate a balanced board. Please try again.");
+            });
+        }
+
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            for (let i = 0; i < 81; i++) {
+                const row = Math.floor(i / 9);
+                const col = i % 9;
+                const value = puzzle[row][col];
+                
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                
+                if (value !== 0) {
+                    cell.innerHTML = `<span>${value}</span>`;
+                    
+                    if (initialPuzzle[row][col] !== 0) {
+                        cell.classList.add('fixed');
+                    } else {
+                        cell.classList.add('user-input');
+                    }
+                }
+
+                cell.addEventListener('click', () => selectCell(i));
+                boardElement.appendChild(cell);
+            }
+        }
+
+        function selectCell(index) {
+            if (!isGameActive) return;
+
+            const prevSelected = document.querySelector('.cell.selected');
+            if (prevSelected) prevSelected.classList.remove('selected');
+            
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('same-number'));
+
+            selectedCellIndex = index;
+            const cell = boardElement.children[index];
+            cell.classList.add('selected');
+
+            const val = cell.textContent;
+            if (val) {
+                document.querySelectorAll('.cell').forEach(c => {
+                    if (c.textContent === val) c.classList.add('same-number');
+                });
+            }
+        }
+
+        function inputNumber(num) {
+            if (selectedCellIndex === null || !isGameActive) return;
+
+            const row = Math.floor(selectedCellIndex / 9);
+            const col = selectedCellIndex % 9;
+            const cell = boardElement.children[selectedCellIndex];
+
+            if (cell.classList.contains('fixed')) return;
+
+            if (num === null) {
+                cell.textContent = '';
+                cell.classList.remove('user-input', 'error');
+                puzzle[row][col] = 0;
+            } else {
+                cell.innerHTML = `<span>${num}</span>`;
+                cell.classList.add('user-input');
+                puzzle[row][col] = num;
+
+                if (!isValid(puzzle, row, col, num)) {
+                    cell.classList.add('error');
+                } else {
+                    cell.classList.remove('error');
+                }
+                
+                document.querySelectorAll('.cell').forEach(c => c.classList.remove('same-number'));
+                document.querySelectorAll('.cell').forEach(c => {
+                    if (c.textContent == num) c.classList.add('same-number');
+                });
+            }
+
+            checkWin();
+        }
+
+        function checkWin() {
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (puzzle[r][c] === 0) return;
+                }
+            }
+
+            let isCorrect = true;
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (puzzle[r][c] !== solution[r][c]) {
+                        isCorrect = false;
+                        boardElement.children[r * 9 + c].classList.add('error');
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                handleWin();
+            } else {
+                showMessage("Check your numbers!", true);
+            }
+        }
+
+        function handleWin() {
+            isGameActive = false;
+            
+            const diff = difficultySelect.value;
+            let pointsEarned = 0;
+            if (diff === 'easy') pointsEarned = 100;
+            else if (diff === 'medium') pointsEarned = 200;
+            else pointsEarned = 300;
+
+            playerScore += pointsEarned;
+            playerLevel++;
+            
+            updateStatsUI();
+            
+            showMessage(`Complete! +${pointsEarned}pts`, false);
+            
+            document.body.classList.add('win-state');
+            
+            statsContainer.classList.remove('animate-pop');
+            void statsContainer.offsetWidth;
+            statsContainer.classList.add('animate-pop');
+            
+            localStorage.removeItem(SAVE_DATA_KEY);
+        }
+
+        function updateStatsUI() {
+            levelDisplay.textContent = playerLevel;
+            scoreDisplay.textContent = playerScore;
+        }
+
+        function showMessage(text, isError) {
+            messageElement.textContent = text;
+            messageElement.style.color = isError ? 'var(--color-error)' : 'var(--color-success)';
+            messageElement.classList.add('visible');
+            setTimeout(() => {
+                messageElement.classList.remove('visible');
+            }, 3000);
+        }
+
+        async function newGame() {
+            isGameActive = true;
+            document.body.classList.remove('win-state');
+            messageElement.classList.remove('visible');
+            btnNew.disabled = true;
+            btnNew.textContent = "...";
+
+            setTimeout(async () => {
+                try {
+                    await generateBoard();
+                    initialPuzzle = puzzle.map(row => [...row]);
+                    renderBoard();
+                    selectedCellIndex = null;
+                } catch (e) {
+                    showMessage("Generation failed. Try again.", true);
+                    console.error(e);
+                } finally {
+                    btnNew.disabled = false;
+                    btnNew.textContent = "New";
+                }
+            }, 50);
+        }
+
+        // --- Save / Load Logic ---
+
+        function saveGame() {
+            if (!isGameActive) {
+                showMessage("Cannot save finished game", true);
+                return;
+            }
+            const saveData = {
+                version: APP_VERSION,
+                puzzle: puzzle,
+                solution: solution,
+                initialPuzzle: initialPuzzle,
+                playerLevel: playerLevel,
+                playerScore: playerScore,
+                difficulty: difficultySelect.value
+            };
+            try {
+                localStorage.setItem(SAVE_DATA_KEY, JSON.stringify(saveData));
+                showMessage("Game Saved!", false);
+            } catch (e) {
+                showMessage("Save failed...", true);
+            }
+        }
+
+        function loadGame() {
+            const savedJSON = localStorage.getItem(SAVE_DATA_KEY);
+            if (!savedJSON) {
+                showMessage("No saved game found", true);
+                return;
+            }
+
+            try {
+                const data = JSON.parse(savedJSON);
+                
+                if (data.version && data.version !== APP_VERSION) {
+                    console.warn(`Loading save from version ${data.version}`);
+                }
+
+                puzzle = data.puzzle;
+                solution = data.solution;
+                initialPuzzle = data.initialPuzzle;
+                playerLevel = data.playerLevel;
+                playerScore = data.playerScore;
+                difficultySelect.value = data.difficulty;
+                
+                isGameActive = true;
+                document.body.classList.remove('win-state');
+                
+                updateStatsUI();
+                renderBoard();
+                
+                // Re-validate visual errors
+                for(let r=0; r<9; r++) {
+                    for(let c=0; c<9; c++) {
+                        const val = puzzle[r][c];
+                        if (initialPuzzle[r][c] === 0 && val !== 0) {
+                            if (!isValid(puzzle, r, c, val)) {
+                                const index = r * 9 + c;
+                                boardElement.children[index].classList.add('error');
+                            }
+                        }
+                    }
+                }
+
+                showMessage("Game Loaded!", false);
+                selectedCellIndex = null;
+
+            } catch (e) {
+                console.error(e);
+                showMessage("Load failed", true);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!isGameActive) return;
+            
+            const key = e.key;
+            if (key >= '1' && key <= '9') {
+                inputNumber(parseInt(key));
+            } else if (key === 'Backspace' || key === 'Delete') {
+                inputNumber(null);
+            } else if (selectedCellIndex !== null) {
+                let row = Math.floor(selectedCellIndex / 9);
+                let col = selectedCellIndex % 9;
+                
+                if (key === 'ArrowUp') row = Math.max(0, row - 1);
+                if (key === 'ArrowDown') row = Math.min(8, row + 1);
+                if (key === 'ArrowLeft') col = Math.max(0, col - 1);
+                if (key === 'ArrowRight') col = Math.min(8, col + 1);
+
+                const newIndex = row * 9 + col;
+                selectCell(newIndex);
+            }
+        });
+
+        // Initialize
+        newGame();
+
+    </script>
+</body>
+</html>

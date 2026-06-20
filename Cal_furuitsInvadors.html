@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cosmic Fruit Invaders | Formula Hero Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #05070a;
+            --accent-pink: #ff2d55;
+            --accent-blue: #007aff;
+            --accent-green: #00ff41;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-deep);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(5, 10, 5, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.1);
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #1e1e1e, #000);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-premium:active { transform: scale(0.95); }
+
+        #fruit-hint-grid {
+            display: grid;
+            gap: 8px;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.05);
+            border-radius: 20px;
+        }
+
+        .hint-node {
+            width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            animation: bounce-slow 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce-slow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        #story-text {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            color: var(--accent-green);
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+            line-height: 1.8;
+        }
+
+        .cursor::after {
+            content: '_';
+            animation: blink 0.7s infinite;
+            color: var(--accent-green);
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .hurry-up {
+            animation: text-blink 0.5s infinite alternate;
+            color: var(--accent-pink);
+        }
+        @keyframes text-blink {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body>
+
+<div id="overlay" class="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-6">
+    <!-- Intro Interface -->
+    <div id="intro-ui" class="glass-panel pointer-events-auto p-12 w-full max-w-2xl flex flex-col gap-8 text-left transform transition-all duration-700">
+        <div class="space-y-4">
+            <h2 class="text-xs font-black tracking-[0.5em] text-green-500 uppercase border-b border-green-900 pb-2">Login: Formula_Hero_Omega... Success.</h2>
+            <div id="story-text" class="text-lg font-medium min-h-[180px] cursor whitespace-pre-wrap"></div>
+        </div>
+        <button id="btn-skip-intro" class="btn-premium py-4 px-8 rounded-xl text-sm font-bold tracking-widest uppercase opacity-0 transition-opacity duration-1000">反撃を開始する</button>
+    </div>
+
+    <!-- Quiz Interface -->
+    <div id="quiz-ui" class="hidden glass-panel pointer-events-auto p-10 w-full max-w-md flex flex-col gap-6 text-center transform transition-all duration-500 opacity-0">
+        <div class="space-y-1">
+            <h2 id="stage-badge" class="text-xs font-black tracking-[0.3em] text-blue-400 uppercase">Mission 001</h2>
+            <h1 class="text-xl font-light tracking-tight opacity-70">方程式の解を求めよ</h1>
+        </div>
+
+        <div id="hint-area" class="py-4 min-h-[200px] flex items-center justify-center bg-black/40 rounded-2xl border border-white/5 overflow-auto">
+            <div id="fruit-hint-grid"></div>
+        </div>
+
+        <div class="space-y-6">
+            <div id="math-formula" class="text-6xl font-black tracking-tighter text-white">7 × 8</div>
+            <div class="relative">
+                <input type="number" id="ans-input" 
+                    class="w-full bg-white/10 border border-white/10 rounded-2xl py-5 text-4xl text-center font-bold focus:outline-none focus:border-blue-500 transition-all text-white"
+                    placeholder="?" inputmode="numeric">
+            </div>
+            <button id="btn-launch" class="btn-premium w-full py-5 rounded-2xl text-lg font-bold tracking-widest uppercase">証明完了（攻撃開始）</button>
+        </div>
+    </div>
+
+    <!-- Results Interface -->
+    <div id="result-ui" class="hidden glass-panel pointer-events-auto p-12 text-center flex flex-col gap-8">
+        <h1 id="result-title" class="text-6xl font-black italic tracking-tighter text-blue-400">SUCCESS</h1>
+        <button id="btn-next" class="btn-premium px-12 py-5 rounded-2xl text-xl font-bold tracking-widest uppercase">次の数式へ</button>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="fixed top-8 left-8 z-40 space-y-1 pointer-events-none">
+    <div class="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase">IQ Power</div>
+    <div id="life-bar" class="flex gap-2 text-xl"></div>
+</div>
+
+<div class="fixed top-8 right-8 z-40 text-right pointer-events-none">
+    <div id="hud-label" class="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase">MSN / TIME / REMAIN</div>
+    <div id="stats-display" class="text-3xl font-black tracking-tighter tabular-nums text-white">001 / 00:00 / 000</div>
+</div>
+
+<!-- Mobile Controls -->
+<div class="fixed bottom-10 inset-x-0 z-40 flex justify-between px-10 pointer-events-none md:hidden">
+    <div class="flex gap-4">
+        <div id="ctrl-left" class="glass-panel pointer-events-auto w-20 h-20 flex items-center justify-center text-2xl active:scale-90 transition-transform text-green-500">←</div>
+        <div id="ctrl-right" class="glass-panel pointer-events-auto w-20 h-20 flex items-center justify-center text-2xl active:scale-90 transition-transform text-green-500">→</div>
+    </div>
+    <div id="ctrl-fire" class="glass-panel pointer-events-auto w-24 h-24 flex items-center justify-center text-4xl bg-green-500/20 active:scale-90 transition-transform text-green-500">⚡</div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+    const CONFIG = {
+        fruits: ['🍎', '🍇', '🍊', '🍓', '🍑', '🥝', '🍋', '🍒', '🍈'],
+        patterns: [
+            { name: "Heart", data: ["  #   #  ", " ### ### ", "#########", " ####### ", "  #####  ", "   ###   ", "    #    "] },
+            { name: "Star", data: ["    #    ", "   ###   ", "#########", "  #####  ", " ####### ", "#   #   #"] },
+            { name: "UFO", data: ["  #####  ", " ####### ", "#########", " # # # # ", "  #   #  "] },
+            { name: "Diamond", data: ["    #    ", "   ###   ", "  #####  ", " ####### ", "  #####  ", "   ###   ", "    #    "] }
+        ]
+    };
+
+    class Game {
+        constructor() {
+            this.canvas = document.getElementById('gameCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.resize();
+            
+            this.state = 'INTRO';
+            this.mission = 1;
+            this.score = 0;
+            this.lives = 3;
+            this.oniMode = false;
+            this.gameStartTime = 0;
+            this.elapsedSeconds = 0;
+
+            this.player = { x: this.canvas.width / 2, y: this.canvas.height - 120, targetX: this.canvas.width / 2 };
+            this.bullets = [];
+            this.enemyBullets = [];
+            this.enemies = [];
+            this.particles = [];
+            
+            this.currentMath = { a: 0, b: 0, ans: 0, emoji: '🍎' };
+            this.keys = {};
+            this.enemyDir = 1;
+            this.enemyStep = 0;
+
+            this.initListeners();
+            this.startIntro();
+            this.loop();
+        }
+
+        resize() {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+            if(this.player) {
+                this.player.y = this.canvas.height - 120;
+            }
+        }
+
+        initListeners() {
+            window.addEventListener('resize', () => this.resize());
+            window.addEventListener('keydown', e => this.keys[e.code] = true);
+            window.addEventListener('keyup', e => this.keys[e.code] = false);
+
+            document.getElementById('btn-skip-intro').onclick = () => this.setupMission();
+            document.getElementById('btn-launch').onclick = () => this.tryStart();
+            document.getElementById('ans-input').onkeydown = (e) => { if(e.key === 'Enter') this.tryStart(); };
+            document.getElementById('btn-next').onclick = () => this.setupMission();
+            
+            const setupTouch = (id, key) => {
+                const el = document.getElementById(id);
+                if(!el) return;
+                el.onpointerdown = (e) => { e.preventDefault(); this.keys[key] = true; };
+                el.onpointerup = () => this.keys[key] = false;
+                el.onpointerleave = () => this.keys[key] = false;
+            };
+            setupTouch('ctrl-left', 'ArrowLeft');
+            setupTouch('ctrl-right', 'ArrowRight');
+            const fire = document.getElementById('ctrl-fire');
+            if(fire) fire.onpointerdown = (e) => { e.preventDefault(); this.fire(); };
+        }
+
+        async startIntro() {
+            const storyElement = document.getElementById('story-text');
+            const skipBtn = document.getElementById('btn-skip-intro');
+            const story = [
+                "> 警告：銀河フルーツ連合の超巨大ミキサーが地球に接近中。",
+                "> 彼らの目的は、全人類を『健康的な朝のミックスジュース』に変えること。",
+                "> だが、奴らは最大の計算ミスを犯した。この街には数学オタクの変態ヒーローがいることを。",
+                "> 主人公：数式超人・オメガ。趣味は『素数の暗唱』と『円周率との文通』。",
+                "> 「フン、無理数な奴らめ。お前たちの不規則な配列、私が美しく解（ほど）いてやろう！」"
+            ];
+
+            let charIndex = 0;
+            let lineIndex = 0;
+
+            const type = () => {
+                if (lineIndex < story.length) {
+                    if (charIndex < story[lineIndex].length) {
+                        storyElement.textContent += story[lineIndex].charAt(charIndex);
+                        charIndex++;
+                        setTimeout(type, 30);
+                    } else {
+                        storyElement.textContent += "\n";
+                        lineIndex++;
+                        charIndex = 0;
+                        setTimeout(type, 500);
+                    }
+                } else {
+                    storyElement.classList.remove('cursor');
+                    skipBtn.classList.remove('opacity-0');
+                    skipBtn.classList.add('opacity-100');
+                }
+            };
+
+            type();
+        }
+
+        setupMission() {
+            this.state = 'QUIZ';
+            this.oniMode = this.mission >= 3;
+            this.elapsedSeconds = 0;
+            
+            this.bullets = [];
+            this.enemyBullets = [];
+            this.particles = [];
+            this.enemies = [];
+            this.enemyDir = 1;
+            this.score = 0;
+
+            document.getElementById('intro-ui').classList.add('hidden');
+            const quizUi = document.getElementById('quiz-ui');
+            quizUi.classList.remove('hidden');
+            setTimeout(() => {
+                quizUi.classList.remove('opacity-0');
+                quizUi.classList.add('opacity-100');
+            }, 50);
+
+            document.getElementById('result-ui').classList.add('hidden');
+            document.getElementById('hud-label').classList.remove('hurry-up');
+            
+            const range = this.mission > 10 ? 12 : 9;
+            this.currentMath.a = Math.floor(Math.random() * (range - 1)) + 2;
+            this.currentMath.b = Math.floor(Math.random() * (range - 1)) + 2;
+            this.currentMath.ans = this.currentMath.a * this.currentMath.b;
+            this.currentMath.emoji = CONFIG.fruits[Math.floor(Math.random() * CONFIG.fruits.length)];
+
+            document.getElementById('math-formula').textContent = `${this.currentMath.a} × ${this.currentMath.b}`;
+            document.getElementById('stage-badge').textContent = `Mission ${String(this.mission).padStart(3, '0')}`;
+            
+            const ansInput = document.getElementById('ans-input');
+            ansInput.value = '';
+            setTimeout(() => ansInput.focus(), 100);
+
+            this.renderHintGrid();
+            this.updateStats();
+        }
+
+        renderHintGrid() {
+            const container = document.getElementById('fruit-hint-grid');
+            container.innerHTML = '';
+            const cols = this.currentMath.b;
+            container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            for(let i=0; i < this.currentMath.ans; i++) {
+                const div = document.createElement('div');
+                div.className = 'hint-node';
+                div.textContent = this.currentMath.emoji;
+                div.style.animationDelay = `${(i % cols) * 0.1}s`;
+                container.appendChild(div);
+            }
+        }
+
+        tryStart() {
+            const input = document.getElementById('ans-input');
+            const val = parseInt(input.value);
+            if(val === this.currentMath.ans) {
+                this.state = 'PLAYING';
+                this.gameStartTime = Date.now();
+                const quizUi = document.getElementById('quiz-ui');
+                quizUi.classList.add('opacity-0');
+                setTimeout(() => quizUi.classList.add('hidden'), 500);
+                this.startLevel();
+            } else {
+                const quizUi = document.getElementById('quiz-ui');
+                quizUi.classList.add('shake');
+                input.classList.add('border-red-500');
+                setTimeout(() => {
+                    quizUi.classList.remove('shake');
+                    input.classList.remove('border-red-500');
+                }, 400);
+            }
+        }
+
+        startLevel() {
+            this.lives = 3;
+            const pattern = CONFIG.patterns[Math.floor(Math.random() * CONFIG.patterns.length)];
+            let points = [];
+            pattern.data.forEach((row, r) => {
+                for(let c=0; c < row.length; c++) if(row[c] === '#') points.push({ r, c });
+            });
+
+            let finalCoords = [];
+            if(this.currentMath.ans <= points.length) {
+                const midR = pattern.data.length / 2;
+                const midC = pattern.data[0].length / 2;
+                points.sort((a,b) => {
+                    const distA = Math.pow(a.r - midR, 2) + Math.pow(a.c - midC, 2);
+                    const distB = Math.pow(b.r - midR, 2) + Math.pow(b.c - midC, 2);
+                    return distA - distB;
+                });
+                finalCoords = points.slice(0, this.currentMath.ans);
+            } else {
+                finalCoords = [...points];
+                let remaining = this.currentMath.ans - points.length;
+                let offsetR = pattern.data.length + 1;
+                while(remaining > 0) {
+                    const toAdd = Math.min(remaining, points.length);
+                    for(let i=0; i<toAdd; i++) finalCoords.push({ r: points[i].r + offsetR, c: points[i].c });
+                    remaining -= toAdd;
+                    offsetR += pattern.data.length + 1;
+                }
+            }
+
+            let cell = 36;
+            let maxR = Math.max(...finalCoords.map(p => p.r));
+            let totalHeight = maxR * cell;
+            
+            if (totalHeight > 350) {
+                cell = 350 / maxR;
+                totalHeight = maxR * cell;
+            }
+
+            const startFrontY = 250;
+            let offsetY = startFrontY - totalHeight; 
+            if (offsetY < 60) offsetY = 60;
+
+            const maxC = Math.max(...finalCoords.map(p => p.c)) + 1;
+            const offsetX = (this.canvas.width - maxC * cell) / 2;
+
+            finalCoords.forEach(pos => {
+                this.enemies.push({
+                    x: offsetX + pos.c * cell,
+                    y: offsetY + pos.r * cell,
+                    w: cell * 0.8, h: cell * 0.8,
+                    emoji: this.currentMath.emoji
+                });
+            });
+            this.updateStats();
+        }
+
+        updateStats() {
+            const msn = String(this.mission).padStart(3, '0');
+            const mm = String(Math.floor(this.elapsedSeconds / 60)).padStart(2, '0');
+            const ss = String(this.elapsedSeconds % 60).padStart(2, '0');
+            const remaining = String(this.enemies.length).padStart(3, '0');
+            
+            document.getElementById('stats-display').textContent = `${msn} / ${mm}:${ss} / ${remaining}`;
+            
+            const lifeEl = document.getElementById('life-bar');
+            if (lifeEl) {
+                lifeEl.innerHTML = '';
+                for(let i=0; i<this.lives; i++) {
+                    const s = document.createElement('span');
+                    s.textContent = '🧠'; 
+                    lifeEl.appendChild(s);
+                }
+            }
+            
+            if (this.elapsedSeconds >= 30) {
+                document.getElementById('hud-label').classList.add('hurry-up');
+            }
+        }
+
+        fire() {
+            if(this.state !== 'PLAYING') return;
+            this.bullets.push({ x: this.player.x, y: this.player.y - 20, v: -16 });
+        }
+
+        createExplosion(x, y, color) {
+            for(let i=0; i<12; i++) {
+                this.particles.push({
+                    x, y, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12,
+                    life: 1.0, color: color || '#fff'
+                });
+            }
+        }
+
+        update() {
+            if(this.state === 'PLAYING') {
+                this.elapsedSeconds = Math.floor((Date.now() - this.gameStartTime) / 1000);
+                this.updateStats();
+
+                if(this.keys['ArrowLeft']) this.player.targetX -= 14;
+                if(this.keys['ArrowRight']) this.player.targetX += 14;
+                this.player.targetX = Math.max(40, Math.min(this.canvas.width - 40, this.player.targetX));
+                this.player.x += (this.player.targetX - this.player.x) * 0.25;
+
+                if(this.keys['Space']) {
+                    if(this.bullets.length === 0 || this.bullets[this.bullets.length-1].y < this.player.y - 100) this.fire();
+                }
+
+                for(let i = this.bullets.length - 1; i >= 0; i--) {
+                    this.bullets[i].y += this.bullets[i].v;
+                    if(this.bullets[i].y < -50) this.bullets.splice(i, 1);
+                }
+
+                for(let i = this.enemyBullets.length - 1; i >= 0; i--) {
+                    const b = this.enemyBullets[i];
+                    b.y += b.v;
+                    if(Math.abs(b.x - this.player.x) < 25 && Math.abs(b.y - this.player.y) < 25) {
+                        this.lives--;
+                        this.enemyBullets.splice(i, 1);
+                        this.createExplosion(this.player.x, this.player.y, '#ff3b30');
+                        this.updateStats();
+                        if(this.lives <= 0) {
+                            this.gameOver();
+                            return;
+                        }
+                    }
+                    if(b.y > this.canvas.height + 50) this.enemyBullets.splice(i, 1);
+                }
+
+                this.enemyStep++;
+                const timeFactor = Math.floor(this.elapsedSeconds / 10);
+                const moveDelay = Math.max(1, 40 - (this.mission * 2) - (timeFactor * 5));
+                
+                if(this.enemyStep > moveDelay) {
+                    let hitWall = false;
+                    this.enemies.forEach(e => {
+                        e.x += 18 * this.enemyDir;
+                        if(e.x < 30 || e.x > this.canvas.width - 30) hitWall = true;
+                    });
+                    if(hitWall) {
+                        this.enemyDir *= -1;
+                        this.enemies.forEach(e => e.y += 20);
+                    }
+                    
+                    let attackChance = 0.12 + (this.mission * 0.02) + (timeFactor * 0.05);
+                    if(this.oniMode && Math.random() < attackChance) {
+                        const visibleEnemies = this.enemies.filter(e => e.y > 0);
+                        if(visibleEnemies.length > 0) {
+                            const shooter = visibleEnemies[Math.floor(Math.random() * visibleEnemies.length)];
+                            this.enemyBullets.push({ x: shooter.x, y: shooter.y, v: 5 + Math.min(6, this.mission/2) + timeFactor });
+                        }
+                    }
+                    this.enemyStep = 0;
+                }
+
+                for(let bi = this.bullets.length-1; bi>=0; bi--) {
+                    const b = this.bullets[bi];
+                    for(let ei = this.enemies.length-1; ei>=0; ei--) {
+                        const e = this.enemies[ei];
+                        if(Math.abs(b.x - e.x) < 20 && Math.abs(b.y - e.y) < 20) {
+                            this.bullets.splice(bi, 1);
+                            this.enemies.splice(ei, 1);
+                            this.score++;
+                            this.updateStats();
+                            this.createExplosion(e.x, e.y, '#ffd60a');
+                            break;
+                        }
+                    }
+                }
+
+                if(this.enemies.length === 0) {
+                    this.win();
+                    return;
+                }
+
+                if(Date.now() - this.gameStartTime > 2000) {
+                    if(this.enemies.some(e => e.y > this.player.y - 10)) {
+                        this.gameOver();
+                        return;
+                    }
+                }
+            }
+
+            this.particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                p.life -= 0.04;
+                if(p.life <= 0) this.particles.splice(i, 1);
+            });
+        }
+
+        win() {
+            this.state = 'RESULT';
+            const rt = document.getElementById('result-title');
+            rt.textContent = "Q.E.D."; 
+            rt.className = "text-6xl font-black italic text-blue-400";
+            document.getElementById('result-ui').classList.remove('hidden');
+            this.mission++;
+        }
+
+        gameOver() {
+            this.state = 'RESULT';
+            const rt = document.getElementById('result-title');
+            rt.textContent = "不可説不可説転"; 
+            rt.className = "text-6xl font-black italic text-red-500";
+            document.getElementById('result-ui').classList.remove('hidden');
+        }
+
+        draw() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            this.ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+            this.ctx.lineWidth = 1;
+            for(let x=0; x<this.canvas.width; x+=60) {
+                this.ctx.beginPath(); this.ctx.moveTo(x, 0); this.ctx.lineTo(x, this.canvas.height); this.ctx.stroke();
+            }
+
+            const offScreenCount = this.enemies.filter(e => e.y < -20).length;
+            if (offScreenCount > 0 && this.state === 'PLAYING') {
+                this.ctx.fillStyle = 'rgba(0, 255, 65, 0.4)';
+                this.ctx.font = 'bold 12px "Fira Code"';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText(`▲ 外れ値検出: ${offScreenCount} ▲`, this.canvas.width/2, 30);
+            }
+            
+            if (this.elapsedSeconds >= 30 && this.state === 'PLAYING' && Math.floor(Date.now() / 500) % 2 === 0) {
+                this.ctx.fillStyle = 'rgba(255, 45, 85, 0.8)';
+                this.ctx.font = '900 24px Inter';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('LIMIT APPROACHING!', this.canvas.width/2, this.canvas.height/2);
+            }
+
+            this.ctx.font = '50px serif';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText('🧺', this.player.x, this.player.y);
+
+            this.enemies.forEach(e => {
+                if (e.y > -50) {
+                    this.ctx.font = `30px serif`;
+                    this.ctx.fillText(e.emoji, e.x, e.y);
+                }
+            });
+
+            this.ctx.fillStyle = '#fff';
+            this.bullets.forEach(b => {
+                this.ctx.fillRect(b.x-2, b.y-10, 4, 20);
+            });
+
+            this.enemyBullets.forEach(b => {
+                this.ctx.fillStyle = '#ff2d55';
+                this.ctx.beginPath();
+                this.ctx.arc(b.x, b.y, 4, 0, Math.PI*2);
+                this.ctx.fill();
+            });
+
+            this.particles.forEach(p => {
+                this.ctx.globalAlpha = p.life;
+                this.ctx.fillStyle = p.color;
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+                this.ctx.fill();
+            });
+            this.ctx.globalAlpha = 1.0;
+        }
+
+        loop() {
+            this.update();
+            this.draw();
+            requestAnimationFrame(() => this.loop());
+        }
+    }
+
+    window.onload = () => new Game();
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fbf6ee" />
+  <meta name="description" content="宮城学院女子大学 教育学科・幼児教育専攻 オープンキャンパス体験サイト。3分心理判定アプリ『わたし色のガーデン』を中心に、幼児教育の学びを楽しく体験できます。" />
+  <meta property="og:title" content="宮城学院女子大学 幼児教育専攻 OC体験サイト" />
+  <meta property="og:description" content="3分心理判定『わたし色のガーデン』から始まる、スマホで楽しむオープンキャンパス。" />
+  <meta property="og:type" content="website" />
+  <title>宮城学院女子大学 幼児教育専攻｜Open Campus Garden</title>
+  <style>
+    :root{
+      --ink:#223126;
+      --muted:#667164;
+      --paper:#fffdf8;
+      --cream:#fbf6ee;
+      --line:#eadfce;
+      --sage:#a8b99c;
+      --sage-deep:#6e8066;
+      --rose:#f4d9d4;
+      --rose-deep:#b77772;
+      --gold:#c7a45d;
+      --sky:#dfeefa;
+      --shadow:0 24px 70px rgba(34,49,38,.12);
+      --shadow-soft:0 12px 32px rgba(34,49,38,.08);
+      --radius:28px;
+      --radius-sm:18px;
+      --font:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,Meiryo,sans-serif;
+      --serif:"Hiragino Mincho ProN","Yu Mincho",YuMincho,serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:var(--font);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(244,217,212,.95), transparent 30%),
+        radial-gradient(circle at 96% 4%, rgba(223,238,250,.95), transparent 28%),
+        radial-gradient(circle at 80% 86%, rgba(168,185,156,.45), transparent 32%),
+        var(--cream);
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit}
+    button{font:inherit}
+    .shell{width:min(1120px,calc(100% - 28px));margin:0 auto;padding:16px 0 112px}
+    .skip-link{position:absolute;left:12px;top:-60px;background:var(--ink);color:white;padding:10px 12px;border-radius:999px;z-index:20}
+    .skip-link:focus{top:12px}
+    header{
+      position:sticky;top:0;z-index:15;
+      backdrop-filter:blur(18px) saturate(1.4);
+      -webkit-backdrop-filter:blur(18px) saturate(1.4);
+      background:rgba(251,246,238,.74);
+      border-bottom:1px solid rgba(234,223,206,.62);
+    }
+    .nav{width:min(1120px,calc(100% - 28px));margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:11px;min-width:0;text-decoration:none}
+    .mark{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#fff,var(--rose));box-shadow:var(--shadow-soft);font-size:22px;flex:0 0 auto}
+    .brand-main{font-weight:950;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+    .brand-sub{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .nav-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+    .pill-link,.quiet-btn{border:1px solid rgba(34,49,38,.12);background:rgba(255,255,255,.72);text-decoration:none;color:var(--ink);padding:10px 13px;border-radius:999px;font-size:12px;font-weight:900;box-shadow:0 10px 24px rgba(34,49,38,.06);cursor:pointer;white-space:nowrap}
+    .pill-link.primary{background:var(--ink);color:white;border-color:var(--ink)}
+    .hero{padding:30px 0 18px}
+    .hero-card{
+      position:relative;overflow:hidden;border-radius:42px;background:rgba(255,253,248,.78);border:1px solid rgba(234,223,206,.85);box-shadow:var(--shadow);padding:clamp(26px,6vw,64px);
+      isolation:isolate;
+    }
+    .hero-card:before{content:"";position:absolute;inset:auto -120px -160px auto;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(168,185,156,.34),transparent 66%);z-index:-1}
+    .hero-card:after{content:"";position:absolute;inset:-130px auto auto -110px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(199,164,93,.25),transparent 65%);z-index:-1}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:clamp(24px,5vw,54px);align-items:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(199,164,93,.38);background:rgba(255,255,255,.66);border-radius:999px;padding:8px 12px;font-size:11px;font-weight:950;letter-spacing:.12em;color:#745d2e;text-transform:uppercase;margin-bottom:18px}
+    .pulse{width:8px;height:8px;border-radius:50%;background:var(--rose-deep);box-shadow:0 0 0 7px rgba(183,119,114,.12);animation:pulse 2s infinite}
+    h1{font-family:var(--serif);font-size:clamp(34px,9vw,72px);line-height:1.05;letter-spacing:.03em;margin:0 0 16px}
+    .hero-copy{font-size:clamp(14px,3.7vw,17px);line-height:1.95;color:#4e5a50;margin:0 0 24px;max-width:650px;font-weight:650}
+    .hero-copy b{color:var(--ink)}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;border:0;border-radius:20px;padding:16px 20px;font-weight:950;letter-spacing:.02em;box-shadow:var(--shadow-soft);transition:.18s transform,.18s box-shadow,.18s opacity;cursor:pointer;line-height:1.25}
+    .cta:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(34,49,38,.16)}
+    .cta:active{transform:translateY(0) scale(.98)}
+    .cta.main{background:var(--ink);color:white;min-height:58px}
+    .cta.sub{background:rgba(255,255,255,.76);border:1px solid var(--line);color:var(--ink);min-height:58px}
+    .phone{
+      position:relative;margin:auto;width:min(360px,100%);border-radius:38px;background:linear-gradient(160deg,#fff,var(--cream));border:1px solid rgba(34,49,38,.1);box-shadow:0 30px 90px rgba(34,49,38,.18);padding:18px;
+      transform:rotate(1.5deg);
+    }
+    .phone-screen{border-radius:28px;overflow:hidden;background:linear-gradient(180deg,#fffaf6,#f2f6ef);border:1px solid rgba(234,223,206,.9);padding:18px;min-height:430px;display:flex;flex-direction:column}
+    .screen-top{display:flex;justify-content:space-between;align-items:center;color:#7a856f;font-size:11px;font-weight:900;margin-bottom:14px}.dots{display:flex;gap:5px}.dots span{width:7px;height:7px;border-radius:50%;background:#d6c7b6}.dots span:nth-child(2){background:#bfcab7}.dots span:nth-child(3){background:#f0c9c4}
+    .garden-preview{background:white;border:1px solid var(--line);border-radius:24px;padding:18px;text-align:center;box-shadow:0 12px 30px rgba(34,49,38,.08);flex:1;display:flex;flex-direction:column;justify-content:center}
+    .flower{font-size:76px;line-height:1;animation:float 4.2s ease-in-out infinite;margin-bottom:10px}.preview-title{font-family:var(--serif);font-size:25px;font-weight:900;margin:0}.preview-text{color:var(--muted);font-size:12px;line-height:1.75;margin:12px 0 18px}.fake-progress{height:9px;background:#f4eee6;border-radius:999px;overflow:hidden}.fake-progress span{display:block;width:72%;height:100%;background:linear-gradient(90deg,var(--gold),var(--sage));border-radius:999px}.mini-question{margin-top:14px;display:grid;gap:8px}.mini-question div{height:44px;border-radius:15px;background:#f9f3ec;border:1px solid #eee1d1}.mini-question div:nth-child(2){background:#26362a}.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.stat{background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:18px;padding:13px 10px;text-align:center}.stat b{display:block;font-size:20px}.stat span{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.08em}
+    section{margin-top:22px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:0 0 14px}.section-title{font-family:var(--serif);font-size:clamp(24px,5vw,38px);margin:0}.section-lead{font-size:13px;line-height:1.8;color:var(--muted);margin:7px 0 0;max-width:680px;font-weight:600}.card{background:rgba(255,253,248,.82);border:1px solid rgba(234,223,206,.84);border-radius:var(--radius);box-shadow:var(--shadow-soft);padding:clamp(18px,4vw,28px)}
+    .garden-feature{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:stretch}.feature-main{background:linear-gradient(135deg,#fff,var(--rose));border:1px solid rgba(234,223,206,.95);border-radius:24px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:260px}.feature-main h2{font-family:var(--serif);font-size:clamp(25px,5vw,42px);margin:0 0 10px}.feature-main p{font-size:14px;line-height:1.9;color:#4c584e;margin:0}.feature-badges{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.badge{display:inline-flex;align-items:center;gap:6px;background:white;border:1px solid rgba(199,164,93,.36);padding:8px 10px;border-radius:999px;font-size:11px;font-weight:950;color:#6d5730}.feature-side{display:grid;gap:12px}.point{background:white;border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}.point-icon{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:#f4efe6;font-size:22px}.point b{display:block;margin-bottom:4px}.point span{font-size:12px;line-height:1.75;color:var(--muted);font-weight:600}
+    .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.step{position:relative;background:white;border:1px solid var(--line);border-radius:22px;padding:18px;min-height:150px}.step-num{font-size:11px;color:#7c6334;font-weight:950;letter-spacing:.12em;margin-bottom:10px}.step h3{margin:0 0 8px;font-size:16px}.step p{margin:0;color:var(--muted);font-size:12px;line-height:1.75;font-weight:600}.step:before{content:"";position:absolute;inset:12px 12px auto auto;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#fff);opacity:.9}
+    .learn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.learn{background:white;border:1px solid var(--line);border-radius:22px;padding:18px;min-height:180px}.learn .emoji{font-size:30px;margin-bottom:8px}.learn h3{margin:0 0 8px;font-size:16px}.learn p{margin:0;color:var(--muted);font-size:12px;line-height:1.8;font-weight:600}
+    .apps-grid{display:grid;grid-template-columns:1.15fr repeat(2,1fr);gap:12px}.app-card{position:relative;overflow:hidden;background:white;border:1px solid var(--line);border-radius:24px;padding:20px;min-height:230px;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;transition:.18s transform,.18s box-shadow,.18s border-color}.app-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:rgba(199,164,93,.6)}.app-card.hero-app{background:linear-gradient(135deg,#fff,var(--green, #eaf3e7));grid-row:span 2}.app-emoji{font-size:42px;line-height:1;margin-bottom:12px}.app-kicker{font-size:10px;font-weight:950;color:#7c6334;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}.app-card h3{font-size:18px;margin:0 0 8px}.app-card p{font-size:12px;line-height:1.75;color:var(--muted);margin:0 0 16px;font-weight:600}.launch{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--ink);color:white;border-radius:999px;padding:10px 12px;font-size:12px;font-weight:950;width:max-content}.app-card:not(.hero-app) .launch{background:#f3ede5;color:var(--ink);border:1px solid var(--line)}.stamp{position:absolute;right:16px;top:16px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f2eee6;color:#b0a38e;font-weight:950}.app-card.done .stamp{background:#233428;color:white}
+    .oc-tools{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tool{background:white;border:1px solid var(--line);border-radius:24px;padding:20px}.tool h3{margin:0 0 8px}.tool p{font-size:12px;line-height:1.75;color:var(--muted);font-weight:600;margin:0 0 14px}.qr-url{display:flex;gap:8px;background:#f6f0e8;border:1px solid var(--line);border-radius:16px;padding:9px;align-items:center}.qr-url code{font-size:11px;line-height:1.4;word-break:break-all;color:#5b5145;flex:1}.copy-btn{border:0;background:var(--ink);color:white;border-radius:12px;padding:9px 10px;font-size:11px;font-weight:900;cursor:pointer}.memo{width:100%;min-height:88px;border:1px solid var(--line);border-radius:16px;background:#fffaf3;padding:12px;color:var(--ink);resize:vertical}.memo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.small-btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;cursor:pointer}.small-btn.dark{background:var(--ink);color:white;border-color:var(--ink)}
+    .links{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.official{background:white;border:1px solid var(--line);border-radius:18px;min-height:70px;text-decoration:none;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:950;font-size:13px;line-height:1.45}.official.primary{background:var(--ink);color:white;border-color:var(--ink)}
+    .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:white;border-radius:999px;padding:11px 16px;box-shadow:var(--shadow);font-size:12px;font-weight:900;opacity:0;pointer-events:none;transition:.22s;z-index:40}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .float-cta{position:fixed;left:0;right:0;bottom:0;z-index:25;background:rgba(251,246,238,.82);border-top:1px solid rgba(234,223,206,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}.float-inner{width:min(760px,100%);margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.float-copy{font-size:12px;font-weight:950;line-height:1.4}.float-copy span{display:block;color:var(--muted);font-size:10px;font-weight:800}.float-inner .cta{padding:13px 15px;border-radius:16px;min-height:48px;white-space:nowrap}
+    footer{margin:26px 0 0;color:var(--muted);font-size:11px;line-height:1.8;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.note{color:var(--muted);font-size:11px;line-height:1.7;margin-top:12px;font-weight:600}
+    @keyframes float{50%{transform:translateY(-8px) rotate(4deg)}}@keyframes pulse{50%{box-shadow:0 0 0 11px rgba(183,119,114,.05)}}
+    @media(max-width:860px){
+      .nav-actions .pill-link:not(.primary){display:none}.hero-grid,.garden-feature,.oc-tools{grid-template-columns:1fr}.phone{transform:none}.journey,.learn-grid{grid-template-columns:repeat(2,1fr)}.apps-grid{grid-template-columns:1fr 1fr}.app-card.hero-app{grid-column:1/-1;grid-row:auto}.links{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:560px){
+      .shell{width:min(100% - 18px,1120px);padding-top:8px}.nav{width:min(100% - 18px,1120px)}.brand-main{font-size:12px}.brand-sub{font-size:9px}.mark{width:38px;height:38px}.hero-card{border-radius:30px;padding:22px 16px}.hero-actions .cta{width:100%}.phone-screen{min-height:360px}.stats-row{grid-template-columns:1fr 1fr 1fr}.garden-feature,.journey,.learn-grid,.apps-grid,.oc-tools,.links{grid-template-columns:1fr}.section-head{display:block}.float-inner{grid-template-columns:1fr}.float-copy{text-align:center}.float-inner .cta{width:100%}h1{font-size:clamp(34px,12vw,54px)}.hero-copy{font-size:14px}.section-title{font-size:28px}.nav-actions .quiet-btn{display:none}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header>
+    <nav class="nav" aria-label="ページ内ナビゲーション">
+      <a class="brand" href="#top" aria-label="トップへ戻る">
+        <span class="mark" aria-hidden="true">🌿</span>
+        <span>
+          <span class="brand-main">宮城学院女子大学 幼児教育専攻</span>
+          <span class="brand-sub">Open Campus Garden</span>
+        </span>
+      </a>
+      <div class="nav-actions">
+        <a class="pill-link" href="#learn">学びを見る</a>
+        <a class="pill-link" href="#apps">遊べる体験</a>
+        <button class="quiet-btn" type="button" id="recommendBtn">今日のおすすめ</button>
+        <a class="pill-link primary" href="My_Garden_v1.3.1-OC-free-MGU.html" data-stamp="garden">診断へ</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="shell">
+    <section id="top" class="hero" aria-label="メインビジュアル">
+      <div class="hero-card">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow"><span class="pulse" aria-hidden="true"></span> QRから30秒で始まるOC体験</div>
+            <h1>あなたらしさが、<br>子どもの未来に<br>つながる。</h1>
+            <p class="hero-copy">
+              まずは、3分の心理判定アプリ <b>「わたし色のガーデン」</b> へ。あなたに近いハーブタイプを見つけながら、幼児教育専攻の学びをスマホで楽しく体験できます。
+            </p>
+            <div class="hero-actions">
+              <a class="cta main" href="My_Garden_v1.3.1-OC-free-MGU.html" data-stamp="garden">🌼 わたし色のガーデンをはじめる</a>
+              <a class="cta sub" href="#apps">🎮 待ち時間に遊ぶ</a>
+            </div>
+            <p class="note">※心理判定は医学的・臨床的な診断ではなく、自己理解と進路探究のきっかけとして楽しむ体験です。</p>
+          </div>
+          <div class="phone" aria-label="アプリのイメージ">
+            <div class="phone-screen">
+              <div class="screen-top"><span>MGU OC</span><div class="dots" aria-hidden="true"><span></span><span></span><span></span></div></div>
+              <div class="garden-preview">
+                <div class="flower" aria-hidden="true">🌼</div>
+                <h2 class="preview-title">わたし色のガーデン</h2>
+                <p class="preview-text">10問に答えると、16タイプの中から今日のあなたに近いハーブタイプが咲きます。</p>
+                <div class="fake-progress" aria-hidden="true"><span></span></div>
+                <div class="mini-question" aria-hidden="true"><div></div><div></div><div></div></div>
+              </div>
+              <div class="stats-row" aria-label="サイトの特徴">
+                <div class="stat"><b>3</b><span>MIN</span></div>
+                <div class="stat"><b>16</b><span>TYPE</span></div>
+                <div class="stat"><b>OC</b><span>FREE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="feature" class="card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">このサイトの主役は、心理判定アプリ。</h2>
+          <p class="section-lead">「楽しかった」で終わらせず、「自分はどんな保育者・教育者に近いか」を自然に考えられる導線にしています。</p>
+        </div>
+      </div>
+      <div class="garden-feature">
+        <div class="feature-main">
+          <div>
+            <h2>わたし色のガーデン</h2>
+            <p>回答結果は、短い強みと進路ヒントにしぼって表示。高校生が緊張せずに楽しめて、OCスタッフとの会話のきっかけにもなります。</p>
+            <div class="feature-badges">
+              <span class="badge">🌿 自己理解</span>
+              <span class="badge">💬 会話のきっかけ</span>
+              <span class="badge">🎓 進路探究</span>
+            </div>
+          </div>
+          <a class="cta main" href="My_Garden_v1.3.1-OC-free-MGU.html" data-stamp="garden">判定アプリを開く →</a>
+        </div>
+        <div class="feature-side">
+          <div class="point"><div class="point-icon">🧭</div><div><b>迷わない</b><span>QRから来た人が最初に押すボタンをひとつに集約。主役アプリへ最短で進めます。</span></div></div>
+          <div class="point"><div class="point-icon">🪴</div><div><b>幼児教育につながる</b><span>性格タイプを、子ども理解・表現・支援・環境づくりの学びへ自然に接続します。</span></div></div>
+          <div class="point"><div class="point-icon">✨</div><div><b>写真を撮りたくなる</b><span>結果画面を友達や保護者に見せたくなる、やさしい世界観の導入にしています。</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="journey" class="card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">おすすめの回り方</h2>
+          <p class="section-lead">高校生が一人でも、友達同士でも、保護者と一緒でも使いやすい4ステップです。</p>
+        </div>
+      </div>
+      <div class="journey">
+        <article class="step"><div class="step-num">STEP 01</div><h3>QRで開く</h3><p>トップページに到着。迷わず「わたし色のガーデン」へ。</p></article>
+        <article class="step"><div class="step-num">STEP 02</div><h3>10問に答える</h3><p>3分でハーブタイプを表示。自分らしい強みを見つけます。</p></article>
+        <article class="step"><div class="step-num">STEP 03</div><h3>専攻の学びへ</h3><p>子ども理解、表現、支援、遊びの学びとつなげます。</p></article>
+        <article class="step"><div class="step-num">STEP 04</div><h3>待ち時間も楽しく</h3><p>ミニゲームで、子どもの遊びと学びのデザインを体験。</p></article>
+      </div>
+    </section>
+
+    <section id="learn" class="card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">幼児教育専攻で広がる4つの学び</h2>
+          <p class="section-lead">心理判定の結果から、幼児教育で大切になる視点へつながるように整理しました。</p>
+        </div>
+      </div>
+      <div class="learn-grid">
+        <article class="learn"><div class="emoji">👶</div><h3>子ども理解</h3><p>一人ひとりの気持ち、発達、関わり方を丁寧に見つめる学び。</p></article>
+        <article class="learn"><div class="emoji">🎨</div><h3>表現と遊び</h3><p>音楽・造形・身体表現など、子どもの「やってみたい」を育てる学び。</p></article>
+        <article class="learn"><div class="emoji">🤝</div><h3>支援と共感</h3><p>子ども、家庭、地域を支えるコミュニケーションと福祉の視点。</p></article>
+        <article class="learn"><div class="emoji">🏡</div><h3>環境づくり</h3><p>安心して挑戦できる保育環境、教材、場づくりを考える学び。</p></article>
+      </div>
+    </section>
+
+    <section id="apps" class="card">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">遊べるOCラウンジ</h2>
+          <p class="section-lead">待ち時間も退屈させないために、短時間で遊べる体験を置いています。中心は心理判定、周辺にミニゲームという構成です。</p>
+        </div>
+      </div>
+      <div class="apps-grid" id="appsGrid">
+        <a class="app-card hero-app" href="My_Garden_v1.3.1-OC-free-MGU.html" data-stamp="garden">
+          <span class="stamp" aria-hidden="true">✓</span>
+          <div><div class="app-emoji">🌼</div><div class="app-kicker">Main experience</div><h3>わたし色のガーデン</h3><p>3分であなたに近いハーブタイプが咲く、OCの主役アプリ。結果を見ながら専攻の学びを考えられます。</p></div>
+          <span class="launch">はじめる →</span>
+        </a>
+        <a class="app-card" href="Cal_99doujou_v1.5.0.html" data-stamp="dojo"><span class="stamp" aria-hidden="true">✓</span><div><div class="app-emoji">😂</div><div class="app-kicker">Playful learning</div><h3>九九お笑い道場</h3><p>笑いながら学ぶ、遊びと学習デザインのミニ体験。</p></div><span class="launch">遊ぶ →</span></a>
+        <a class="app-card" href="Kakezan100.html" data-stamp="rpg"><span class="stamp" aria-hidden="true">✓</span><div><div class="app-emoji">🧙</div><div class="app-kicker">Quest</div><h3>かけ算100階層</h3><p>RPG風の計算ゲーム。物語で学びを支える仕掛けを体験。</p></div><span class="launch">遊ぶ →</span></a>
+        <a class="app-card" href="Cal_furuitsInvadors.html" data-stamp="fruit"><span class="stamp" aria-hidden="true">✓</span><div><div class="app-emoji">🍓</div><div class="app-kicker">Action</div><h3>Fruit Invaders</h3><p>数式を解いてフルーツを迎撃。集中と達成感のアクション体験。</p></div><span class="launch">遊ぶ →</span></a>
+        <a class="app-card" href="Exp_NumberPlace.html" data-stamp="number"><span class="stamp" aria-hidden="true">✓</span><div><div class="app-emoji">🔢</div><div class="app-kicker">Puzzle</div><h3>Number Place</h3><p>落ち着いて考えるナンバープレイス。ひとり時間にもおすすめ。</p></div><span class="launch">遊ぶ →</span></a>
+      </div>
+      <p class="note" id="stampStatus">体験スタンプ：0 / 5</p>
+    </section>
+
+    <section class="card" id="tools">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">来場者向けツール</h2>
+          <p class="section-lead">スマホで見た人が、その場でURLを共有したり、気になったことをメモできます。</p>
+        </div>
+      </div>
+      <div class="oc-tools">
+        <div class="tool">
+          <h3>QR誘導URL</h3>
+          <p>印刷物や掲示に載せるトップページURLです。</p>
+          <div class="qr-url"><code id="siteUrl">https://knishiura777-dotcom.github.io/d/OC_youji.html</code><button class="copy-btn" type="button" id="copyBtn">コピー</button></div>
+        </div>
+        <div class="tool">
+          <h3>今日のOCメモ</h3>
+          <p>気になった授業、聞きたい質問、診断結果をメモできます。この端末内だけに保存されます。</p>
+          <textarea class="memo" id="memo" placeholder="例：私はラベンダータイプ。実習について質問したい。"></textarea>
+          <div class="memo-actions"><button class="small-btn dark" id="saveMemo">保存</button><button class="small-btn" id="clearMemo">消す</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="official-links">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">もっと詳しく知る</h2>
+          <p class="section-lead">診断やゲームをきっかけに、専攻ページ・オープンキャンパス情報・資料請求へ進めます。</p>
+        </div>
+      </div>
+      <div class="links">
+        <a class="official primary" href="https://www.mgu.ac.jp/departments/kd/" target="_blank" rel="noopener">教育学科ページ</a>
+        <a class="official" href="https://www.mgu.ac.jp/department/youzi.html" target="_blank" rel="noopener">幼児教育専攻<br>特設ページ</a>
+        <a class="official" href="https://www.mgu.ac.jp/information/opencampus/" target="_blank" rel="noopener">オープンキャンパス<br>情報</a>
+        <a class="official" href="https://www.mgu.ac.jp/information/request/" target="_blank" rel="noopener">資料請求</a>
+      </div>
+    </section>
+
+    <footer>
+      <div>© 宮城学院女子大学 教育学科・幼児教育専攻 Open Campus Garden</div>
+      <div>Design concept: simple, warm, mobile-first, playful.</div>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">コピーしました</div>
+  <div class="float-cta" aria-label="固定CTA">
+    <div class="float-inner">
+      <div class="float-copy">まずは心理判定から<span>3分で、あなた色のハーブが咲きます。</span></div>
+      <a class="cta main" href="My_Garden_v1.3.1-OC-free-MGU.html" data-stamp="garden">🌼 診断へ</a>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      'use strict';
+      const STAMP_KEY = 'mgu_youji_oc_stamps_v1';
+      const MEMO_KEY = 'mgu_youji_oc_memo_v1';
+      const stampIds = ['garden','dojo','rpg','fruit','number'];
+      const toast = document.getElementById('toast');
+      const memo = document.getElementById('memo');
+      const status = document.getElementById('stampStatus');
+      const appsGrid = document.getElementById('appsGrid');
+      function getStamps(){
+        try{return JSON.parse(localStorage.getItem(STAMP_KEY) || '[]');}catch(e){return [];}
+      }
+      function setStamps(list){localStorage.setItem(STAMP_KEY, JSON.stringify(Array.from(new Set(list))));}
+      function showToast(text){
+        toast.textContent = text;
+        toast.classList.add('show');
+        setTimeout(function(){toast.classList.remove('show');}, 1600);
+      }
+      function updateStamps(){
+        const stamps = getStamps();
+        document.querySelectorAll('[data-stamp]').forEach(function(el){
+          const id = el.getAttribute('data-stamp');
+          if(stamps.includes(id)){ el.classList.add('done'); }
+        });
+        if(status){ status.textContent = '体験スタンプ：' + stamps.length + ' / ' + stampIds.length + (stamps.length >= 3 ? '　いい感じに回れています。' : ''); }
+      }
+      document.querySelectorAll('a[data-stamp]').forEach(function(a){
+        a.addEventListener('click', function(){
+          const stamps = getStamps();
+          stamps.push(a.getAttribute('data-stamp'));
+          setStamps(stamps);
+          updateStamps();
+        });
+      });
+      const copyBtn = document.getElementById('copyBtn');
+      if(copyBtn){
+        copyBtn.addEventListener('click', async function(){
+          const text = document.getElementById('siteUrl').textContent;
+          try{ await navigator.clipboard.writeText(text); showToast('URLをコピーしました'); }
+          catch(e){ showToast('URL: ' + text); }
+        });
+      }
+      if(memo){ memo.value = localStorage.getItem(MEMO_KEY) || ''; }
+      const saveMemo = document.getElementById('saveMemo');
+      if(saveMemo){ saveMemo.addEventListener('click', function(){ localStorage.setItem(MEMO_KEY, memo.value); showToast('メモを保存しました'); }); }
+      const clearMemo = document.getElementById('clearMemo');
+      if(clearMemo){ clearMemo.addEventListener('click', function(){ memo.value=''; localStorage.removeItem(MEMO_KEY); showToast('メモを消しました'); }); }
+      const recommendBtn = document.getElementById('recommendBtn');
+      if(recommendBtn){
+        recommendBtn.addEventListener('click', function(){
+          const cards = Array.from(appsGrid.querySelectorAll('.app-card'));
+          cards.forEach(function(c){ c.style.outline = 'none'; c.style.transform = ''; });
+          const card = cards[Math.floor(Math.random() * cards.length)];
+          card.scrollIntoView({behavior:'smooth', block:'center'});
+          card.style.outline = '4px solid rgba(199,164,93,.45)';
+          card.style.transform = 'translateY(-4px)';
+          showToast('今日のおすすめを選びました');
+          setTimeout(function(){ card.style.outline = 'none'; card.style.transform = ''; }, 2400);
+        });
+      }
+      updateStamps();
+    })();
+  </script>
+</body>
+</html>
