@@ -70,11 +70,11 @@
     }
     .hero-card:before{content:"";position:absolute;inset:auto -120px -160px auto;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(168,185,156,.34),transparent 66%);z-index:-1}
     .hero-card:after{content:"";position:absolute;inset:-130px auto auto -110px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(199,164,93,.25),transparent 65%);z-index:-1}
-    .hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:clamp(24px,5vw,54px);align-items:center}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:clamp(24px,4.4vw,48px);align-items:center}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(199,164,93,.38);background:rgba(255,255,255,.66);border-radius:999px;padding:8px 12px;font-size:11px;font-weight:950;letter-spacing:.12em;color:#745d2e;text-transform:uppercase;margin-bottom:18px}
     .pulse{width:8px;height:8px;border-radius:50%;background:var(--rose-deep);box-shadow:0 0 0 7px rgba(183,119,114,.12);animation:pulse 2s infinite}
-    h1{font-family:var(--serif);font-size:clamp(34px,9vw,72px);line-height:1.05;letter-spacing:.03em;margin:0 0 16px}
-    .hero-copy{font-size:clamp(14px,3.7vw,17px);line-height:1.95;color:#4e5a50;margin:0 0 24px;max-width:650px;font-weight:650}
+    h1{font-family:var(--serif);font-size:clamp(42px,5.7vw,60px);line-height:1.12;letter-spacing:.025em;margin:0 0 18px}.hero-title .line{display:block;white-space:nowrap}
+    .hero-copy{font-size:clamp(14px,3.7vw,17px);line-height:1.95;color:#4e5a50;margin:0 0 24px;max-width:590px;font-weight:650}
     .hero-copy b{color:var(--ink)}
     .hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;border:0;border-radius:20px;padding:16px 20px;font-weight:950;letter-spacing:.02em;box-shadow:var(--shadow-soft);transition:.18s transform,.18s box-shadow,.18s opacity;cursor:pointer;line-height:1.25}
@@ -83,7 +83,7 @@
     .cta.main{background:var(--ink);color:white;min-height:58px}
     .cta.sub{background:rgba(255,255,255,.76);border:1px solid var(--line);color:var(--ink);min-height:58px}
     .phone{
-      position:relative;margin:auto;width:min(360px,100%);border-radius:38px;background:linear-gradient(160deg,#fff,var(--cream));border:1px solid rgba(34,49,38,.1);box-shadow:0 30px 90px rgba(34,49,38,.18);padding:18px;
+      position:relative;margin:auto;width:min(340px,100%);border-radius:38px;background:linear-gradient(160deg,#fff,var(--cream));border:1px solid rgba(34,49,38,.1);box-shadow:0 30px 90px rgba(34,49,38,.18);padding:18px;
       transform:rotate(1.5deg);
     }
     .phone-screen{border-radius:28px;overflow:hidden;background:linear-gradient(180deg,#fffaf6,#f2f6ef);border:1px solid rgba(234,223,206,.9);padding:18px;min-height:430px;display:flex;flex-direction:column}
@@ -105,7 +105,7 @@
       .nav-actions .pill-link:not(.primary){display:none}.hero-grid,.garden-feature,.oc-tools{grid-template-columns:1fr}.phone{transform:none}.journey,.learn-grid{grid-template-columns:repeat(2,1fr)}.apps-grid{grid-template-columns:1fr 1fr}.app-card.hero-app{grid-column:1/-1;grid-row:auto}.links{grid-template-columns:1fr 1fr}
     }
     @media(max-width:560px){
-      .shell{width:min(100% - 18px,1120px);padding-top:8px}.nav{width:min(100% - 18px,1120px)}.brand-main{font-size:12px}.brand-sub{font-size:9px}.mark{width:38px;height:38px}.hero-card{border-radius:30px;padding:22px 16px}.hero-actions .cta{width:100%}.phone-screen{min-height:360px}.stats-row{grid-template-columns:1fr 1fr 1fr}.garden-feature,.journey,.learn-grid,.apps-grid,.oc-tools,.links{grid-template-columns:1fr}.section-head{display:block}.float-inner{grid-template-columns:1fr}.float-copy{text-align:center}.float-inner .cta{width:100%}h1{font-size:clamp(34px,12vw,54px)}.hero-copy{font-size:14px}.section-title{font-size:28px}.nav-actions .quiet-btn{display:none}
+      .shell{width:min(100% - 18px,1120px);padding-top:8px}.nav{width:min(100% - 18px,1120px)}.brand-main{font-size:12px}.brand-sub{font-size:9px}.mark{width:38px;height:38px}.hero-card{border-radius:30px;padding:22px 16px}.hero-actions .cta{width:100%}.phone-screen{min-height:360px}.stats-row{grid-template-columns:1fr 1fr 1fr}.garden-feature,.journey,.learn-grid,.apps-grid,.oc-tools,.links{grid-template-columns:1fr}.section-head{display:block}.float-inner{grid-template-columns:1fr}.float-copy{text-align:center}.float-inner .cta{width:100%}h1{font-size:clamp(34px,10.2vw,50px);line-height:1.15}.hero-copy{font-size:14px}.section-title{font-size:28px}.nav-actions .quiet-btn{display:none}
     }
   </style>
 </head>
@@ -135,7 +135,7 @@
         <div class="hero-grid">
           <div>
             <div class="eyebrow"><span class="pulse" aria-hidden="true"></span> QRから30秒で始まるOC体験</div>
-            <h1>あなたらしさが、<br>子どもの未来に<br>つながる。</h1>
+            <h1 class="hero-title"><span class="line">あなたらしさが、</span><span class="line">子どもの未来に</span><span class="line">つながる。</span></h1>
             <p class="hero-copy">
               まずは、3分の心理判定アプリ <b>「わたし色のガーデン」</b> へ。あなたに近いハーブタイプを見つけながら、幼児教育専攻の学びをスマホで楽しく体験できます。
             </p>
