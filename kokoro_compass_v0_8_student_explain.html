@@ -1,0 +1,2948 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>こころコンパス診断 v0.8 Student Explain</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --panel: rgba(255,255,255,0.86);
+      --ink: #27231f;
+      --muted: #6f675f;
+      --line: #e5dbcf;
+      --accent: #7a5cff;
+      --accent2: #00a884;
+      --accent3: #ffb54a;
+      --danger: #ce5b5b;
+      --shadow: 0 18px 50px rgba(50, 42, 30, 0.13);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(122,92,255,.17), transparent 34%),
+        radial-gradient(circle at 88% 20%, rgba(0,168,132,.15), transparent 30%),
+        radial-gradient(circle at 42% 92%, rgba(255,181,74,.20), transparent 34%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .app {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      letter-spacing: .03em;
+    }
+
+    .brand h1 {
+      font-size: clamp(20px, 4vw, 32px);
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.58);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(229,219,207,.8);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: clamp(18px, 4vw, 34px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .hero h2 {
+      font-size: clamp(30px, 8vw, 58px);
+      letter-spacing: -.04em;
+      line-height: 1.04;
+      margin: 0 0 18px;
+    }
+
+    .hero .lead {
+      font-size: clamp(15px, 2.4vw, 18px);
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0 0 22px;
+    }
+
+    .notice {
+      background: #fff9ec;
+      border: 1px solid #f0d6a0;
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: #5b4a2a;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 18px 0;
+    }
+
+    .mode-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255,255,255,.74);
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: .2s transform, .2s border-color, .2s background;
+    }
+
+    .mode-card:hover { transform: translateY(-2px); }
+    .mode-card.selected {
+      border-color: rgba(122,92,255,.7);
+      background: rgba(122,92,255,.09);
+    }
+
+    .mode-card strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .mode-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    button {
+      border: 0;
+      background: var(--ink);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(39,35,31,.16);
+      transition: .18s transform, .18s opacity;
+      font-size: 15px;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .42; cursor: not-allowed; transform: none; }
+
+    .secondary {
+      background: white;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .accent {
+      background: linear-gradient(135deg, var(--accent), #5a46ce);
+    }
+
+    .green {
+      background: linear-gradient(135deg, var(--accent2), #08765e);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .hidden { display: none !important; }
+
+    .progress-shell {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(39,35,31,.08);
+      overflow: hidden;
+      margin: 16px 0 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+      transition: width .25s ease;
+    }
+
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .stage-title h2 {
+      margin: 0;
+      font-size: clamp(24px, 6vw, 42px);
+      letter-spacing: -.03em;
+    }
+
+    .stage-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .step-badge {
+      padding: 10px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.7);
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .question {
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .q-text {
+      font-weight: 800;
+      line-height: 1.65;
+      font-size: 16px;
+      margin-bottom: 13px;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .scale label {
+      min-height: 58px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 8px 6px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      line-height: 1.25;
+      transition: .15s background, .15s border-color, .15s color, .15s transform;
+    }
+
+    .scale input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .scale label:has(input:checked) {
+      background: rgba(122,92,255,.12);
+      color: var(--ink);
+      border-color: rgba(122,92,255,.65);
+      font-weight: 800;
+      transform: translateY(-1px);
+    }
+
+    .stage-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .error {
+      color: var(--danger);
+      font-weight: 800;
+      margin-top: 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .type-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 360px;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(255,255,255,.5), transparent 25%),
+        linear-gradient(135deg, #30294d, #5f4bd8 46%, #0f9a78);
+      color: white;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(41,34,78,.28);
+    }
+
+    .type-card::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -90px;
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      border: 38px solid rgba(255,255,255,.15);
+    }
+
+    .type-card .small {
+      opacity: .76;
+      font-weight: 800;
+      letter-spacing: .08em;
+      font-size: 12px;
+      margin-bottom: 24px;
+    }
+
+    .type-card h2 {
+      font-size: clamp(28px, 7vw, 46px);
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      margin: 0 0 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .type-card .copy {
+      font-size: 17px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+      opacity: .92;
+      position: relative;
+      z-index: 1;
+    }
+
+    .type-chip {
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,.38);
+      background: rgba(255,255,255,.14);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin: 0 6px 6px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,.74);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+
+    .info-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .info-card p, .info-card li {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .score-row {
+      margin: 14px 0;
+    }
+
+    .score-row .score-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .bar-shell {
+      height: 15px;
+      border-radius: 999px;
+      background: rgba(39,35,31,.08);
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      transition: width .6s ease;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      line-height: 1.6;
+    }
+
+    th {
+      background: rgba(39,35,31,.04);
+      white-space: nowrap;
+    }
+
+    .reflection {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .reflection .prompt {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      color: var(--ink);
+      line-height: 1.7;
+      font-weight: 700;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 860px) {
+      .hero, .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .pill {
+        display: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app { padding: 14px; }
+      .scale {
+        grid-template-columns: 1fr;
+      }
+      .scale label {
+        min-height: 42px;
+        justify-content: start;
+        place-items: center start;
+        padding-left: 14px;
+      }
+      .stage-head, .stage-nav {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .stage-nav button {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      header, .actions, .stage-nav, #startView, #quizView { display: none !important; }
+      .panel, .info-card, .type-card { box-shadow: none; }
+      .app { width: 100%; padding: 0; }
+      .result-grid { grid-template-columns: 1fr; }
+      details { break-inside: avoid; }
+    }
+  
+    /* Award Concept Layer v0.2 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(39,35,31,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(39,35,31,.035) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 76%);
+      z-index: -1;
+    }
+
+    .logo {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo::after {
+      content: "";
+      position: absolute;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.65);
+      transform: rotate(24deg);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 620px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      right: 28%;
+      top: 52%;
+      width: 520px;
+      height: 520px;
+      transform: translate(50%, -50%);
+      border-radius: 50%;
+      background:
+        conic-gradient(from 210deg,
+          rgba(122,92,255,.34),
+          rgba(0,168,132,.28),
+          rgba(255,181,74,.28),
+          rgba(122,92,255,.34));
+      filter: blur(.2px);
+      opacity: .45;
+      z-index: -1;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(122,92,255,.22);
+      border-radius: 999px;
+      background: rgba(255,255,255,.6);
+      color: #5a46ce;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      margin-bottom: 18px;
+    }
+
+    .hero h2 .grad {
+      background: linear-gradient(110deg, #27231f, #5b43df 45%, #009b78 76%, #27231f);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .signature-card {
+      position: relative;
+      border-radius: 30px;
+      padding: 18px;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,.92), rgba(255,255,255,.58)),
+        radial-gradient(circle at 18% 20%, rgba(122,92,255,.15), transparent 30%);
+      border: 1px solid rgba(255,255,255,.7);
+      box-shadow: 0 30px 80px rgba(39,35,31,.16);
+      overflow: hidden;
+    }
+
+    .compass-art {
+      height: 276px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.96) 0 7%, transparent 7.5%),
+        conic-gradient(from 160deg,
+          rgba(122,92,255,.96),
+          rgba(0,168,132,.9),
+          rgba(255,181,74,.95),
+          rgba(239,97,97,.76),
+          rgba(122,92,255,.96));
+      display: grid;
+      place-items: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .compass-art::before {
+      content: "";
+      position: absolute;
+      width: 206px;
+      height: 206px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 36px rgba(255,255,255,.10),
+        0 0 0 72px rgba(255,255,255,.06);
+    }
+
+    .compass-art::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 118px;
+      background: rgba(255,255,255,.88);
+      border-radius: 999px;
+      transform-origin: bottom center;
+      transform: translateY(-58px) rotate(38deg);
+      box-shadow: 0 12px 32px rgba(39,35,31,.22);
+    }
+
+    .compass-art strong {
+      position: relative;
+      z-index: 1;
+      font-size: 13px;
+      letter-spacing: .14em;
+      text-align: center;
+      text-shadow: 0 2px 20px rgba(0,0,0,.2);
+    }
+
+    .design-principles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .principle {
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(229,219,207,.88);
+    }
+
+    .principle b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .principle span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .mode-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-card.selected::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(var(--accent), var(--accent2));
+    }
+
+    .question {
+      box-shadow: 0 10px 28px rgba(39,35,31,.055);
+    }
+
+    .question:focus-within {
+      border-color: rgba(122,92,255,.55);
+      box-shadow: 0 12px 34px rgba(122,92,255,.12);
+    }
+
+    .scale label {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scale label:has(input:checked)::after {
+      content: "";
+      position: absolute;
+      inset: auto 10px 8px 10px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .type-card {
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,255,255,.35), transparent 22%),
+        radial-gradient(circle at 82% 84%, rgba(0,168,132,.45), transparent 34%),
+        conic-gradient(from 210deg at 50% 50%, #261e45, #604aff, #00a884, #ffb54a, #261e45);
+    }
+
+    .type-card .small::before {
+      content: "◎ ";
+      color: rgba(255,255,255,.8);
+    }
+
+    .award-note {
+      margin-top: 16px;
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(39,35,31,.88);
+      color: white;
+      box-shadow: 0 18px 50px rgba(39,35,31,.18);
+    }
+
+    .award-note b {
+      display: block;
+      margin-bottom: 6px;
+      letter-spacing: .04em;
+    }
+
+    .award-note span {
+      display: block;
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 860px) {
+      .hero { min-height: auto; }
+      .design-principles { grid-template-columns: 1fr; }
+    }
+
+  
+    /* Mobile Optimized Layer v0.4 */
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    button, .mode-card, .scale label, summary {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    button {
+      min-height: 48px;
+    }
+
+    .mobile-scale-guide {
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin: 8px 0 10px;
+      color: var(--muted);
+      font-size: 10px;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .mobile-scale-guide span {
+      background: rgba(255,255,255,.68);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 5px 2px;
+    }
+
+    .mobile-only {
+      display: none;
+    }
+
+    @media (max-width: 680px) {
+      body {
+        background:
+          radial-gradient(circle at 12% 8%, rgba(122,92,255,.15), transparent 30%),
+          radial-gradient(circle at 92% 24%, rgba(0,168,132,.14), transparent 32%),
+          var(--bg);
+      }
+
+      .app {
+        padding: 12px max(12px, env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+      }
+
+      header {
+        margin-bottom: 12px;
+      }
+
+      .logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        font-size: 14px;
+      }
+
+      .brand {
+        gap: 10px;
+      }
+
+      .brand h1 {
+        font-size: 20px;
+        letter-spacing: -.02em;
+      }
+
+      .brand p {
+        font-size: 11px;
+        line-height: 1.35;
+        max-width: 260px;
+      }
+
+      .panel {
+        border-radius: 22px;
+        padding: 16px;
+      }
+
+      .hero {
+        gap: 14px;
+      }
+
+      .hero-kicker {
+        font-size: 10px;
+        padding: 7px 10px;
+        margin-bottom: 12px;
+      }
+
+      .hero h2 {
+        font-size: clamp(32px, 11vw, 44px);
+        line-height: 1.12;
+        margin-bottom: 12px;
+      }
+
+      .hero .lead {
+        font-size: 14px;
+        line-height: 1.75;
+        margin-bottom: 14px;
+      }
+
+      .notice {
+        font-size: 12px;
+        line-height: 1.65;
+        padding: 12px;
+        border-radius: 16px;
+        margin: 12px 0;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 9px;
+      }
+
+      .actions button {
+        width: 100%;
+        border-radius: 15px;
+        font-size: 15px;
+      }
+
+      .signature-card {
+        padding: 12px;
+        border-radius: 24px;
+        margin-top: 4px;
+      }
+
+      .compass-art {
+        height: 176px;
+        border-radius: 22px;
+      }
+
+      .compass-art::before {
+        width: 146px;
+        height: 146px;
+        box-shadow:
+          0 0 0 24px rgba(255,255,255,.10),
+          0 0 0 48px rgba(255,255,255,.06);
+      }
+
+      .compass-art::after {
+        height: 86px;
+        transform: translateY(-42px) rotate(38deg);
+      }
+
+      .design-principles {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .principle {
+        padding: 10px;
+        border-radius: 14px;
+      }
+
+      .principle b {
+        font-size: 12px;
+      }
+
+      .principle span {
+        font-size: 10.5px;
+      }
+
+      .award-note {
+        padding: 13px;
+        border-radius: 18px;
+        margin-top: 10px;
+      }
+
+      .award-note span {
+        font-size: 12px;
+      }
+
+      .mode-card {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      .mode-card strong {
+        font-size: 16px;
+      }
+
+      .mode-card span {
+        font-size: 12px;
+      }
+
+      .stage-head {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        margin: -16px -16px 12px;
+        padding: 14px 16px 10px;
+        background: rgba(247,244,238,.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(229,219,207,.82);
+      }
+
+      .stage-title h2 {
+        font-size: 24px;
+      }
+
+      .stage-title p {
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .step-badge {
+        align-self: flex-start;
+        font-size: 11px;
+        padding: 7px 10px;
+      }
+
+      .progress-shell {
+        position: sticky;
+        top: 106px;
+        z-index: 4;
+        margin: 0 -4px 10px;
+        height: 8px;
+      }
+
+      .question {
+        padding: 13px;
+        border-radius: 18px;
+        margin: 10px 0;
+      }
+
+      .q-meta {
+        font-size: 10.5px;
+        margin-bottom: 7px;
+      }
+
+      .q-text {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+
+      .mobile-scale-guide {
+        display: grid;
+      }
+
+      .scale {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 6px;
+      }
+
+      .scale label {
+        min-height: 50px !important;
+        padding: 6px 2px !important;
+        display: grid !important;
+        place-items: center !important;
+        font-size: 0 !important;
+        border-radius: 14px;
+      }
+
+      .scale label::before {
+        content: attr(data-short);
+        font-size: 18px;
+        color: var(--muted);
+        font-weight: 900;
+      }
+
+      .scale label:has(input:checked)::before {
+        color: var(--ink);
+      }
+
+      .stage-nav {
+        position: sticky;
+        bottom: 0;
+        z-index: 8;
+        display: grid;
+        grid-template-columns: .8fr 1.2fr;
+        gap: 9px;
+        margin: 14px -16px -16px;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(247,244,238,.94);
+        backdrop-filter: blur(14px);
+        border-top: 1px solid rgba(229,219,207,.86);
+      }
+
+      .stage-nav button {
+        width: 100%;
+        min-height: 50px;
+        border-radius: 15px;
+      }
+
+      .result-grid {
+        gap: 12px;
+      }
+
+      .type-card {
+        min-height: 310px;
+        border-radius: 24px;
+        padding: 22px;
+      }
+
+      .type-card h2 {
+        font-size: clamp(30px, 10vw, 42px);
+      }
+
+      .type-card .copy {
+        font-size: 15px;
+        line-height: 1.75;
+      }
+
+      .type-chip {
+        font-size: 11px;
+        padding: 7px 9px;
+      }
+
+      .info-card {
+        border-radius: 18px;
+        padding: 14px;
+      }
+
+      .info-card h3 {
+        font-size: 16px;
+      }
+
+      .info-card p, .info-card li {
+        font-size: 12.5px;
+        line-height: 1.7;
+      }
+
+      .score-row .score-label {
+        font-size: 13px;
+      }
+
+      .reflection .prompt {
+        font-size: 13px;
+        padding: 12px;
+      }
+
+      details {
+        border-radius: 16px;
+        padding: 12px;
+      }
+
+      summary {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: normal;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      th, td {
+        min-width: 110px;
+        font-size: 11px;
+        padding: 8px 6px;
+      }
+
+      .footer-note {
+        font-size: 11.5px;
+      }
+
+      .mobile-only {
+        display: block;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .design-principles {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h2 {
+        font-size: 30px;
+      }
+
+      .stage-title h2 {
+        font-size: 22px;
+      }
+
+      .q-text {
+        font-size: 14px;
+      }
+
+      .scale label {
+        min-height: 46px !important;
+      }
+
+      .scale label::before {
+        font-size: 16px;
+      }
+    }
+
+  
+    /* Type Card Illustration Layer v0.5 */
+    .result-illustration {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 360px);
+      height: 190px;
+      margin: 4px auto 22px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(255,255,255,.42), transparent 28%),
+        linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.25);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+    }
+
+    .result-illustration svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .type-card h2 {
+      text-wrap: balance;
+    }
+
+    .type-card .copy {
+      text-wrap: pretty;
+    }
+
+    .type-chip {
+      backdrop-filter: blur(8px);
+    }
+
+    .type-card-meta {
+      position: relative;
+      z-index: 1;
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .type-mini-section {
+      border: 1px solid rgba(255,255,255,.24);
+      background: rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 10px 12px;
+      color: rgba(255,255,255,.92);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .type-mini-section b {
+      display: block;
+      font-size: 11px;
+      letter-spacing: .08em;
+      opacity: .75;
+      margin-bottom: 3px;
+    }
+
+    @media (max-width: 680px) {
+      .result-illustration {
+        width: 100%;
+        height: 168px;
+        border-radius: 22px;
+        margin-bottom: 18px;
+      }
+
+      .type-card {
+        min-height: auto;
+      }
+
+      .type-card-meta {
+        gap: 7px;
+      }
+
+      .type-mini-section {
+        font-size: 11.5px;
+        border-radius: 14px;
+        padding: 9px 10px;
+      }
+    }
+
+  
+    /* Bootstrap / Type Prevalence Layer v0.6 */
+    .bootstrap-controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+      margin: 14px 0;
+    }
+
+    .control-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .control-field label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .control-field input,
+    .control-field select {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--ink);
+    }
+
+    .bootstrap-note {
+      border-radius: 16px;
+      border: 1px solid #f0d6a0;
+      background: #fff9ec;
+      padding: 12px;
+      color: #5b4a2a;
+      line-height: 1.7;
+      font-size: 13px;
+      margin: 10px 0;
+    }
+
+    .type-share-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .type-share-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .type-share-card b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .type-share-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .share-bar-shell {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(39,35,31,.08);
+      margin: 8px 0;
+      overflow: hidden;
+    }
+
+    .share-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+    }
+
+    @media (max-width: 780px) {
+      .bootstrap-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .type-share-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  
+    /* Threshold Mode Layer v0.7 */
+    .threshold-box {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px;
+      background: rgba(255,255,255,.72);
+      margin-top: 12px;
+    }
+
+    .threshold-box h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .threshold-box p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    .threshold-select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .mode-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(122,92,255,.28);
+      background: rgba(122,92,255,.08);
+      color: #5a46ce;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      margin: 2px 6px 8px 0;
+    }
+
+    .classification-note {
+      border: 1px solid rgba(122,92,255,.22);
+      background: rgba(122,92,255,.07);
+      border-radius: 16px;
+      padding: 11px 12px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+
+  
+    /* Student Explanation Layer v0.8 */
+    .student-explain-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .student-explain-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .student-explain-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .student-explain-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .axis-reading-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .axis-reading-item {
+      border: 1px solid rgba(229,219,207,.86);
+      border-radius: 15px;
+      padding: 11px 12px;
+      background: #fff;
+    }
+
+    .axis-reading-item b {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .axis-reading-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+
+    .student-main-message {
+      border-radius: 22px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(122,92,255,.13), transparent 34%),
+        radial-gradient(circle at 90% 10%, rgba(0,168,132,.12), transparent 32%),
+        rgba(255,255,255,.78);
+      border: 1px solid rgba(229,219,207,.9);
+      margin-top: 14px;
+    }
+
+    .student-main-message h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .student-main-message p {
+      margin: 0;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .advanced-details {
+      margin-top: 18px;
+      border: 1px solid rgba(39,35,31,.12);
+      border-radius: 24px;
+      background: rgba(255,255,255,.48);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .advanced-details > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 20px;
+      font-weight: 900;
+      background: rgba(39,35,31,.88);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .advanced-details > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .advanced-details > summary::after {
+      content: "開く";
+      font-size: 12px;
+      opacity: .8;
+      border: 1px solid rgba(255,255,255,.35);
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .advanced-details[open] > summary::after {
+      content: "閉じる";
+    }
+
+    .advanced-inner {
+      padding: 0 0 18px;
+    }
+
+    .advanced-inner .panel {
+      box-shadow: none;
+      margin: 18px 18px 0 !important;
+      background: rgba(255,255,255,.78);
+    }
+
+    .student-priority-note {
+      border-radius: 16px;
+      background: #fff9ec;
+      border: 1px solid #f0d6a0;
+      color: #5b4a2a;
+      padding: 13px;
+      line-height: 1.75;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 780px) {
+      .student-explain-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .student-explain-card {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      .student-explain-card h3 {
+        font-size: 16px;
+      }
+
+      .student-explain-card p {
+        font-size: 13px;
+      }
+
+      .student-main-message {
+        padding: 15px;
+        border-radius: 18px;
+      }
+
+      .student-main-message h3 {
+        font-size: 17px;
+      }
+
+      .student-main-message p {
+        font-size: 13px;
+      }
+
+      .advanced-details > summary {
+        padding: 15px 16px;
+        font-size: 14px;
+      }
+
+      .advanced-inner .panel {
+        margin: 12px 12px 0 !important;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">心</div>
+        <div>
+          <h1>こころコンパス診断</h1>
+          <p>感情との付き合い方と行動のしなやかさを見つける心理教育UX</p>
+        </div>
+      </div>
+      <div class="pill">v0.8 / Student Explain</div>
+    </header>
+
+    <section id="startView" class="panel">
+      <div class="hero">
+        <div>
+          <div class="hero-kicker">EMOTIONAL COMPASS / PSYCHO-EDUCATIONAL UX</div>
+          <h2><span class="grad">感情を測る</span>のではなく、<br>感情との付き合い方をデザインする。</h2>
+          <p class="lead">
+            この診断は、授業・研修・オープンキャンパスで使える心理教育ツールです。
+            20問を「4つのこころステージ」として体験化し、回答後に記憶に残るタイプカードと4軸スコアを表示します。
+          </p>
+          <div class="notice">
+            この診断は、精神疾患・人格特性・能力を判定するものではありません。
+            自分のこころの動き方を知り、よりよい行動や他者理解につなげるための振り返りツールです。
+          </div>
+          <div class="notice mobile-only">
+            スマホでは、回答ボタンを1〜5の数字で表示します。<br>
+            1＝あてはまらない、5＝あてはまる、です。
+          </div>
+          <div class="actions">
+            <button class="accent" onclick="startQuiz()">診断をはじめる</button>
+            <button class="secondary" onclick="showEvidenceFromStart()">教員・研究者向け情報</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="signature-card">
+            <div class="compass-art"><strong>KOKORO<br>COMPASS</strong></div>
+            <div class="design-principles">
+              <div class="principle"><b>Delight</b><span>診断を「テスト」ではなく、進みたくなる体験にする。</span></div>
+              <div class="principle"><b>Interaction</b><span>押す・進む・結果を見る動きに気持ちよさを持たせる。</span></div>
+              <div class="principle"><b>Inclusivity</b><span>能力判定ではなく、誰もが振り返れる言葉にする。</span></div>
+              <div class="principle"><b>Social Impact</b><span>授業・支援・対話につながる心理教育として設計する。</span></div>
+            </div>
+          </div>
+          <div class="award-note">
+            <b>DESIGN POSITION</b>
+            <span>世界観は「カード型診断」から「感情との付き合い方と行動のしなやかさを見つけるコンパス体験」へ。心理尺度の重さを減らし、教育的信頼性とビジュアルの記憶性を両立します。</span>
+          </div>
+          <div class="mode-card selected" id="mode20" onclick="selectMode(20)">
+            <strong>授業・研修版：20項目</strong>
+            <span>4軸×5項目。標準版。授業内の振り返り、研修、予備的な検証に向いています。</span>
+          </div>
+          <div class="mode-card" id="mode16" onclick="selectMode(16)">
+            <strong>通常診断版：16項目</strong>
+            <span>4軸×4項目。オープンキャンパスや短時間の体験コンテンツに向いています。</span>
+          </div>
+          <div class="threshold-box">
+            <h3>タイプ判定基準</h3>
+            <select id="thresholdMode" class="threshold-select" onchange="selectThresholdMode(this.value)">
+              <option value="fixed35">標準：3.5以上を「高め」</option>
+              <option value="fixed33">やや広め：3.3以上を「高め」</option>
+              <option value="fixed30">体験用：3.0以上を「高め」</option>
+              <option value="scoreOnly">研究用：スコア優先・タイプは補助</option>
+            </select>
+            <p>
+              標準の3.5基準はやや厳しめです。授業でタイプの偏りが大きい場合は、3.3基準やスコア優先表示で確認できます。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quizView" class="panel hidden">
+      <div class="stage-head">
+        <div class="stage-title">
+          <h2 id="stageTitle">STEP</h2>
+          <p id="stageLead"></p>
+        </div>
+        <div class="step-badge" id="stepBadge"></div>
+      </div>
+      <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="mobile-scale-guide" aria-hidden="true"><span>1<br>非該当</span><span>2</span><span>3<br>中間</span><span>4</span><span>5<br>該当</span></div>
+      <div id="questionContainer"></div>
+      <div id="errorBox" class="error hidden">未回答の項目があります。</div>
+      <div class="stage-nav">
+        <button class="secondary" id="backBtn" onclick="prevStage()">戻る</button>
+        <button class="green" id="nextBtn" onclick="nextStage()">次へ</button>
+      </div>
+    </section>
+
+    <section id="resultView" class="hidden">
+      <div class="result-grid">
+        <div class="type-card" id="typeCard">
+          <div class="small">KOKORO COMPASS / TYPE CARD</div>
+          <div class="result-illustration" id="typeIllustration"></div>
+          <h2 id="typeName"></h2>
+          <div class="copy" id="typeCopy"></div>
+          <div id="typeChips"></div>
+          <div class="type-card-meta">
+            <div class="type-mini-section"><b>STRENGTH</b><span id="cardStrengthText"></span></div>
+            <div class="type-mini-section"><b>FIRST STEP</b><span id="cardActionText"></span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="info-card">
+            <h3>あなたの4軸スコア</h3>
+            <p>スコアは1〜5点です。高いほど「よい／低いほど悪い」ではなく、今のこころの使い方の傾向として見ます。</p>
+            <div id="scoreBars"></div>
+            <div class="classification-note" id="classificationNote"></div>
+          </div>
+
+          <div class="info-card">
+            <h3>強みと気をつけたい点</h3>
+            <p><strong>説明：</strong><span id="descriptionText"></span></p>
+            <p><strong>強み：</strong><span id="strengthText"></span></p>
+            <p><strong>気をつけたい点：</strong><span id="cautionText"></span></p>
+            <p><strong>小さな一歩：</strong><span id="actionText"></span></p>
+            <p><strong>イラストモチーフ：</strong><span id="motifText"></span></p>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="panel" style="margin-top:18px;" id="studentExplanationPanel">
+        <h2 style="margin-top:0;">結果の読み方</h2>
+        <p class="footer-note">
+          この結果は、あなたの性格を決めつけるものではありません。今の回答から見えた「感情との付き合い方」と「行動のしなやかさ」の傾向です。
+        </p>
+
+        <div class="student-main-message">
+          <h3 id="studentHeadline">あなたの結果をひとことで読むと</h3>
+          <p id="studentMainText"></p>
+        </div>
+
+        <div class="student-explain-grid">
+          <div class="student-explain-card">
+            <h3>なぜこのタイプになるの？</h3>
+            <p id="whyTypeText"></p>
+          </div>
+          <div class="student-explain-card">
+            <h3>この結果をどう使う？</h3>
+            <p id="howToUseText"></p>
+          </div>
+        </div>
+
+        <div class="student-explain-card" style="margin-top:12px;">
+          <h3>4つの力の読み方</h3>
+          <p>
+            高い軸は「すでに使いやすい力」、低めの軸は「これから育てられる力」として見ます。
+            低いことは悪いことではありません。場面によっては、立ち止まることや慎重になることも大切な反応です。
+          </p>
+          <div class="axis-reading-list" id="axisReadingList"></div>
+        </div>
+
+        <div class="student-priority-note">
+          授業で使うときは、タイプ名を比べるよりも、<strong>「自分はどの場面で感情に巻き込まれやすいか」</strong>、
+          <strong>「大切にしたいことのために次に何ができるか」</strong>を考える材料として使ってください。
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <h2 style="margin-top:0;">授業・研修用の振り返り</h2>
+        <div class="reflection">
+          <div class="prompt">1. 今日の結果で、「たしかにそうかも」と思ったところはどこですか。</div>
+          <div class="prompt">2. 感情に巻き込まれやすいのは、どんな場面ですか。最近の例で考えてみましょう。</div>
+          <div class="prompt">3. 自分が大切にしたいことのために、明日からできる小さな一歩は何ですか。</div>
+          <div class="prompt">4. 友人・子ども・家族など、誰かを理解するときに、この結果はどう役立ちそうですか。</div>
+        </div>
+        <div class="actions">
+          <button class="secondary" onclick="window.print()">結果を印刷する</button>
+          <button class="secondary" onclick="copySummary()">結果をコピーする</button>
+          <button class="accent" onclick="restart()">もう一度診断する</button>
+        </div>
+        <p class="footer-note" id="copyStatus"></p>
+      </div>
+
+
+      <details class="advanced-details">
+        <summary>教員・研究者向け機能（ブートストラップ／項目管理／エビデンス）</summary>
+        <div class="advanced-inner">
+      <div class="panel" style="margin-top:18px;" id="bootstrapPanel">
+        <h2 style="margin-top:0;">タイプ発生割合の確認</h2>
+        <p class="student-priority-note">この機能は教員・研究者向けです。学生への通常提示では、タイプ発生割合よりも、結果の意味と振り返りを優先します。</p>
+        <p class="footer-note">
+          現時点では実データがないため、発生割合は確定できません。この欄では、仮想データによるシミュレーションと、授業後に取得したCSVデータによる実データ・ブートストラップの両方を確認できます。
+        </p>
+
+        <div class="bootstrap-note">
+          重要：シミュレーション結果は「仮定した回答分布」の結果であり、実際の学生・高校生・研修参加者の割合ではありません。
+          実際の発生割合は、回答データを収集した後にブートストラップ信頼区間で確認します。
+        </div>
+
+        <details>
+          <summary>判定基準の考え方</summary>
+          <table>
+            <thead><tr><th>基準</th><th>特徴</th><th>向いている用途</th></tr></thead>
+            <tbody>
+              <tr><td>固定3.5基準</td><td>「ややあてはまる」以上に近い回答を高めとみなす。やや厳しめ。</td><td>標準診断、慎重な解釈</td></tr>
+              <tr><td>固定3.3基準</td><td>3.5より少し広く高め判定する。中間寄り回答でも偏りが緩和される。</td><td>授業・OCでの実用</td></tr>
+              <tr><td>固定3.0基準</td><td>中間以上を高めとみなす。タイプの偏りは減るが、肯定判定が増えやすい。</td><td>体験版・イベント用</td></tr>
+              <tr><td>集団内中央値基準</td><td>その集団の中で相対的に高いかを判定する。発生割合の偏りを比較的抑えやすい。</td><td>授業後分析、研究的検討</td></tr>
+            </tbody>
+          </table>
+        </details>
+
+        <details open>
+          <summary>仮想データで確認する</summary>
+          <div class="bootstrap-controls">
+            <div class="control-field">
+              <label for="simN">仮想回答者数</label>
+              <input id="simN" type="number" value="2000" min="100" max="20000" step="100">
+            </div>
+            <div class="control-field">
+              <label for="bootB">ブートストラップ回数</label>
+              <input id="bootB" type="number" value="500" min="100" max="3000" step="100">
+            </div>
+            <div class="control-field">
+              <label for="responseModel">仮定する回答分布</label>
+              <select id="responseModel">
+                <option value="balanced">中間寄り</option>
+                <option value="uniform">完全ランダム</option>
+                <option value="positive">やや肯定寄り</option>
+                <option value="negative">やや否定寄り</option>
+              </select>
+            </div>
+            <div class="control-field">
+              <label for="simRule">集計時の判定基準</label>
+              <select id="simRule">
+                <option value="fixed35">固定3.5基準</option>
+                <option value="fixed33">固定3.3基準</option>
+                <option value="fixed30">固定3.0基準</option>
+                <option value="median">集団内中央値基準</option>
+              </select>
+            </div>
+            <button class="green" onclick="runSimulationBootstrap()">シミュレーション実行</button>
+          </div>
+          <div id="simulationSummary" class="footer-note"></div>
+          <div id="simulationResults" class="type-share-grid"></div>
+        </details>
+
+        <details>
+          <summary>授業後CSVでブートストラップする</summary>
+          <p class="footer-note">
+            CSVの列名に Q01〜Q20 を含めてください。値は1〜5です。16項目モードでは拡張項目を除外して計算します。
+            個人名・学籍番号などの個人情報列は含めない運用を推奨します。
+          </p>
+          <div class="bootstrap-controls">
+            <div class="control-field" style="grid-column: span 2;">
+              <label for="csvFile">CSVファイル</label>
+              <input id="csvFile" type="file" accept=".csv,text/csv">
+            </div>
+            <div class="control-field">
+              <label for="csvBootB">ブートストラップ回数</label>
+              <input id="csvBootB" type="number" value="1000" min="100" max="5000" step="100">
+            </div>
+            <div class="control-field">
+              <label for="csvRule">集計時の判定基準</label>
+              <select id="csvRule">
+                <option value="fixed35">固定3.5基準</option>
+                <option value="fixed33">固定3.3基準</option>
+                <option value="fixed30">固定3.0基準</option>
+                <option value="median">集団内中央値基準</option>
+              </select>
+            </div>
+            <button class="accent" onclick="runCsvBootstrap()">CSVで確認</button>
+          </div>
+          <div id="csvSummary" class="footer-note"></div>
+          <div id="csvResults" class="type-share-grid"></div>
+        </details>
+      </div>
+
+      <div class="panel" style="margin-top:18px;" id="evidencePanel">
+        <h2 style="margin-top:0;">教員向け情報：参考情報・オリジナル情報・エビデンスの切り分け</h2>
+        <details open>
+          <summary>本アプリの位置づけ</summary>
+          <p class="footer-note">
+            本アプリは、既存尺度の短縮版ではありません。心理的柔軟性、感情調整、価値に基づく行動、
+            マインドフルネスに関する既存研究を参考にしつつ、授業・研修・自己理解・心理教育に使いやすいように独自設計した体験型診断ツールです。
+            現時点では教育用の試作版であり、心理検査・臨床診断・採用選考・能力判定の用途には使用しません。
+          </p>
+        </details>
+
+        <details>
+          <summary>判定基準と偏りの扱い</summary>
+          <p class="footer-note">
+            固定3.5基準では、中間寄り回答を仮定した場合、4軸すべてが「低め」と判定されやすくなり、
+            「こころ再起動タイプ」が多く出ることがあります。これはブートストラップの問題ではなく、
+            回答分布と閾値の組み合わせによるものです。本版では、固定3.5・固定3.3・固定3.0・集団内中央値基準を比較できます。
+            研究的には、タイプ名よりも4軸スコアを主情報とし、タイプは補助的な可視化として扱う運用が安全です。
+          </p>
+        </details>
+
+        <details>
+          <summary>デザイン賞を意識した設計意図</summary>
+          <table>
+            <thead><tr><th>評価されやすい観点</th><th>本アプリでの対応</th></tr></thead>
+            <tbody>
+              <tr><td>独自性</td><td>心理尺度を単なる質問紙ではなく、4つのこころステージを進む「コンパス体験」として再設計する。</td></tr>
+              <tr><td>インタラクション</td><td>回答、進行、結果表示、振り返りまでを一つの流れにし、操作の見通しと心地よさを重視する。</td></tr>
+              <tr><td>包摂性</td><td>能力・人格・疾患を判定しない。誰もが自己理解の入口として使える言葉にする。</td></tr>
+              <tr><td>社会的意義</td><td>授業、保育者養成、研修、対話支援に接続し、心理学の知見を教育現場へ届ける。</td></tr>
+              <tr><td>視覚的記憶性</td><td>結果をスコア表ではなく、共有したくなるタイプカードとして表示する。</td></tr>
+            </tbody>
+          </table>
+        </details>
+
+        <details>
+          <summary>4軸モデルの参照概念</summary>
+          <table>
+            <thead><tr><th>本アプリの軸</th><th>内容</th><th>主な参照概念</th></tr></thead>
+            <tbody>
+              <tr><td>感情を受けとめる力</td><td>嫌な感情を否定せず、内側に起きていることとして認める力。</td><td>受容、体験の回避、感情への気づき</td></tr>
+              <tr><td>感情から一歩引く力</td><td>怒りや不安に巻き込まれすぎず、距離をとって眺める力。</td><td>脱フュージョン、観察する自己、マインドフルネス</td></tr>
+              <tr><td>大切なことに向かう力</td><td>気分や空気だけでなく、大切にしたい価値に沿って動く力。</td><td>価値、コミットされた行動</td></tr>
+              <tr><td>状況に合わせて切り替える力</td><td>予定通りにいかない場面でも、方法を変えながら前に進む力。</td><td>認知的柔軟性、問題解決、適応的行動</td></tr>
+            </tbody>
+          </table>
+        </details>
+
+        <details>
+          <summary>項目管理表</summary>
+          <div id="itemMetaTable"></div>
+        </details>
+
+        <details>
+          <summary>今後の検証計画</summary>
+          <ol class="footer-note">
+            <li>内容的妥当性：専門家レビューにより、各項目が4軸の内容を反映しているかを確認する。</li>
+            <li>回答分布：授業・研修で試用し、天井効果・床効果・極端な偏りを確認する。</li>
+            <li>信頼性：各軸の内的一貫性を確認し、必要に応じて項目を修正する。</li>
+            <li>構造的妥当性：探索的因子分析・確認的因子分析により、4軸構造の妥当性を検討する。</li>
+            <li>関連尺度との妥当性：必要に応じて、心理的柔軟性、感情調整、価値、マインドフルネス関連尺度との関連を確認する。</li>
+          </ol>
+        </details>
+      </div>
+            </div>
+      </details>
+
+</section>
+  </div>
+
+<script>
+const axes = {
+  acceptance: {
+    label: "感情を受けとめる力",
+    stageTitle: "STEP 1｜感情とのつきあい方",
+    lead: "嫌な気持ちや不安を、消すべきものとしてではなく「今の自分に起きていること」として見られるかを振り返ります。"
+  },
+  distance: {
+    label: "感情から一歩引く力",
+    stageTitle: "STEP 2｜感情との距離のとり方",
+    lead: "怒り・不安・悲しみに巻き込まれすぎず、一歩引いて眺められるかを振り返ります。"
+  },
+  values: {
+    label: "大切なことに向かう力",
+    stageTitle: "STEP 3｜大切にしたいことへの動き方",
+    lead: "その場の気分や空気だけでなく、自分が大切にしたいことに沿って行動できるかを振り返ります。"
+  },
+  flexibility: {
+    label: "状況に合わせて切り替える力",
+    stageTitle: "STEP 4｜変化へのしなやかさ",
+    lead: "計画通りにいかない場面でも、方法を変えながら前に進めるかを振り返ります。"
+  }
+};
+
+const questions = [
+  {id:"Q01", axis:"acceptance", core:true, reverse:false, text:"嫌な感情が湧いたとき、それを否定せずに「今そう感じているな」と認められる。", concept:"受容・感情への気づき", reference:"AAQ-II、ACTの受容概念等を参考", originality:"文言は心理教育用に独自作成", evidence:"未検証：内容的妥当性から確認予定"},
+  {id:"Q02", axis:"acceptance", core:true, reverse:true, text:"不安や怒りがあると、それをすぐ消そうとして無理に別のことへ逃げたくなる。", concept:"体験の回避", reference:"AAQ-II、体験の回避概念等を参考", originality:"日常場面の表現に独自翻訳", evidence:"未検証：逆転項目として回答分布を確認予定"},
+  {id:"Q03", axis:"acceptance", core:true, reverse:false, text:"自分の気持ちが揺れていても、「それも今の自分の一部」と受けとめられる。", concept:"自己受容・感情受容", reference:"ACT、セルフコンパッション関連概念を参考", originality:"授業用に非臨床的表現へ再構成", evidence:"未検証"},
+  {id:"Q04", axis:"acceptance", core:true, reverse:false, text:"落ち込んだときでも、感じていることを言葉にしようとする。", concept:"感情のラベリング", reference:"感情認識・情動知能関連研究を参考", originality:"記述・対話につながる項目として独自設計", evidence:"未検証"},
+  {id:"Q05", axis:"acceptance", core:false, reverse:true, text:"ネガティブな気持ちは、できるだけ感じないように押し込めてしまう。", concept:"感情抑制・回避", reference:"ERQの抑制、体験の回避概念を参考", originality:"20項目版の拡張項目", evidence:"未検証"},
+
+  {id:"Q06", axis:"distance", core:true, reverse:false, text:"感情が強く動いても、一歩引いて「今、自分はこう感じている」と見られる。", concept:"脱フュージョン・観察する自己", reference:"ACT、マインドフルネス概念を参考", originality:"高校生・学生にも伝わる表現に独自作成", evidence:"未検証"},
+  {id:"Q07", axis:"distance", core:true, reverse:true, text:"怒りや不安が強いと、その感情そのものになったように行動してしまう。", concept:"感情への巻き込まれ", reference:"DERS、ACTのフュージョン概念を参考", originality:"行動化の傾向を教育用表現に再構成", evidence:"未検証"},
+  {id:"Q08", axis:"distance", core:true, reverse:false, text:"頭の中の考えを、事実ではなく「考えのひとつ」として眺められる。", concept:"認知的脱フュージョン", reference:"ACTの脱フュージョン概念を参考", originality:"専門用語を避けた独自項目", evidence:"未検証"},
+  {id:"Q09", axis:"distance", core:true, reverse:false, text:"つらい気持ちが出ても、少し時間を置いてから反応できる。", concept:"反応抑制・感情調整", reference:"DERS、感情調整研究を参考", originality:"授業後の行動目標につながる項目として独自設計", evidence:"未検証"},
+  {id:"Q10", axis:"distance", core:false, reverse:true, text:"感情が高ぶると、後で振り返るまで自分の状態に気づきにくい。", concept:"感情認識の困難", reference:"DERSの感情認識困難概念を参考", originality:"20項目版の拡張項目", evidence:"未検証"},
+
+  {id:"Q11", axis:"values", core:true, reverse:false, text:"気分が乗らないときでも、自分が大切にしたいことのために小さく動ける。", concept:"価値に沿った行動", reference:"VLQ、ACTのコミットされた行動を参考", originality:"小さな行動に焦点化した独自項目", evidence:"未検証"},
+  {id:"Q12", axis:"values", core:true, reverse:true, text:"その場の空気や一時的な気分で、後から後悔する選択をしがちだ。", concept:"衝動的選択・価値との不一致", reference:"価値行動、自己制御関連研究を参考", originality:"日常的な選択場面として独自作成", evidence:"未検証"},
+  {id:"Q13", axis:"values", core:true, reverse:false, text:"迷ったとき、自分が大切にしたいことを基準に選べる。", concept:"価値明確化", reference:"ACTの価値概念、キャリア教育の価値明確化を参考", originality:"授業内の自己理解へ接続する項目", evidence:"未検証"},
+  {id:"Q14", axis:"values", core:true, reverse:false, text:"周囲の評価が気になっても、自分にとって意味のある行動を選ぼうとする。", concept:"価値に基づく意思決定", reference:"価値行動、自己決定関連概念を参考", originality:"対人場面を含む独自表現", evidence:"未検証"},
+  {id:"Q15", axis:"values", core:false, reverse:true, text:"目の前の楽さを優先して、本当に大切なことを後回しにしがちだ。", concept:"回避・先延ばし", reference:"コミットされた行動、自己制御研究を参考", originality:"20項目版の拡張項目", evidence:"未検証"},
+
+  {id:"Q16", axis:"flexibility", core:true, reverse:false, text:"計画通りにいかなくても、別の方法を試して前に進める。", concept:"認知的柔軟性・問題解決", reference:"心理的柔軟性、問題解決研究を参考", originality:"行動の切り替えに焦点化した独自項目", evidence:"未検証"},
+  {id:"Q17", axis:"flexibility", core:true, reverse:true, text:"「こうあるべき」と考えすぎて、動き出せなくなることがある。", concept:"ルールへの固執", reference:"ACTのルール支配、認知的柔軟性を参考", originality:"教育場面で使いやすい表現に独自作成", evidence:"未検証"},
+  {id:"Q18", axis:"flexibility", core:true, reverse:false, text:"予想外の変化が起きても、状況を見ながらやり方を変えられる。", concept:"適応的行動・状況対応", reference:"心理的柔軟性、レジリエンス関連概念を参考", originality:"非臨床・実用場面に合わせて独自設計", evidence:"未検証"},
+  {id:"Q19", axis:"flexibility", core:true, reverse:false, text:"失敗したとき、原因を責めるより次の工夫を考えられる。", concept:"問題解決・再評価", reference:"ERQの再評価、問題解決研究を参考", originality:"授業の振り返りにつなげる独自項目", evidence:"未検証"},
+  {id:"Q20", axis:"flexibility", core:false, reverse:true, text:"一度決めたやり方にこだわりすぎて、切り替えに時間がかかる。", concept:"認知的硬さ・固執", reference:"認知的柔軟性研究を参考", originality:"20項目版の拡張項目", evidence:"未検証"}
+];
+
+const typeMap = {
+  "1111": {
+    name:"しなやか航海士タイプ",
+    copy:"風が変わっても、進み方を変えながら進める人。",
+    description:"感情に気づき、少し距離をとりながら、自分が大切にしたい方向へ進めるタイプです。予定通りにいかない場面でも、方法を変えながら前に進むしなやかさがあります。",
+    strength:"変化の中でも自分の軸を失わず、状況に合わせて行動を調整できます。",
+    caution:"周囲から頼られやすい分、自分の疲れや違和感を後回しにしやすいことがあります。",
+    action:"一日の終わりに、「今日、自分が大切にできたこと」を一つ書き出してみましょう。",
+    motif:"小さな船、羅針盤、風を受ける帆、遠くの光。"
+  },
+  "1110": {
+    name:"誠実な羅針盤タイプ",
+    copy:"大切な方向を見失わず、まっすぐ進もうとする人。",
+    description:"感情を受けとめ、自分の内側を見つめながら、大切にしたいことへ誠実に向かうタイプです。ぶれない軸を持ち、意味のある行動を積み重ねる力があります。",
+    strength:"自分の価値観に沿って、地道に努力を続けることができます。",
+    caution:"「こう進むべき」と思いすぎると、別の方法を試す余裕が少なくなることがあります。",
+    action:"同じ目的に向かうための「別ルート」を一つ考えてみましょう。",
+    motif:"胸元のコンパス、一本道、星、静かな光。"
+  },
+  "1101": {
+    name:"静かな調整者タイプ",
+    copy:"揺れる場の中で、静かにバランスを整える人。",
+    description:"自分の感情を受けとめながら、一歩引いて状況を見られるタイプです。感情に飲み込まれすぎず、場の空気や相手の状態も見ながら、穏やかに調整できます。",
+    strength:"落ち着いて観察し、必要な距離をとりながら人や場に関わることができます。",
+    caution:"全体のバランスを大切にするあまり、自分の望みや価値を後回しにすることがあります。",
+    action:"迷った場面で、「私は本当は何を大切にしたいのか」を一文で書いてみましょう。",
+    motif:"水面、波紋、月、手で整えられる小さな輪。"
+  },
+  "1100": {
+    name:"内省の灯台タイプ",
+    copy:"まず内側を照らし、静かに進む人。",
+    description:"自分の感情や考えを丁寧に見つめる力があるタイプです。すぐに動くよりも、まず自分の内側を整え、納得できる形で進もうとします。",
+    strength:"感情や考えを深く振り返り、自分の状態を言葉にする力があります。",
+    caution:"考えすぎると、行動を始めるタイミングを逃してしまうことがあります。",
+    action:"完璧な答えを待たず、3分でできる小さな行動を一つ選んでみましょう。",
+    motif:"夜の海、灯台、小さな光、静かな水平線。"
+  },
+  "1011": {
+    name:"行動する共感家タイプ",
+    copy:"気持ちを大切にしながら、前へ手を伸ばす人。",
+    description:"自分や相手の感情に気づきながら、大切なことに向かって行動できるタイプです。人の気持ちを置き去りにせず、意味のある一歩を選ぼうとします。",
+    strength:"感情のあたたかさを行動につなげ、人や場を前向きに動かす力があります。",
+    caution:"感情が強く動いたとき、勢いのまま反応してしまうことがあります。",
+    action:"反応する前に、「今の感情に名前をつける」練習をしてみましょう。",
+    motif:"胸に手を当てる人物、差し出す芽、光る道、やわらかい風。"
+  },
+  "1010": {
+    name:"まっすぐランナータイプ",
+    copy:"意味のあるゴールへ、まっすぐ走り出せる人。",
+    description:"自分が大切だと思うことに向けて、力強く行動できるタイプです。迷いすぎず、まず動いてみる推進力があります。",
+    strength:"目標に向かうエネルギーがあり、行動を積み重ねる力があります。",
+    caution:"勢いがある分、感情の揺れや周囲の変化に気づく前に進みすぎることがあります。",
+    action:"走り出す前に、「今の自分の気持ちはどうか」を一度だけ確認してみましょう。",
+    motif:"光のライン、走る人物、風、遠くのゴール。"
+  },
+  "1001": {
+    name:"感受性のガーデナータイプ",
+    copy:"揺れながらも、ていねいに育てていく人。",
+    description:"自分の感情に気づき、環境の変化にも反応しながら、物事をやさしく育てていくタイプです。変化の中で、必要な手入れや工夫を見つける力があります。",
+    strength:"小さな変化に気づき、相手や状況に合わせて関わり方を調整できます。",
+    caution:"場に合わせる力がある分、自分が何を大切にしたいのかが見えにくくなることがあります。",
+    action:"今日の選択が、「自分の何を大切にしたものだったか」を振り返ってみましょう。",
+    motif:"小さな庭、新芽、雨粒、支柱、やわらかな日差し。"
+  },
+  "1000": {
+    name:"やさしい抱え込み手タイプ",
+    copy:"感じたことを、ていねいに抱える人。",
+    description:"自分の感情を粗末にせず、大切に受けとめようとするタイプです。感じたことをすぐに切り捨てず、内側で丁寧に扱うやさしさがあります。",
+    strength:"自分や相手の気持ちを大切にし、繊細な感情に気づくことができます。",
+    caution:"感じたことを抱え込みすぎると、次の行動に移るまで時間がかかることがあります。",
+    action:"信頼できる人に、「今、こう感じている」と短く伝えてみましょう。",
+    motif:"両手で包む光の球、やわらかな布、静かな曲線。"
+  },
+  "0111": {
+    name:"クールな実行者タイプ",
+    copy:"冷静に見極め、必要な一手を選ぶ人。",
+    description:"感情に巻き込まれすぎず、自分が大切にしたいことと状況を見ながら行動できるタイプです。落ち着いた判断と実行力があります。",
+    strength:"混乱した場面でも、必要な行動を整理して前に進めることができます。",
+    caution:"感情を後回しにしすぎると、自分の疲れや本音に気づきにくくなることがあります。",
+    action:"行動した後に、「本当はどんな気持ちだったか」を一つ書いてみましょう。",
+    motif:"透明な地図、矢印、直線、静かな横顔。"
+  },
+  "0110": {
+    name:"原則のナビゲータータイプ",
+    copy:"自分の基準を持ち、進む方向を選ぶ人。",
+    description:"感情に流されすぎず、自分にとって大切な基準や価値をもとに行動を選べるタイプです。場の空気よりも、筋の通った判断を大切にします。",
+    strength:"自分なりの原則を持ち、周囲に流されずに判断できます。",
+    caution:"感情や状況の変化を「判断を乱すもの」と見てしまうと、柔軟さが少なくなることがあります。",
+    action:"決める前に、「今の感情は何を知らせているのか」を確認してみましょう。",
+    motif:"星図、定規、幾何学模様、航路を描く手。"
+  },
+  "0101": {
+    name:"観察する変化対応者タイプ",
+    copy:"流れを読み、向きを変えながら進む人。",
+    description:"感情から一歩引き、状況の変化を見ながら柔軟に対応できるタイプです。場の流れや変化を観察し、必要に応じて動き方を変えられます。",
+    strength:"感情に飲み込まれにくく、状況を見て対応を調整できます。",
+    caution:"変化に合わせる力がある分、「何のために動くのか」が曖昧になることがあります。",
+    action:"次の行動を選ぶ前に、「自分が大切にしたいこと」を一語で置いてみましょう。",
+    motif:"高い場所、双眼鏡、風見鶏、流れる雲。"
+  },
+  "0100": {
+    name:"頭で整える分析家タイプ",
+    copy:"考えを並べ、心の地図を整える人。",
+    description:"感情に巻き込まれすぎず、頭の中で状況を整理しようとするタイプです。考えを分けたり、順序立てたりしながら、自分の状態を理解しようとします。",
+    strength:"混乱した場面でも、物事を客観的に整理しようとする力があります。",
+    caution:"分析が長くなると、行動や切り替えが後回しになることがあります。",
+    action:"60点でよいので、試しにできる行動を一つ決めてみましょう。",
+    motif:"思考カード、グリッド、整列する線、机上の光。"
+  },
+  "0011": {
+    name:"切り替えチャレンジャータイプ",
+    copy:"別ルートを見つけ、軽やかに試す人。",
+    description:"状況の変化に合わせて、方法を変えながら進めるタイプです。失敗や予定変更があっても、別のやり方を試そうとする力があります。",
+    strength:"一つの方法にこだわりすぎず、試行錯誤しながら前に進めます。",
+    caution:"動きながら調整できる一方で、自分の感情や価値を確認する時間が少なくなることがあります。",
+    action:"動く前に、「これは何につながる一歩か」を言葉にしてみましょう。",
+    motif:"分岐路、ジャンプする人物、複数の矢印、軽い風。"
+  },
+  "0010": {
+    name:"がんばる一本道タイプ",
+    copy:"大切なことへ、粘り強く進もうとする人。",
+    description:"自分が意味を感じることに向けて、努力を重ねるタイプです。一度決めたことに対して、まじめに向き合い続ける力があります。",
+    strength:"目標や役割に対して誠実で、簡単には投げ出さずに取り組めます。",
+    caution:"うまくいかないときに、努力量だけで乗り切ろうとして疲れやすくなることがあります。",
+    action:"うまくいかない時は、努力を増やす前に「方法を一つ変える」ことを試してみましょう。",
+    motif:"一本道、重いリュック、休憩用ベンチ、遠くの灯り。"
+  },
+  "0001": {
+    name:"変化に反応するスプリンタータイプ",
+    copy:"変化を感じ取り、すばやく動き出す人。",
+    description:"状況の変化に反応し、止まらずに動こうとするタイプです。周囲の動きや空気の変化に敏感で、すぐに対応しようとする瞬発力があります。",
+    strength:"変化に気づきやすく、必要なときに素早く行動へ移れます。",
+    caution:"すばやく反応する分、自分の本音や大切にしたいことを確認する前に動いてしまうことがあります。",
+    action:"動く前に、「今の気持ち」と「大切にしたいこと」を一つずつ確認してみましょう。",
+    motif:"稲妻、波、信号、動きの線、走り出す足元。"
+  },
+  "0000": {
+    name:"こころ再起動タイプ",
+    copy:"立ち止まりを、次の一歩の準備に変える人。",
+    description:"今は少し立ち止まり、自分の感情や大切にしたいことを整えるタイミングにいるタイプです。止まっていることは失敗ではなく、次に進むための再調整として捉えることができます。",
+    strength:"無理に進まず、自分を整える必要に気づける可能性があります。",
+    caution:"結果を「弱さ」や「できなさ」と受け取ると、さらに動きにくくなることがあります。",
+    action:"まずは「今感じていること」を一つ書き、次に「3分でできること」を一つ選びましょう。",
+    motif:"朝焼け、靴ひもを結ぶ人物、スタートライン、再起動マーク。"
+  }
+};
+
+
+const illustrationMap = {
+  "1111": {scene:"ship", c1:"#7a5cff", c2:"#00a884", c3:"#ffb54a"},
+  "1110": {scene:"compass", c1:"#7a5cff", c2:"#ffb54a", c3:"#ffffff"},
+  "1101": {scene:"ripples", c1:"#00a884", c2:"#7a5cff", c3:"#ffffff"},
+  "1100": {scene:"lighthouse", c1:"#2c2457", c2:"#7a5cff", c3:"#ffdf8a"},
+  "1011": {scene:"sprout", c1:"#7a5cff", c2:"#00a884", c3:"#ffb54a"},
+  "1010": {scene:"runner", c1:"#ffb54a", c2:"#7a5cff", c3:"#ffffff"},
+  "1001": {scene:"garden", c1:"#00a884", c2:"#7a5cff", c3:"#ffdf8a"},
+  "1000": {scene:"holding", c1:"#7a5cff", c2:"#ffdf8a", c3:"#ffffff"},
+  "0111": {scene:"map", c1:"#00a884", c2:"#7a5cff", c3:"#ffffff"},
+  "0110": {scene:"stars", c1:"#ffb54a", c2:"#7a5cff", c3:"#ffffff"},
+  "0101": {scene:"weather", c1:"#00a884", c2:"#7a5cff", c3:"#ffffff"},
+  "0100": {scene:"cards", c1:"#7a5cff", c2:"#00a884", c3:"#ffffff"},
+  "0011": {scene:"branch", c1:"#00a884", c2:"#ffb54a", c3:"#ffffff"},
+  "0010": {scene:"road", c1:"#ffb54a", c2:"#7a5cff", c3:"#ffffff"},
+  "0001": {scene:"sprint", c1:"#ffb54a", c2:"#00a884", c3:"#ffffff"},
+  "0000": {scene:"restart", c1:"#ffb54a", c2:"#00a884", c3:"#7a5cff"}
+};
+
+function typeIllustrationSvg(key) {
+  const item = illustrationMap[key] || illustrationMap["1111"];
+  const {scene, c1, c2, c3} = item;
+  const common = `
+    <defs>
+      <linearGradient id="g-${key}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${c1}" stop-opacity=".96"/>
+        <stop offset="55%" stop-color="${c2}" stop-opacity=".88"/>
+        <stop offset="100%" stop-color="${c3}" stop-opacity=".80"/>
+      </linearGradient>
+      <filter id="soft-${key}" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="1.2"/>
+      </filter>
+    </defs>
+    <rect width="360" height="190" rx="28" fill="url(#g-${key})" opacity=".68"/>
+    <circle cx="42" cy="38" r="50" fill="white" opacity=".14"/>
+    <circle cx="316" cy="150" r="72" fill="white" opacity=".10"/>
+    <path d="M20 146 C80 120, 120 166, 180 136 S286 104, 342 126" fill="none" stroke="white" stroke-opacity=".24" stroke-width="2"/>
+  `;
+
+  const person = (x=180, y=104) => `
+    <circle cx="${x}" cy="${y-34}" r="13" fill="white" opacity=".92"/>
+    <path d="M${x} ${y-18} C${x-20} ${y+8}, ${x-18} ${y+32}, ${x} ${y+40} C${x+18} ${y+32}, ${x+20} ${y+8}, ${x} ${y-18}Z" fill="white" opacity=".84"/>
+    <path d="M${x-15} ${y+2} C${x-36} ${y+10}, ${x-44} ${y+18}, ${x-52} ${y+28}" fill="none" stroke="white" stroke-opacity=".78" stroke-width="5" stroke-linecap="round"/>
+    <path d="M${x+15} ${y+2} C${x+36} ${y+10}, ${x+44} ${y+18}, ${x+52} ${y+28}" fill="none" stroke="white" stroke-opacity=".78" stroke-width="5" stroke-linecap="round"/>
+  `;
+
+  const scenes = {
+    ship: `
+      <path d="M82 140 C120 156, 224 156, 276 140 L248 160 H108 Z" fill="white" opacity=".82"/>
+      <path d="M178 44 L178 136" stroke="white" stroke-width="5" stroke-linecap="round"/>
+      <path d="M184 54 C224 74, 238 104, 184 124 Z" fill="white" opacity=".72"/>
+      <path d="M172 62 C132 78, 122 104, 172 124 Z" fill="white" opacity=".42"/>
+      <circle cx="180" cy="100" r="42" fill="none" stroke="white" stroke-opacity=".42" stroke-width="2"/>
+      <path d="M64 70 C112 42, 154 52, 204 38 C244 28, 286 44, 318 32" fill="none" stroke="white" stroke-opacity=".50" stroke-width="3" stroke-linecap="round"/>
+    `,
+    compass: `
+      <circle cx="180" cy="96" r="58" fill="none" stroke="white" stroke-opacity=".62" stroke-width="3"/>
+      <circle cx="180" cy="96" r="8" fill="white" opacity=".92"/>
+      <path d="M180 38 L197 96 L180 154 L163 96 Z" fill="white" opacity=".74"/>
+      <path d="M122 96 L180 79 L238 96 L180 113 Z" fill="white" opacity=".38"/>
+      <path d="M50 150 C112 110, 154 128, 208 92 C246 66, 288 60, 326 42" fill="none" stroke="white" stroke-opacity=".34" stroke-width="5" stroke-linecap="round"/>
+      ${person(88,128)}
+    `,
+    ripples: `
+      <circle cx="180" cy="100" r="22" fill="none" stroke="white" stroke-opacity=".78" stroke-width="3"/>
+      <circle cx="180" cy="100" r="46" fill="none" stroke="white" stroke-opacity=".48" stroke-width="2"/>
+      <circle cx="180" cy="100" r="74" fill="none" stroke="white" stroke-opacity=".25" stroke-width="2"/>
+      <path d="M70 132 C118 116, 150 132, 180 100 C214 68, 244 76, 292 58" fill="none" stroke="white" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
+      ${person(92,122)}
+    `,
+    lighthouse: `
+      <path d="M160 154 L176 64 H202 L218 154 Z" fill="white" opacity=".84"/>
+      <rect x="168" y="48" width="42" height="18" rx="4" fill="white" opacity=".92"/>
+      <path d="M210 58 L330 18" stroke="white" stroke-opacity=".62" stroke-width="9" stroke-linecap="round"/>
+      <path d="M168 58 L48 18" stroke="white" stroke-opacity=".28" stroke-width="7" stroke-linecap="round"/>
+      <path d="M42 154 C96 126, 132 160, 180 138 C222 118, 264 142, 326 116" fill="none" stroke="white" stroke-opacity=".32" stroke-width="3"/>
+      ${person(92,132)}
+    `,
+    sprout: `
+      ${person(180,112)}
+      <path d="M180 132 C180 102, 202 88, 224 88" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+      <path d="M224 88 C206 70, 188 78, 180 100 C204 102, 222 100, 224 88Z" fill="white" opacity=".72"/>
+      <path d="M180 132 C178 112, 156 100, 136 100" fill="none" stroke="white" stroke-opacity=".62" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="180" cy="78" r="32" fill="none" stroke="white" stroke-opacity=".28" stroke-width="2"/>
+    `,
+    runner: `
+      <path d="M38 150 L318 56" stroke="white" stroke-opacity=".30" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="180" cy="70" r="13" fill="white" opacity=".92"/>
+      <path d="M176 84 L156 112 L198 112 L218 136" fill="none" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M164 102 L130 116" stroke="white" stroke-opacity=".82" stroke-width="6" stroke-linecap="round"/>
+      <path d="M194 112 L156 148" stroke="white" stroke-opacity=".82" stroke-width="7" stroke-linecap="round"/>
+      <path d="M66 82 C104 64, 132 62, 162 46" stroke="white" stroke-opacity=".44" stroke-width="3" fill="none" stroke-linecap="round"/>
+    `,
+    garden: `
+      ${person(190,112)}
+      <path d="M96 154 C110 118, 132 98, 154 82 C146 116, 136 140, 96 154Z" fill="white" opacity=".50"/>
+      <path d="M124 154 C154 112, 184 104, 220 90 C206 126, 172 152, 124 154Z" fill="white" opacity=".68"/>
+      <path d="M80 160 H296" stroke="white" stroke-opacity=".42" stroke-width="5" stroke-linecap="round"/>
+      <path d="M102 58 C124 44, 144 50, 150 72" fill="none" stroke="white" stroke-opacity=".42" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="106" cy="58" r="3" fill="white" opacity=".8"/>
+      <circle cx="124" cy="50" r="3" fill="white" opacity=".8"/>
+    `,
+    holding: `
+      ${person(180,116)}
+      <circle cx="180" cy="108" r="32" fill="white" opacity=".38" filter="url(#soft-${key})"/>
+      <circle cx="180" cy="108" r="20" fill="white" opacity=".72"/>
+      <path d="M80 60 C122 30, 238 30, 280 60 C250 92, 110 92, 80 60Z" fill="white" opacity=".12"/>
+      <path d="M70 134 C122 116, 132 162, 180 142 C222 124, 246 148, 300 118" fill="none" stroke="white" stroke-opacity=".34" stroke-width="4" stroke-linecap="round"/>
+    `,
+    map: `
+      <path d="M82 58 L152 42 L216 62 L286 46 L286 136 L216 154 L152 134 L82 150 Z" fill="white" opacity=".28"/>
+      <path d="M152 42 V134 M216 62 V154" stroke="white" stroke-opacity=".46" stroke-width="3"/>
+      <path d="M104 130 C148 92, 196 124, 250 70" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+      <path d="M250 70 L238 72 L246 82" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+      ${person(62,132)}
+    `,
+    stars: `
+      <circle cx="108" cy="72" r="4" fill="white"/>
+      <circle cx="154" cy="44" r="3" fill="white"/>
+      <circle cx="210" cy="74" r="5" fill="white"/>
+      <circle cx="264" cy="48" r="3" fill="white"/>
+      <circle cx="286" cy="112" r="4" fill="white"/>
+      <path d="M108 72 L154 44 L210 74 L264 48 L286 112" fill="none" stroke="white" stroke-opacity=".50" stroke-width="2"/>
+      <path d="M78 150 L282 150" stroke="white" stroke-opacity=".28" stroke-width="4" stroke-linecap="round"/>
+      ${person(164,126)}
+    `,
+    weather: `
+      <path d="M72 92 C82 68, 106 62, 126 76 C140 48, 184 50, 196 82 C224 74, 250 92, 248 118 H76 C62 116, 58 100, 72 92Z" fill="white" opacity=".68"/>
+      <path d="M278 52 L300 74 M300 52 L278 74" stroke="white" stroke-opacity=".72" stroke-width="5" stroke-linecap="round"/>
+      <path d="M94 144 C146 122, 210 166, 288 122" fill="none" stroke="white" stroke-opacity=".36" stroke-width="4" stroke-linecap="round"/>
+      ${person(184,132)}
+    `,
+    cards: `
+      <rect x="84" y="58" width="64" height="78" rx="10" fill="white" opacity=".42"/>
+      <rect x="148" y="44" width="64" height="78" rx="10" fill="white" opacity=".68"/>
+      <rect x="212" y="62" width="64" height="78" rx="10" fill="white" opacity=".34"/>
+      <path d="M104 86 H130 M104 104 H132 M168 74 H194 M168 92 H190 M232 92 H258 M232 110 H252" stroke="white" stroke-opacity=".72" stroke-width="3" stroke-linecap="round"/>
+      ${person(180,146)}
+    `,
+    branch: `
+      <path d="M62 152 C108 130, 134 108, 166 88 C206 64, 246 62, 306 44" fill="none" stroke="white" stroke-width="7" stroke-opacity=".52" stroke-linecap="round"/>
+      <path d="M166 88 C166 122, 154 142, 130 160" fill="none" stroke="white" stroke-width="5" stroke-opacity=".50" stroke-linecap="round"/>
+      <path d="M166 88 C194 110, 224 124, 272 120" fill="none" stroke="white" stroke-width="5" stroke-opacity=".50" stroke-linecap="round"/>
+      <circle cx="166" cy="88" r="10" fill="white" opacity=".82"/>
+      ${person(94,130)}
+    `,
+    road: `
+      <path d="M142 160 L176 54 H206 L244 160 Z" fill="white" opacity=".30"/>
+      <path d="M188 70 L192 150" stroke="white" stroke-opacity=".65" stroke-width="4" stroke-dasharray="10 10"/>
+      <rect x="82" y="126" width="48" height="26" rx="8" fill="white" opacity=".42"/>
+      <path d="M82 126 V112 M130 126 V112" stroke="white" stroke-opacity=".7" stroke-width="4"/>
+      ${person(252,130)}
+    `,
+    sprint: `
+      <path d="M48 146 L148 70 L118 126 L212 46 L174 114 L312 58" fill="none" stroke="white" stroke-opacity=".62" stroke-width="7" stroke-linejoin="round"/>
+      <circle cx="176" cy="82" r="12" fill="white" opacity=".92"/>
+      <path d="M170 94 L148 116 L190 116 L224 138" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M190 116 L150 154" stroke="white" stroke-width="7" stroke-linecap="round"/>
+      <path d="M78 86 C116 72, 140 68, 166 50" stroke="white" stroke-opacity=".32" stroke-width="3" fill="none" stroke-linecap="round"/>
+    `,
+    restart: `
+      <path d="M180 50 A54 54 0 1 1 128 88" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" opacity=".54"/>
+      <path d="M128 88 L126 62 L150 76" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+      <path d="M70 154 H292" stroke="white" stroke-opacity=".40" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="174" cy="92" r="12" fill="white" opacity=".92"/>
+      <path d="M170 106 C154 124, 152 138, 174 146 C196 138, 200 124, 184 106Z" fill="white" opacity=".78"/>
+      <path d="M148 150 C164 136, 184 136, 202 150" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    `
+  };
+
+  return `<svg viewBox="0 0 360 190" role="img" aria-label="${typeMap[key].name}のシンボルイラスト">${common}${scenes[scene]}</svg>`;
+}
+
+
+let selectedMode = 20;
+let thresholdMode = 'fixed35';
+let currentStage = 0;
+let answers = {};
+let lastResult = null;
+
+function selectMode(mode) {
+  selectedMode = mode;
+  document.getElementById("mode20").classList.toggle("selected", mode === 20);
+  document.getElementById("mode16").classList.toggle("selected", mode === 16);
+}
+
+
+function selectThresholdMode(mode) {
+  thresholdMode = mode;
+}
+
+function thresholdValue(mode = thresholdMode) {
+  if (mode === "fixed30") return 3.0;
+  if (mode === "fixed33") return 3.3;
+  return 3.5;
+}
+
+function thresholdLabel(mode = thresholdMode) {
+  const labels = {
+    fixed35: "固定3.5基準",
+    fixed33: "固定3.3基準",
+    fixed30: "固定3.0基準",
+    scoreOnly: "スコア優先・タイプ補助",
+    median: "集団内中央値基準"
+  };
+  return labels[mode] || labels.fixed35;
+}
+
+function classifyScores(scores, mode = thresholdMode, medians = null) {
+  if (mode === "median" && medians) {
+    return stageAxes().map(axis => scores[axis] >= medians[axis] ? "1" : "0").join("");
+  }
+  const t = thresholdValue(mode);
+  return stageAxes().map(axis => scores[axis] >= t ? "1" : "0").join("");
+}
+
+function axisMedians(scoreRows) {
+  const medians = {};
+  for (const axis of stageAxes()) {
+    const arr = scoreRows.map(s => s[axis]).filter(v => Number.isFinite(v)).sort((a, b) => a - b);
+    const mid = Math.floor(arr.length / 2);
+    medians[axis] = arr.length % 2 ? arr[mid] : (arr[mid - 1] + arr[mid]) / 2;
+  }
+  return medians;
+}
+
+
+function activeQuestions() {
+  return questions.filter(q => selectedMode === 20 || q.core);
+}
+
+function stageAxes() {
+  return ["acceptance", "distance", "values", "flexibility"];
+}
+
+function startQuiz() {
+  currentStage = 0;
+  answers = {};
+  document.getElementById("startView").classList.add("hidden");
+  document.getElementById("resultView").classList.add("hidden");
+  document.getElementById("quizView").classList.remove("hidden");
+  renderStage();
+}
+
+function renderStage() {
+  const axis = stageAxes()[currentStage];
+  const axisInfo = axes[axis];
+  const qs = activeQuestions().filter(q => q.axis === axis);
+  document.getElementById("stageTitle").textContent = axisInfo.stageTitle;
+  document.getElementById("stageLead").textContent = axisInfo.lead;
+  document.getElementById("stepBadge").textContent = `${currentStage + 1} / 4`;
+  document.getElementById("progressBar").style.width = `${(currentStage) / 4 * 100}%`;
+  document.getElementById("backBtn").disabled = currentStage === 0;
+  document.getElementById("nextBtn").textContent = currentStage === 3 ? "結果を見る" : "次へ";
+  document.getElementById("errorBox").classList.add("hidden");
+
+  const container = document.getElementById("questionContainer");
+  container.innerHTML = qs.map((q, idx) => `
+    <div class="question">
+      <div class="q-meta">
+        <span>${q.id}｜${axes[q.axis].label}${q.core ? "" : "｜拡張項目"}</span>
+        <span>${q.reverse ? "逆転項目" : "順方向項目"}</span>
+      </div>
+      <div class="q-text">${idx + 1}. ${q.text}</div>
+      <div class="scale">
+        ${[1,2,3,4,5].map(v => `
+          <label data-short="${v}" title="${scaleLabelText(v)}" aria-label="${scaleLabelText(v)}">
+            <input type="radio" name="${q.id}" value="${v}" ${answers[q.id] === v ? "checked" : ""} onchange="saveAnswer('${q.id}', ${v})">
+            ${scaleLabel(v)}
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+
+function scaleLabelText(v) {
+  return {
+    1:"あてはまらない",
+    2:"あまりあてはまらない",
+    3:"どちらともいえない",
+    4:"ややあてはまる",
+    5:"あてはまる"
+  }[v];
+}
+
+function scaleLabel(v) {
+  return {
+    1:"あてはまらない",
+    2:"あまり<br>あてはまらない",
+    3:"どちらとも<br>いえない",
+    4:"やや<br>あてはまる",
+    5:"あてはまる"
+  }[v];
+}
+
+function saveAnswer(id, value) {
+  answers[id] = value;
+  document.getElementById("errorBox").classList.add("hidden");
+}
+
+function currentStageAnswered() {
+  const axis = stageAxes()[currentStage];
+  return activeQuestions().filter(q => q.axis === axis).every(q => answers[q.id]);
+}
+
+function nextStage() {
+  if (!currentStageAnswered()) {
+    document.getElementById("errorBox").classList.remove("hidden");
+    return;
+  }
+  if (currentStage < 3) {
+    currentStage++;
+    renderStage();
+    window.scrollTo({top:0, behavior:"smooth"});
+  } else {
+    document.getElementById("progressBar").style.width = "100%";
+    showResult();
+  }
+}
+
+function prevStage() {
+  if (currentStage > 0) {
+    currentStage--;
+    renderStage();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+}
+
+function scoreQuestion(q) {
+  const raw = answers[q.id];
+  return q.reverse ? 6 - raw : raw;
+}
+
+function calculateScores() {
+  const score = {};
+  for (const axis of stageAxes()) {
+    const qs = activeQuestions().filter(q => q.axis === axis);
+    const total = qs.reduce((sum, q) => sum + scoreQuestion(q), 0);
+    score[axis] = +(total / qs.length).toFixed(2);
+  }
+  return score;
+}
+
+function typeKey(scores) {
+  return classifyScores(scores, thresholdMode);
+}
+
+
+function axisLevel(score) {
+  if (score >= 4.0) return "かなり使いやすい";
+  if (score >= 3.5) return "使いやすい";
+  if (score >= 3.0) return "場面によって使える";
+  if (score >= 2.5) return "これから育てられる";
+  return "意識して育てたい";
+}
+
+function axisExplanation(axis, score) {
+  const high = score >= 3.5;
+  const mid = score >= 3.0 && score < 3.5;
+  const map = {
+    acceptance: {
+      high: "嫌な気持ちをすぐ否定せず、「今そう感じている」と気づきやすい傾向があります。",
+      mid: "感情に気づける場面もありますが、強い気持ちのときは避けたくなることもありそうです。",
+      low: "つらい感情を感じると、早く消したい・見ないようにしたい方向に動きやすいかもしれません。"
+    },
+    distance: {
+      high: "感情が強くても、一歩引いて自分を観察する余裕を持ちやすい傾向があります。",
+      mid: "落ち着いているときは距離を取れますが、感情が強い場面では巻き込まれやすいかもしれません。",
+      low: "怒りや不安が強いと、その感情の勢いのまま反応しやすい傾向があるかもしれません。"
+    },
+    values: {
+      high: "その場の気分だけでなく、自分が大切にしたいことを基準に行動しやすい傾向があります。",
+      mid: "大切にしたいことはありますが、疲れや不安があると後回しになりやすい場面もありそうです。",
+      low: "一時的な気分や周囲の空気に影響され、大切なことを後回しにしやすいかもしれません。"
+    },
+    flexibility: {
+      high: "予定通りにいかなくても、別の方法を試すなど切り替えがしやすい傾向があります。",
+      mid: "切り替えられる場面もありますが、こだわりや不安が強いと動きにくくなることもありそうです。",
+      low: "一度決めたやり方や「こうあるべき」に引っ張られ、切り替えに時間がかかるかもしれません。"
+    }
+  };
+  if (high) return map[axis].high;
+  if (mid) return map[axis].mid;
+  return map[axis].low;
+}
+
+function studentMainMessage(key, type, scores) {
+  const highAxes = stageAxes().filter(axis => scores[axis] >= 3.5).map(axis => axes[axis].label);
+  const lowAxes = stageAxes().filter(axis => scores[axis] < 3.0).map(axis => axes[axis].label);
+
+  if (thresholdMode === "scoreOnly") {
+    return "このモードでは、タイプ名よりも4つのスコアを中心に読みます。高い軸は今使いやすい力、低めの軸はこれから練習できる力として見てください。";
+  }
+
+  if (highAxes.length === 4) {
+    return "4つの力が全体的に使いやすい状態です。感情に気づき、距離をとり、大切なことに向かいながら、状況に合わせて動く力がまとまって出ています。";
+  }
+
+  if (highAxes.length === 0) {
+    return "今の結果は、力がないという意味ではありません。感情や行動を整える前に、少し立ち止まって自分の状態を見つめるタイミングを示している可能性があります。";
+  }
+
+  if (highAxes.length === 1) {
+    return `今のあなたは、特に「${highAxes[0]}」が使いやすく出ています。まずはこの力を入口にして、他の力を少しずつ育てていくとバランスが取りやすくなります。`;
+  }
+
+  return `今のあなたは、${highAxes.map(x => "「" + x + "」").join("、")}が比較的使いやすく出ています。これらを土台にしながら、低めの軸を少し補うと、感情との付き合い方がさらに安定します。`;
+}
+
+function whyTypeMessage(key, scores) {
+  const labels = stageAxes().map(axis => {
+    const mark = scores[axis] >= thresholdValue(thresholdMode) ? "高め" : "低め";
+    return `${axes[axis].label}＝${mark}`;
+  });
+  if (thresholdMode === "scoreOnly") {
+    return "研究用モードでは、タイプ判定は補助的に表示しています。4軸それぞれの得点を見て、自分の状態を具体的に振り返ることを優先します。";
+  }
+  return `このタイプは、4つの軸を「高め／低め」に分け、その組み合わせから表示しています。今回の判定では、${labels.join("、")}として読み取られました。`;
+}
+
+function howToUseMessage(type) {
+  return `この結果は、「自分はこういう人だ」と決めつけるためではなく、次の行動を考えるための地図です。まずは、カードにある小さな一歩――${type.action}――を試してみてください。`;
+}
+
+function renderStudentExplanation(key, type, scores) {
+  document.getElementById("studentMainText").textContent = studentMainMessage(key, type, scores);
+  document.getElementById("whyTypeText").textContent = whyTypeMessage(key, scores);
+  document.getElementById("howToUseText").textContent = howToUseMessage(type);
+
+  document.getElementById("axisReadingList").innerHTML = stageAxes().map(axis => {
+    const score = scores[axis];
+    return `
+      <div class="axis-reading-item">
+        <b><span>${axes[axis].label}</span><span>${score.toFixed(2)} / 5｜${axisLevel(score)}</span></b>
+        <span>${axisExplanation(axis, score)}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+
+function showResult() {
+  const scores = calculateScores();
+  const key = typeKey(scores);
+  const type = typeMap[key];
+
+  lastResult = {scores, key, type, mode:selectedMode, thresholdMode};
+
+  document.getElementById("quizView").classList.add("hidden");
+  document.getElementById("resultView").classList.remove("hidden");
+
+  document.getElementById("typeName").textContent = type.name;
+  document.getElementById("typeIllustration").innerHTML = typeIllustrationSvg(key);
+  document.getElementById("typeCopy").textContent = type.copy;
+  document.getElementById("descriptionText").textContent = type.description;
+  document.getElementById("strengthText").textContent = type.strength;
+  document.getElementById("cautionText").textContent = type.caution;
+  document.getElementById("actionText").textContent = type.action;
+  document.getElementById("motifText").textContent = type.motif;
+  document.getElementById("cardStrengthText").textContent = type.strength;
+  document.getElementById("cardActionText").textContent = type.action;
+  renderStudentExplanation(key, type, scores);
+
+  const chips = stageAxes().map(axis => {
+    const label = axes[axis].label;
+    const val = scores[axis] >= 3.5 ? "高め" : "育成中";
+    return `<span class="type-chip">${escapeHtml(label)}：${val}</span>`;
+  }).join("");
+  document.getElementById("typeChips").innerHTML = chips;
+
+  document.getElementById("scoreBars").innerHTML = stageAxes().map(axis => {
+    const pct = Math.round(scores[axis] / 5 * 100);
+    return `
+      <div class="score-row">
+        <div class="score-label"><span>${axes[axis].label}</span><span>${scores[axis].toFixed(2)} / 5</span></div>
+        <div class="bar-shell"><div class="bar" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join("");
+
+  const note = thresholdMode === "scoreOnly"
+    ? "研究用モードでは、タイプ名は補助的に表示しています。解釈の中心は4軸スコアです。"
+    : `現在のタイプ判定は「${thresholdLabel(thresholdMode)}」です。固定基準では、各軸がこの基準以上の場合に「高め」として16タイプ化します。`;
+  document.getElementById("classificationNote").innerHTML = `<span class="mode-tag">${thresholdLabel(thresholdMode)}</span>${note}`;
+
+  renderItemMetaTable();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+
+function randomLikert(model) {
+  const models = {
+    uniform: [0.20, 0.20, 0.20, 0.20, 0.20],
+    balanced: [0.10, 0.20, 0.40, 0.20, 0.10],
+    positive: [0.07, 0.13, 0.30, 0.28, 0.22],
+    negative: [0.22, 0.28, 0.30, 0.13, 0.07]
+  };
+  const probs = models[model] || models.balanced;
+  const r = Math.random();
+  let acc = 0;
+  for (let i = 0; i < probs.length; i++) {
+    acc += probs[i];
+    if (r <= acc) return i + 1;
+  }
+  return 5;
+}
+
+function scoreFromRow(row, q) {
+  const raw = Number(row[q.id]);
+  if (!Number.isFinite(raw) || raw < 1 || raw > 5) return null;
+  return q.reverse ? 6 - raw : raw;
+}
+
+function scoresFromRow(row) {
+  const scores = {};
+  for (const axis of stageAxes()) {
+    const qs = activeQuestions().filter(q => q.axis === axis);
+    let total = 0;
+    for (const q of qs) {
+      const v = scoreFromRow(row, q);
+      if (v === null) return null;
+      total += v;
+    }
+    scores[axis] = +(total / qs.length).toFixed(4);
+  }
+  return scores;
+}
+
+function typeKeyFromScores(scores, rule = "fixed35", medians = null) {
+  return classifyScores(scores, rule, medians);
+}
+
+function typeKeyFromRow(row, rule = "fixed35", medians = null) {
+  const scores = scoresFromRow(row);
+  if (!scores) return null;
+  return typeKeyFromScores(scores, rule, medians);
+}
+
+function simulatedRows(n, model) {
+  const qs = activeQuestions();
+  const rows = [];
+  for (let i = 0; i < n; i++) {
+    const row = {};
+    qs.forEach(q => row[q.id] = randomLikert(model));
+    rows.push(row);
+  }
+  return rows;
+}
+
+
+function keysFromRowsWithRule(rows, rule) {
+  const scored = rows.map(scoresFromRow).filter(Boolean);
+  if (rule === "median") {
+    const med = axisMedians(scored);
+    return {
+      keys: scored.map(s => typeKeyFromScores(s, "median", med)),
+      medians: med
+    };
+  }
+  return {
+    keys: scored.map(s => typeKeyFromScores(s, rule)),
+    medians: null
+  };
+}
+
+function mediansText(medians) {
+  if (!medians) return "";
+  return "中央値：" + stageAxes().map(axis => `${axes[axis].label} ${medians[axis].toFixed(2)}`).join("、");
+}
+
+
+function prevalenceFromKeys(keys) {
+  const counts = {};
+  Object.keys(typeMap).forEach(k => counts[k] = 0);
+  keys.forEach(k => {
+    if (counts[k] !== undefined) counts[k] += 1;
+  });
+  const n = keys.length || 1;
+  const props = {};
+  Object.keys(typeMap).forEach(k => props[k] = counts[k] / n);
+  return {counts, props, n};
+}
+
+function bootstrapTypePrevalence(keys, b) {
+  const n = keys.length;
+  const allTypes = Object.keys(typeMap);
+  const dist = {};
+  allTypes.forEach(k => dist[k] = []);
+  for (let i = 0; i < b; i++) {
+    const sample = [];
+    for (let j = 0; j < n; j++) {
+      sample.push(keys[Math.floor(Math.random() * n)]);
+    }
+    const prev = prevalenceFromKeys(sample).props;
+    allTypes.forEach(k => dist[k].push(prev[k]));
+  }
+  const ci = {};
+  allTypes.forEach(k => {
+    const arr = dist[k].sort((a, b) => a - b);
+    const lo = arr[Math.floor(0.025 * (arr.length - 1))] || 0;
+    const hi = arr[Math.floor(0.975 * (arr.length - 1))] || 0;
+    ci[k] = {lo, hi};
+  });
+  return ci;
+}
+
+function renderPrevalence(containerId, keys, ci) {
+  const prev = prevalenceFromKeys(keys);
+  const sorted = Object.keys(typeMap).sort((a, b) => prev.props[b] - prev.props[a]);
+  document.getElementById(containerId).innerHTML = sorted.map(k => {
+    const pct = prev.props[k] * 100;
+    const lo = ci ? ci[k].lo * 100 : null;
+    const hi = ci ? ci[k].hi * 100 : null;
+    const ciText = ci ? `95%CI ${lo.toFixed(1)}〜${hi.toFixed(1)}%` : "";
+    return `
+      <div class="type-share-card">
+        <b>${typeMap[k].name}</b>
+        <span>${typeMap[k].copy}</span>
+        <div class="share-bar-shell"><div class="share-bar" style="width:${Math.min(100, pct)}%"></div></div>
+        <span><strong>${pct.toFixed(1)}%</strong>（${prev.counts[k]} / ${prev.n}） ${ciText}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+function runSimulationBootstrap() {
+  const n = Math.max(100, Math.min(20000, Number(document.getElementById("simN").value) || 2000));
+  const b = Math.max(100, Math.min(3000, Number(document.getElementById("bootB").value) || 500));
+  const model = document.getElementById("responseModel").value;
+  const rule = document.getElementById("simRule").value;
+  const rows = simulatedRows(n, model);
+  const grouped = keysFromRowsWithRule(rows, rule);
+  const keys = grouped.keys;
+  const ci = bootstrapTypePrevalence(keys, b);
+  document.getElementById("simulationSummary").textContent =
+    `${selectedMode}項目モード、仮想回答者${keys.length}名、ブートストラップ${b}回、判定基準「${thresholdLabel(rule)}」で推定しました。これは実データではなく、回答分布「${document.getElementById("responseModel").selectedOptions[0].textContent}」を仮定した結果です。${grouped.medians ? " " + mediansText(grouped.medians) : ""}`;
+  renderPrevalence("simulationResults", keys, ci);
+}
+
+function parseCsv(text) {
+  const rows = [];
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(line => line.trim().length);
+  if (lines.length < 2) return rows;
+  const parseLine = (line) => {
+    const out = [];
+    let cur = "";
+    let quote = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else if (ch === '"') {
+        quote = !quote;
+      } else if (ch === "," && !quote) {
+        out.push(cur);
+        cur = "";
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out.map(v => v.trim());
+  };
+  const headers = parseLine(lines[0]);
+  for (let i = 1; i < lines.length; i++) {
+    const vals = parseLine(lines[i]);
+    const row = {};
+    headers.forEach((h, idx) => row[h] = vals[idx]);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function runCsvBootstrap() {
+  const file = document.getElementById("csvFile").files[0];
+  const b = Math.max(100, Math.min(5000, Number(document.getElementById("csvBootB").value) || 1000));
+  const rule = document.getElementById("csvRule").value;
+  const summary = document.getElementById("csvSummary");
+  if (!file) {
+    summary.textContent = "CSVファイルを選択してください。";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const rows = parseCsv(String(reader.result || ""));
+    const grouped = keysFromRowsWithRule(rows, rule);
+    const keys = grouped.keys;
+    if (keys.length < 10) {
+      summary.textContent = `有効な回答行が${keys.length}件でした。Q01〜Q20列と1〜5の値を確認してください。`;
+      document.getElementById("csvResults").innerHTML = "";
+      return;
+    }
+    const ci = bootstrapTypePrevalence(keys, b);
+    summary.textContent = `${selectedMode}項目モード、有効回答${keys.length}名、ブートストラップ${b}回、判定基準「${thresholdLabel(rule)}」でタイプ発生割合の95%信頼区間を推定しました。${grouped.medians ? " " + mediansText(grouped.medians) : ""}`;
+    renderPrevalence("csvResults", keys, ci);
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+
+function renderItemMetaTable() {
+  const rows = activeQuestions().map(q => `
+    <tr>
+      <td>${q.id}</td>
+      <td>${axes[q.axis].label}</td>
+      <td>${q.reverse ? "逆転" : "順方向"}</td>
+      <td>${q.concept}</td>
+      <td>${q.reference}</td>
+      <td>${q.originality}</td>
+      <td>${q.evidence}</td>
+    </tr>
+  `).join("");
+
+  document.getElementById("itemMetaTable").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>軸</th><th>方向</th><th>参照概念</th><th>参考情報</th><th>オリジナル情報</th><th>検証状況</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function copySummary() {
+  if (!lastResult) return;
+  const lines = [
+    "こころコンパス診断 結果",
+    `モード：${lastResult.mode}項目`,
+    `判定基準：${thresholdLabel(lastResult.thresholdMode)}`,
+    `タイプ：${lastResult.type.name}`,
+    `キャッチコピー：${lastResult.type.copy}`,
+    `説明：${lastResult.type.description}`,
+    "",
+    "4軸スコア：",
+    ...stageAxes().map(axis => `・${axes[axis].label}：${lastResult.scores[axis].toFixed(2)} / 5`),
+    "",
+    `強み：${lastResult.type.strength}`,
+    `気をつけたい点：${lastResult.type.caution}`,
+    `小さな一歩：${lastResult.type.action}`,
+    `イラストモチーフ：${lastResult.type.motif}`
+  ];
+  navigator.clipboard.writeText(lines.join("\n")).then(() => {
+    document.getElementById("copyStatus").textContent = "結果をコピーしました。";
+  }).catch(() => {
+    document.getElementById("copyStatus").textContent = "コピーに失敗しました。ブラウザの設定をご確認ください。";
+  });
+}
+
+function restart() {
+  document.getElementById("resultView").classList.add("hidden");
+  document.getElementById("startView").classList.remove("hidden");
+  answers = {};
+  lastResult = null;
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function showEvidenceFromStart() {
+  answers = {};
+  const defaultScores = {acceptance:3.5, distance:3.5, values:3.5, flexibility:3.5};
+  lastResult = {scores:defaultScores, key:"1111", type:typeMap["1111"], mode:selectedMode, thresholdMode};
+  document.getElementById("startView").classList.add("hidden");
+  document.getElementById("quizView").classList.add("hidden");
+  document.getElementById("resultView").classList.remove("hidden");
+
+  document.getElementById("typeName").textContent = "教員向けプレビュー";
+  document.getElementById("typeIllustration").innerHTML = typeIllustrationSvg("1111");
+  document.getElementById("typeCopy").textContent = "参考情報・オリジナル情報・今後検証するエビデンスを切り分けて確認できます。";
+  document.getElementById("typeChips").innerHTML = `<span class="type-chip">心理教育ツール</span><span class="type-chip">既存尺度の短縮版ではない</span>`;
+  document.getElementById("descriptionText").textContent = "16タイプの完成版カード文面と、タイプ別シンボルイラスト枠を確認できます。";
+  document.getElementById("strengthText").textContent = "授業・研修・OCに展開しやすい構造です。";
+  document.getElementById("cautionText").textContent = "臨床診断・採用選考・能力判定には使用しません。";
+  document.getElementById("actionText").textContent = "項目レビューと小規模試用から妥当性検証を始めます。";
+  document.getElementById("motifText").textContent = "タイプ別の象徴モチーフをSVG風に内蔵表示します。";
+  document.getElementById("cardStrengthText").textContent = "参考情報・独自性・検証状況を切り分けて提示できます。";
+  document.getElementById("cardActionText").textContent = "授業試用後に文面とイラストの納得感を改善します。";
+  renderStudentExplanation("1111", typeMap["1111"], defaultScores);
+  document.getElementById("scoreBars").innerHTML = stageAxes().map(axis => `
+      <div class="score-row">
+        <div class="score-label"><span>${axes[axis].label}</span><span>参照軸</span></div>
+        <div class="bar-shell"><div class="bar" style="width:70%"></div></div>
+      </div>
+    `).join("");
+  const noteEl = document.getElementById("classificationNote");
+  if (noteEl) noteEl.innerHTML = `<span class="mode-tag">${thresholdLabel(thresholdMode)}</span>教員向けプレビューです。実際のタイプ判定は回答後に選択中の基準で行います。`;
+  renderItemMetaTable();
+  document.getElementById("evidencePanel").scrollIntoView({behavior:"smooth"});
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[s]));
+}
+
+renderItemMetaTable();
+</script>
+</body>
+</html>
