@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教育・学校心理学／教育心理学 最終テスト</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --error-color: #c0392b;
+            --warning-color: #d35400;
+            --success-color: #27ae60;
+            --bg-color: #f8f9fa;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { color: var(--primary-color); border-bottom: 3px solid var(--primary-color); padding-bottom: 10px; font-size: 24px; }
+        h2 { color: var(--primary-color); font-size: 18px; margin-top: 25px; }
+        .alert-box { background-color: #edf2f7; border-left: 5px solid var(--primary-color); padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .error-text { color: var(--error-color); font-weight: bold; }
+        .warning-text { color: var(--warning-color); font-weight: bold; }
+        
+        /* ボタン設定 */
+        .btn { display: block; width: 100%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; text-align: center; margin-top: 30px; }
+        .btn:hover { background: #34495e; }
+        
+        /* テスト画面スタイル */
+        .hidden { display: none !important; }
+        .question-block { background: #fff; border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 25px; border-radius: 6px; }
+        .meta-info { display: flex; gap: 20px; margin-bottom: 20px; }
+        .meta-info input { padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; width: 50%; font-size: 16px; }
+        
+        textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 16px; resize: vertical; box-sizing: border-box; }
+        .char-counter { text-align: right; font-size: 14px; color: #718096; margin-top: 5px; }
+        
+        /* 警告オーバーレイ */
+        #warningOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; text-align: center; padding: 20px; box-sizing: border-box; }
+        #warningOverlay h2 { color: #ff6b6b; font-size: 32px; }
+        #warningOverlay p { font-size: 20px; max-width: 600px; }
+        #warningOverlay .btn-resume { background: var(--success-color); width: auto; padding: 12px 40px; }
+        
+        /* タイマー・離脱カウンター固定表示 */
+        .status-bar { position: fixed; top: 0; left: 0; width: 100%; background: #2c3e50; color: white; padding: 10px 20px; display: flex; justify-content: space-between; font-weight: bold; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<!-- 画面1：事前ルール説明 ＆ 環境チェック -->
+<div id="instructionScreen" class="container">
+    <h1>【重要】最終テスト 受験ルールと環境確認</h1>
+    
+    <div class="alert-box">
+        <p>このテストは、普段から授業を真面目に聞き、準備を行ってきた学生が正当に評価されるよう、厳格なシステム制御のもとで実施されます。以下のルールを必ず確認し、同意の上で開始してください。</p>
+    </div>
+
+    <h2>⚠️ 4つの受験ルール（必ずお読みください）</h2>
+    <ol>
+        <li><span class="error-text">PC（パソコン）からのみ受験可能</span><br>スマートフォンやタブレットでの回答は受け付けません（画面がロックされます）。</li>
+        <li><span class="error-text">コピー＆ペーストの禁止</span><br>解答欄への貼り付け操作は一切できません。事前に用意した「印刷した下書き用紙（紙）」を見ながら、制限時間内に手入力でタイピングしてください。</li>
+        <li><span class="warning-text">画面離脱の監視（猶予は最大10回まで）</span><br>テスト中、他のタブを開く、別アプリを見る、検索を行う、またはPCの通知ポップアップをクリックするなどして**テスト画面から離れると、画面が強制ロックされ警告が表示**されます。<br>画面から離れられる猶予は**【合計10回（1問あたり1回相当）】**です。10回を超えた場合、その時点でテストは自動的に強制提出（終了）となります。</li>
+        <li><span class="warning-text">ログの自動記録</span><br>解答にかかった時間、実際のタイピング回数、推敲（文字を消した）回数、画面を離れた回数がすべて自動記録され、採点時の誠実さの指標として送信されます。</li>
+    </ol>
+
+    <h2>⚙️ あなたの受験環境チェック</h2>
+    <div id="envCheckResult" class="alert-box">
+        確認中...
+    </div>
+
+    <div id="startSection" class="hidden">
+        <p class="warning-text" style="text-align: center;">※「テストを開始する」を押すと自動的に全画面（フルスクリーン）モードになり、60分間のタイマーが始まります。</p>
+        <button class="btn" onclick="startExam()">確認しました（テストを開始する）</button>
+    </div>
+</div>
+
+<!-- 画面2：本番テスト画面 -->
+<div id="examStatusBar" class="status-bar hidden">
+    <div>⏳ 残り時間: <span id="timerDisplay">60:00</span></div>
+    <div>⚠️ 画面離脱警告: <span id="blurCountDisplay">0</span> / 10 回</div>
+</div>
+
+<div id="examScreen" class="container hidden" style="margin-top: 80px;">
+    <h1>教育・学校心理学／教育心理学 最終テスト</h1>
+    <p>※各問200字程度（150字〜220字が目安）。文字数が著しく少ない場合は減点対象となります。解けない問題は空欄のまま提出しても構いません。</p>
+    
+    <form id="examForm" onsubmit="submitExam(event)">
+        <!-- 学生情報 -->
+        <div class="meta-info">
+            <input type="text" id="studentId" placeholder="学籍番号（例：A24001）" required>
+            <input type="text" id="studentName" placeholder="氏名" required>
+        </div>
+
+        <!-- 問題1〜10 -->
+        <div class="question-block">
+            <p><strong>問1.</strong> あなたは学習する際に、どのような学習方法を使い、どのように学習が改善されるでしょうか。どの学習技術の知識を生徒や学生に伝えることが最も重要かを述べなさい。（第二章）</p>
+            <textarea id="q1" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q1_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問2.</strong> いじめ、モチベーションの欠如、喧嘩、勉強のしすぎ、さぼりすぎなど、様々な学校の問題に対処するための創造的な問題解決方法について述べなさい。（第三章）</p>
+            <textarea id="q2" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q2_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問3.</strong> 子どもや若者が学校で成功するためには、彼らが特別で、価値があり、世話をされ、無条件に愛されていると感じることが重要であることを説明しなさい。また、具体的にどのような方法があるかを述べなさい。（第四章）</p>
+            <textarea id="q3" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q3_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問4.</strong> グリット能力と動的マインドセットを鍛える方法について述べなさい。（第五章）</p>
+            <textarea id="q4" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q4_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問5.</strong> 自分の感情を制御するのがどれぐらい上手であるかを述べなさい。また、感情の起伏が激しい場合、後で悔やむような行動となった例を挙げなさい。（第六章）</p>
+            <textarea id="q5" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q5_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問6.</strong> ストレスを感じたとき、どのような身体症状が出ますか。体の中でどのように感じますか。普段、どのような方法でストレスを管理していますか。（第七章）</p>
+            <textarea id="q6" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q6_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問7.</strong> 十分に運動することの重要性について説明しなさい。また、それらの知識を活用する方法について述べなさい。（第八章）</p>
+            <textarea id="q7" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q7_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問8.</strong> 睡眠を無視することは、学習と集中力に非常にネガティブな影響を及ぼします。そのことを説明し、学校でこの問題にどのように対処すればいいか述べなさい。（第八章）</p>
+            <textarea id="q8" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q8_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問9.</strong> あなたが担当する授業をより面白く、楽しく、魅力的にするためには、どのような方法を用いればいいか説明しなさい。（第二章）</p>
+            <textarea id="q9" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q9_len">0</span> 文字</div>
+        </div>
+
+        <div class="question-block">
+            <p><strong>問10.</strong> 創造性の要素を導入することが最も適切な科目は何だと思いますか。具体例を挙げて説明しなさい。（第三章）</p>
+            <textarea id="q10" placeholder="（空欄提出可）"></textarea>
+            <div class="char-counter"><span id="q10_len">0</span> 文字</div>
+        </div>
+
+        <input type="hidden" id="hiddenLog">
+        <button type="submit" class="btn" style="background-color: var(--success-color);">すべての解答を送信する</button>
+    </form>
+</div>
+
+<!-- 画面3：警告表示用オーバーレイ（ソフトロック） -->
+<div id="warningOverlay" class="hidden">
+    <h2>⚠️ 【警告】テスト画面から離れました</h2>
+    <p>別タブの閲覧、他アプリの起動、または通知のクリックが検知されました。<br>この離脱ログはサーバーに自動記録されています。</p>
+    <p class="warning-text" style="font-size: 24px;">現在の離脱回数: <span id="overlayCountDisplay">0</span> / 10 回</p>
+    <p>※10回を超えると、その時点で回答が自動的に強制提出され、テストが終了します。</p>
+    <button class="btn btn-resume" onclick="resumeExam()">テストに戻る</button>
+</div>
+
+<!-- 画面4：送信完了・強制終了画面 -->
+<div id="completionScreen" class="container hidden">
+    <h1 id="completionTitle">テスト終了</h1>
+    <p id="completionMessage">解答は正常に回収されました。お疲れ様でした。</p>
+</div>
+
+<script>
+    // ログ収集用データ構造
+    const examLog = {
+        startTime: 0,
+        endTime: 0,
+        totalTimeSec: 0,
+        blurCount: 0,
+        keyCounts: {},
+        backspaceCounts: {}
+    };
+
+    let timerInterval;
+    let timeLeft = 60 * 60; // 60分
+    const maxBlurs = 10;    // 猶予10回
+    let isExamActive = false;
+    let isSubmitting = false; // 【新規追加】送信中の誤判定を防ぐフラグ
+
+    window.onload = function() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSmallScreen = window.innerWidth < 1024;
+        const envDiv = document.getElementById('envCheckResult');
+        const startSec = document.getElementById('startSection');
+
+        if (isMobile || isSmallScreen) {
+            envDiv.innerHTML = `<p class="error-text">❌ 判定：スマートフォンまたはタブレット端末からのアクセスです。<br>このテストはPCからのみ受験可能です。</p>`;
+        } else {
+            envDiv.innerHTML = `<p style="color: var(--success-color); font-weight:bold;">✅ 判定：PC環境を確認しました。受験可能です。</p>`;
+            startSec.classList.remove('hidden');
+        }
+        
+        for(let i=1; i<=10; i++) {
+            examLog.keyCounts['q' + i] = 0;
+            examLog.backspaceCounts['q' + i] = 0;
+            setupTextareaEvent(i);
+        }
+    };
+
+    function setupTextareaEvent(num) {
+        const id = 'q' + num;
+        const ta = document.getElementById(id);
+        const lenDisp = document.getElementById(id + '_len');
+
+        ta.addEventListener('paste', e => e.preventDefault());
+        ta.addEventListener('copy', e => e.preventDefault());
+        ta.addEventListener('contextmenu', e => e.preventDefault());
+        ta.addEventListener('drop', e => e.preventDefault());
+
+        ta.addEventListener('keydown', function(e) {
+            if(!isExamActive) return;
+            examLog.keyCounts[id]++;
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                examLog.backspaceCounts[id]++;
+            }
+        });
+
+        ta.addEventListener('input', function() {
+            lenDisp.innerText = this.value.length;
+            if(this.value.length > 250) {
+                lenDisp.style.color = 'var(--error-color)';
+            } else {
+                lenDisp.style.color = '#718096';
+            }
+        });
+    }
+
+    function startExam() {
+        isExamActive = true;
+        examLog.startTime = Date.now();
+        
+        const docElm = document.documentElement;
+        if (docElm.requestFullscreen) { docElm.requestFullscreen(); }
+        else if (docElm.mozRequestFullScreen) { docElm.mozRequestFullScreen(); }
+        else if (docElm.webkitRequestFullScreen) { docElm.webkitRequestFullScreen(); }
+        else if (docElm.msRequestFullscreen) { docElm.msRequestFullscreen(); }
+
+        document.getElementById('instructionScreen').classList.add('hidden');
+        document.getElementById('examStatusBar').classList.remove('hidden');
+        document.getElementById('examScreen').classList.remove('hidden');
+
+        timerInterval = setInterval(updateTimer, 1000);
+        window.addEventListener('blur', handleWindowBlur);
+    }
+
+    function updateTimer() {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            autoSubmit("制限時間終了のため、自動提出されました。");
+            return;
+        }
+        timeLeft--;
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        document.getElementById('timerDisplay').innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function handleWindowBlur() {
+        // 【重要修正】テスト中ではない、または提出・ダイアログ処理中の場合は離脱としてカウントしない
+        if (!isExamActive || isSubmitting) return;
+        
+        examLog.blurCount++;
+        document.getElementById('blurCountDisplay').innerText = examLog.blurCount;
+        document.getElementById('overlayCountDisplay').innerText = examLog.blurCount;
+
+        if (examLog.blurCount > maxBlurs) {
+            clearInterval(timerInterval);
+            isExamActive = false;
+            document.getElementById('warningOverlay').classList.add('hidden');
+            autoSubmit("画面離脱回数が10回を超えたため、テストは強制終了されました。");
+        } else {
+            document.getElementById('warningOverlay').classList.remove('hidden');
+        }
+    }
+
+    function resumeExam() {
+        document.getElementById('warningOverlay').classList.add('hidden');
+        if (!document.fullscreenElement) {
+            const docElm = document.documentElement;
+            if (docElm.requestFullscreen) docElm.requestFullscreen();
+        }
+    }
+
+    function submitExam(e) {
+        if(e) e.preventDefault();
+        
+        isSubmitting = true; // 【追加】確認ダイアログ表示前にフラグをONにして、blur検知を一時無効化
+        
+        if(!confirm("本当にすべての解答を送信してよろしいですか？（未入力の問題があっても送信できます）")) {
+            isSubmitting = false; // キャンセルされたらフラグを戻す
+            return;
+        }
+        executeDataSubmit(false, "テスト完了。解答は正常に回収されました。");
+    }
+
+    function autoSubmit(reasonMessage) {
+        isSubmitting = true; // 自動提出時もフラグをONに固定
+        executeDataSubmit(true, reasonMessage);
+    }
+
+    function executeDataSubmit(isForced, message) {
+        isExamActive = false;
+        clearInterval(timerInterval);
+        window.removeEventListener('blur', handleWindowBlur);
+        
+        if (document.exitFullscreen) { document.exitFullscreen().catch(()=>{}); }
+
+        examLog.endTime = Date.now();
+        examLog.totalTimeSec = Math.floor((examLog.endTime - examLog.startTime) / 1000);
+
+        const payload = {
+            studentId: document.getElementById('studentId').value || "未入力",
+            studentName: document.getElementById('studentName').value || "未入力",
+            forcedSubmit: isForced,
+            logData: examLog,
+            answers: {}
+        };
+
+        for(let i=1; i<=10; i++) {
+            payload.answers['q' + i] = document.getElementById('q' + i).value;
+        }
+
+        document.getElementById('examScreen').classList.add('hidden');
+        document.getElementById('examStatusBar').classList.add('hidden');
+        const compScreen = document.getElementById('completionScreen');
+        compScreen.classList.remove('hidden');
+        
+        if (isForced) {
+            document.getElementById('completionTitle').innerText = "⚠️ テストが強制終了されました";
+            document.getElementById('completionTitle').style.color = "var(--error-color)";
+        }
+        document.getElementById('completionMessage').innerText = message + " 採点をお待ちください。";
+
+        // 念のため、送信直前のデータをブラウザ内に一時保存します。
+        // サーバー保存に成功したら削除されます。
+        const backupKey = 'exam_backup_' + (payload.studentId || 'unknown') + '_' + Date.now();
+        try {
+            localStorage.setItem(backupKey, JSON.stringify(payload));
+        } catch (e) {
+            console.warn('localStorageへのバックアップ保存に失敗しました:', e);
+        }
+
+        document.getElementById('completionTitle').innerText = isForced ? "⚠️ テスト終了・送信中" : "送信中";
+        document.getElementById('completionMessage').innerText = message + " 現在、サーバーへ保存しています。この画面を閉じないでください。";
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    console.log("送信成功", result);
+                    try { localStorage.removeItem(backupKey); } catch (e) {}
+                    document.getElementById('completionTitle').innerText = isForced ? "⚠️ テストが強制終了されました" : "送信完了";
+                    document.getElementById('completionMessage').innerText = message + " 解答は正常に保存されました。採点をお待ちください。";
+                })
+                .withFailureHandler(function(err) {
+                    const detail = err && err.message ? err.message : String(err);
+                    console.error("送信エラー", err);
+                    document.getElementById('completionTitle').innerText = "送信エラー";
+                    document.getElementById('completionTitle').style.color = "var(--error-color)";
+                    document.getElementById('completionMessage').innerText =
+                        "サーバーへの保存に失敗しました。この画面を閉じず、教員へ連絡してください。エラー内容: " + detail;
+                    alert("送信エラーが発生しました。画面を閉じずに教員へ連絡してください。\n\n" + detail);
+                })
+                .processExamSubmit(payload);
+        } else {
+            console.error("GAS環境外での実行です。google.script.run が使えません。", payload);
+            document.getElementById('completionTitle').innerText = "GAS環境外です";
+            document.getElementById('completionTitle').style.color = "var(--error-color)";
+            document.getElementById('completionMessage').innerText =
+                "このHTMLをローカルファイルやプレビューで開いているため、スプレッドシートに保存できません。Apps ScriptのWebアプリURLから開いてください。";
+        }
+    }
+</script>
+</body>
+</html>
