@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MG 幼教クエスト '86 〜オープンキャンパス大作戦〜</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: レトロゲーム風ドットフォント -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0d0f14;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'DotGothic16', monospace, sans-serif;
+            image-rendering: pixelated;
+        }
+        /* CRT ブラウン管スキャンライン風エフェクト */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.3) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+        /* ファミコン風コマンド枠 */
+        .fc-box {
+            background-color: #000000;
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 0 2px #000000, 4px 4px 0 2px rgba(0,0,0,0.6);
+            border-radius: 4px;
+        }
+        .fc-box-gold {
+            background-color: #1a0f00;
+            border: 4px solid #f59e0b;
+            box-shadow: 0 0 0 2px #000000, 4px 4px 0 2px rgba(0,0,0,0.8);
+            border-radius: 4px;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden relative">
+    <div class="scanlines fixed inset-0 z-50 pointer-events-none"></div>
+
+    <!-- ヘッダー / ステータスHUD -->
+    <header class="bg-red-900 border-b-4 border-yellow-400 text-yellow-300 p-2 shadow-lg sticky top-0 z-40">
+        <div class="max-w-md mx-auto flex justify-between items-center text-xs">
+            <div class="flex items-center gap-1.5">
+                <span class="text-base">🎓</span>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="bg-yellow-400 text-black px-1 font-bold text-[9px] rounded-xs" id="playerRankBadge">Lv.1</span>
+                        <span id="playerTitle" class="font-bold text-xs text-white">たまご保育士</span>
+                    </div>
+                    <!-- 経験値バー -->
+                    <div class="w-28 bg-black border border-white h-2 rounded-xs overflow-hidden mt-0.5 relative">
+                        <div id="expBar" class="bg-green-400 h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <div class="bg-black border-2 border-yellow-400 px-2 py-0.5 rounded text-yellow-300 flex items-center gap-1 font-bold text-xs shadow">
+                    <span>🪙</span>
+                    <span id="ticketCount">5</span>枚
+                </div>
+                <button id="soundToggleBtn" onclick="toggleSound()" class="bg-black border-2 border-white px-2 py-0.5 rounded text-xs active:bg-gray-800">
+                    <span id="soundIcon">🔊</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインビュー領域 -->
+    <main class="max-w-md mx-auto w-full flex-1 flex flex-col p-3 relative z-10">
+
+        <!-- ===== タブ1: 激熱！リトミック・ビート ===== -->
+        <section id="tab-rhythm" class="tab-content flex-1 flex flex-col justify-between">
+            <div class="text-center my-0.5">
+                <div class="inline-flex items-center gap-1 bg-red-700 text-white text-[10px] px-2 py-0.5 border border-white mb-0.5">
+                    <span>STAGE 1</span>
+                    <span>★</span>
+                    <span id="rhythmModeLabel">NORMAL MODE</span>
+                </div>
+                <h2 class="text-base font-bold text-yellow-400 tracking-wider">🎹 激熱！リトミック・ビート</h2>
+            </div>
+
+            <!-- ステータスHUD & FEVERゲージ -->
+            <div class="fc-box p-1.5 my-1 text-xs">
+                <div class="flex justify-between items-center text-center mb-1">
+                    <div>
+                        <div class="text-[9px] text-yellow-400">TIME</div>
+                        <div id="rhythmTimer" class="text-lg font-bold text-red-500">25</div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-yellow-400">SCORE</div>
+                        <div id="rhythmScore" class="text-xl font-bold text-green-400">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-yellow-400">COMBO</div>
+                        <div id="rhythmCombo" class="text-lg font-bold text-cyan-400">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-yellow-400">HIGHSCORE</div>
+                        <div id="rhythmHighScore" class="text-xs font-bold text-stone-300">0</div>
+                    </div>
+                </div>
+                <!-- フィーバーゲージ -->
+                <div class="relative w-full bg-gray-900 border-2 border-white h-3 rounded-xs overflow-hidden">
+                    <div id="feverBar" class="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 h-full transition-all duration-100" style="width: 0%"></div>
+                    <div id="feverText" class="absolute inset-0 flex items-center justify-center text-[8px] font-black text-white drop-shadow">
+                        FEVER GAUGE (0%)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvasリズムゲーム画面 -->
+            <div class="relative flex-1 flex items-center justify-center my-1 min-h-[250px]">
+                <canvas id="rhythmCanvas" width="320" height="250" class="w-full max-w-[320px] h-auto border-4 border-white bg-black rounded shadow"></canvas>
+                
+                <!-- オーバーレイ -->
+                <div id="rhythmOverlay" class="absolute inset-0 bg-black/90 border-4 border-white rounded flex flex-col items-center justify-center p-3 text-center">
+                    <div class="text-3xl mb-1 animate-bounce">🎹⚡</div>
+                    <h3 class="text-sm font-bold text-yellow-400 mb-1">★ 幼教リトミック・フィーバー ★</h3>
+                    <p class="text-[10px] text-stone-200 mb-3 leading-relaxed">
+                        流れてくるドット音符が【判定枠】に重なったら<br>
+                        タイミングよく【Aボタン / 画面】をプッシュ！<br>
+                        コンボを繋いで <span class="text-yellow-300 font-bold">FEVER突入</span> を狙え！
+                    </p>
+                    <button onclick="startRhythmGame()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-8 border-2 border-yellow-400 shadow text-sm active:translate-y-0.5">
+                        ▶ GAME START
+                    </button>
+                </div>
+            </div>
+
+            <!-- 操作ボタン -->
+            <div class="mt-1 bg-gray-950 border-2 border-gray-700 p-1.5 rounded">
+                <button id="rhythmTapBtn" onpointerdown="onRhythmTap(event)" disabled class="w-full py-4 bg-gradient-to-b from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 disabled:opacity-30 text-white font-bold text-lg border-b-4 border-red-950 active:border-b-0 active:translate-y-1 transition rounded flex flex-col items-center justify-center shadow-lg">
+                    <span class="flex items-center gap-1.5 tracking-wider">
+                        🔴 Aボタン 【TAP HERE !!】
+                    </span>
+                    <span id="tapFeedback" class="text-[10px] text-yellow-300 font-normal mt-0.5">
+                        PERFECTを狙え！
+                    </span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== タブ2: 園児笑顔MAX！シアターパズル ===== -->
+        <section id="tab-theater" class="tab-content hidden flex-1 flex flex-col justify-between">
+            <div class="text-center my-0.5">
+                <div class="inline-block bg-blue-700 text-white text-[10px] px-2 py-0.5 border border-white mb-0.5">
+                    STAGE 2 : シナジーパズル
+                </div>
+                <h2 class="text-base font-bold text-yellow-400">🎭 園児ごきげんMAXシアター</h2>
+                <p class="text-[10px] text-stone-300">組み合わせで【特殊シナジーコンボ】を発動させよ！</p>
+            </div>
+
+            <!-- スマイルメーター -->
+            <div class="fc-box p-1.5 my-1 text-xs">
+                <div class="flex justify-between text-[10px] mb-0.5">
+                    <span class="text-yellow-300">❤️ 園児スマイルメーター</span>
+                    <span id="smileScoreText" class="font-bold text-pink-400">0 / 1000 pt</span>
+                </div>
+                <div class="w-full bg-gray-900 border border-white h-3 rounded-xs overflow-hidden">
+                    <div id="smileBar" class="bg-gradient-to-r from-pink-500 to-red-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- シアターCanvas -->
+            <div class="relative flex-1 flex items-center justify-center my-1 bg-black border-4 border-white rounded min-h-[210px]">
+                <canvas id="theaterCanvas" width="300" height="210" class="w-full max-w-[300px] h-auto"></canvas>
+                
+                <div id="synergyBanner" class="hidden absolute top-2 inset-x-2 bg-yellow-400 text-black font-black text-center text-xs py-1 border-2 border-black animate-bounce">
+                    🌟 特殊シナジー発動！！ 🌟
+                </div>
+
+                <div id="theaterDialog" class="hidden absolute inset-x-2 bottom-2 fc-box p-2 text-xs">
+                    <div class="text-[10px] text-yellow-400 mb-0.5">▼ えんじたちの こえ</div>
+                    <div id="theaterDialogText" class="text-white text-[11px] leading-tight mb-1"></div>
+                    <button onclick="closeTheaterDialog()" class="bg-yellow-500 text-black px-2 py-0.5 text-[10px] font-bold border border-white float-right">
+                        OK ▶
+                    </button>
+                </div>
+            </div>
+
+            <!-- 選択コマンド -->
+            <div class="fc-box p-1.5 my-0.5 text-xs">
+                <div class="flex border-b border-gray-700 pb-1 mb-1 text-[10px]">
+                    <button onclick="switchTheaterCat('actor')" id="cat-actor" class="theater-cat-btn flex-1 text-yellow-400 font-bold">主役キャラ</button>
+                    <button onclick="switchTheaterCat('item')" id="cat-item" class="theater-cat-btn flex-1 text-gray-400">小道具</button>
+                    <button onclick="switchTheaterCat('bg')" id="cat-bg" class="theater-cat-btn flex-1 text-gray-400">ステージ</button>
+                </div>
+
+                <div id="theaterOptionsList" class="flex gap-1 overflow-x-auto no-scrollbar py-0.5"></div>
+
+                <button onclick="playTheaterAction()" class="w-full mt-1.5 py-2 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-black border-2 border-white text-xs shadow active:translate-y-0.5">
+                    ▶ 劇を上演して園児を喜ばせる！ (EXP獲得)
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== タブ3: 激アツ！8bit ガラポンスロット ===== -->
+        <section id="tab-gacha" class="tab-content hidden flex-1 flex flex-col justify-between">
+            <div class="text-center my-0.5">
+                <div class="inline-block bg-yellow-600 text-white text-[10px] px-2 py-0.5 border border-white mb-0.5">
+                    BONUS : チャンスステージ
+                </div>
+                <h2 class="text-base font-bold text-yellow-400">🎰 激アツ！8bit ガラポンスロット</h2>
+                <p class="text-[10px] text-stone-300">コインをベットして限定ノベルティ＆図鑑カードを当てろ！</p>
+            </div>
+
+            <!-- ガラポンCanvas & 演出カットイン -->
+            <div class="relative flex-1 flex flex-col items-center justify-center my-1 bg-black border-4 border-white rounded min-h-[220px] overflow-hidden">
+                <canvas id="gachaCanvas" width="280" height="190" class="max-w-[280px] h-auto"></canvas>
+
+                <!-- 激アツ！カットイン演出 -->
+                <div id="gachaCutin" class="hidden absolute inset-0 bg-red-600/90 z-20 flex flex-col items-center justify-center text-white text-center p-2 animate-pulse">
+                    <div class="text-3xl font-black text-yellow-300 tracking-widest animate-bounce">激 熱 !!</div>
+                    <div class="text-xs mt-1 font-bold">★ 激レア確定演出 ★</div>
+                </div>
+
+                <!-- ボタンエリア（1連 / 5連） -->
+                <div class="flex gap-2 mt-1 w-full px-4">
+                    <button id="spinGacha1Btn" onclick="spinRetroGacha(1)" class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold border-2 border-yellow-400 shadow text-[11px] active:scale-95 disabled:opacity-40">
+                        ▶ 1回まわす (🪙1枚)
+                    </button>
+                    <button id="spinGacha5Btn" onclick="spinRetroGacha(5)" class="flex-1 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-yellow-300 font-bold border-2 border-yellow-400 shadow text-[11px] active:scale-95 disabled:opacity-40">
+                        🔥 5連ガチャ (🪙4枚お得!)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 景品ランク一覧 -->
+            <div class="fc-box p-1.5 text-[9px] text-stone-300">
+                <div class="text-yellow-400 font-bold mb-1 flex justify-between border-b border-gray-700 pb-0.5">
+                    <span>【けいひん 排出リスト】</span>
+                    <span>全12しゅるい</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1">
+                    <div class="text-yellow-300 font-bold">👑 金賞(5%): MG限定トート</div>
+                    <div class="text-slate-200 font-bold">🥈 銀賞(15%): 学食カフェ利用券</div>
+                    <div class="text-red-400 font-bold">🔴 赤賞(25%): 幼教オリジナル文具</div>
+                    <div class="text-green-400 font-bold">🟢 緑賞(25%): 合格祈願ドット絵しおり</div>
+                    <div class="col-span-2 text-cyan-300 font-bold">📜 白賞(30%): 学びのコレクションカード (重複時+50EXP)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== タブ4: 幼教マスター図鑑＆認定証 ===== -->
+        <section id="tab-zukan" class="tab-content hidden flex-1 flex flex-col">
+            <div class="text-center my-0.5">
+                <div class="inline-block bg-green-700 text-white text-[10px] px-2 py-0.5 border border-white mb-0.5">
+                    COLLECTION : まナビ図鑑
+                </div>
+                <h2 class="text-base font-bold text-yellow-400">📜 幼教マスター図鑑</h2>
+                <div class="flex justify-between items-center text-[10px] px-2 text-stone-300">
+                    <span>あつめたカード: <span id="collectedRatio" class="text-yellow-400 font-bold text-xs">0/12</span></span>
+                    <button onclick="openLicenseModal()" class="bg-yellow-500 text-black font-bold px-2 py-0.5 border border-white text-[10px] active:scale-95">
+                        👑 認定証をみる
+                    </button>
+                </div>
+            </div>
+
+            <!-- 図鑑グリッド -->
+            <div id="zukanGrid" class="flex-1 grid grid-cols-3 gap-1 overflow-y-auto max-h-[360px] p-1 my-1 no-scrollbar fc-box"></div>
+        </section>
+
+    </main>
+
+    <!-- レトロRPG風 当選モーダル -->
+    <div id="rewardModal" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4">
+        <div id="modalBox" class="fc-box-gold max-w-xs w-full p-3.5 text-center relative animate-bounce">
+            <div id="modalHeader" class="bg-red-700 text-white text-[10px] px-2 py-0.5 border border-white inline-block mb-1">
+                🎉 ATARI !!
+            </div>
+            <div id="modalItemIcon" class="text-4xl my-1.5">🎁</div>
+            <h3 id="modalTitle" class="text-sm font-bold text-yellow-400">MGオリジナルトート！</h3>
+            <p id="modalDesc" class="text-[10px] text-stone-200 my-1.5 leading-tight"></p>
+            <div id="modalBonusExp" class="text-[10px] text-green-400 font-bold mb-2"></div>
+            <button onclick="closeModal()" class="w-full py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold border-2 border-white text-xs">
+                ▶ うけとる
+            </button>
+        </div>
+    </div>
+
+    <!-- MG幼教マスター認定証モーダル -->
+    <div id="licenseModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div class="fc-box-gold max-w-xs w-full p-3 text-center relative">
+            <div class="text-yellow-400 text-xs font-black mb-1">★ 宮城学院女子大学 幼児教育専攻 ★</div>
+            <h3 class="text-sm font-bold text-white bg-red-900 border border-yellow-400 py-1 mb-2">
+                幼教マスター認定証
+            </h3>
+            <div class="text-left text-[10px] bg-black p-2 border border-gray-700 leading-relaxed mb-2 text-stone-200">
+                <div>【プレイヤー】: <span id="licensePlayerName" class="text-yellow-300 font-bold">受験生マスター</span></div>
+                <div>【しょうごう】: <span id="licensePlayerTitle" class="text-green-400 font-bold">たまご保育士</span></div>
+                <div>【ずかん達成率】: <span id="licenseRate" class="text-cyan-300 font-bold">0%</span></div>
+                <div class="text-[9px] text-stone-400 mt-1 border-t border-gray-800 pt-1">
+                    この画面をオープンキャンパスの個別相談・受付で提示すると、特製プレゼントを進呈します！
+                </div>
+            </div>
+            <button onclick="closeLicenseModal()" class="w-full py-1.5 bg-yellow-500 text-black font-bold border-2 border-white text-xs">
+                とじる ▶
+            </button>
+        </div>
+    </div>
+
+    <!-- カード詳細解説モーダル -->
+    <div id="cardDetailModal" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4">
+        <div class="fc-box max-w-xs w-full p-3 text-center relative">
+            <div id="cardDetailIcon" class="text-4xl my-1">📜</div>
+            <h3 id="cardDetailTitle" class="text-sm font-bold text-yellow-400 mb-1"></h3>
+            <div id="cardDetailBody" class="text-[10px] text-left text-stone-200 bg-gray-950 p-2 border border-gray-700 leading-relaxed mb-2 max-h-48 overflow-y-auto"></div>
+            <button onclick="closeCardDetailModal()" class="w-full py-1.5 bg-yellow-500 text-black font-bold border border-white text-xs">
+                とじる ▶
+            </button>
+        </div>
+    </div>
+
+    <!-- フッターナビゲーション -->
+    <nav class="bg-black border-t-4 border-yellow-400 text-white sticky bottom-0 z-40">
+        <div class="max-w-md mx-auto flex justify-around items-center py-1.5 text-center text-[10px]">
+            <button onclick="switchTab('rhythm')" id="nav-rhythm" class="nav-btn flex-1 flex flex-col items-center text-yellow-400 font-bold">
+                <span class="text-base">🎹</span>
+                <span>リズム</span>
+            </button>
+            <button onclick="switchTab('theater')" id="nav-theater" class="nav-btn flex-1 flex flex-col items-center text-gray-500">
+                <span class="text-base">🎭</span>
+                <span>シアター</span>
+            </button>
+            <button onclick="switchTab('gacha')" id="nav-gacha" class="nav-btn flex-1 flex flex-col items-center text-gray-500">
+                <span class="text-base">🎰</span>
+                <span>ガラポン</span>
+            </button>
+            <button onclick="switchTab('zukan')" id="nav-zukan" class="nav-btn flex-1 flex flex-col items-center text-gray-500">
+                <span class="text-base">📜</span>
+                <span>ずかん</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- JavaScript ロジック -->
+    <script>
+        /* ==========================================
+           1. グローバルステート & サウンド (Web Audio API)
+           ========================================== */
+        const state = {
+            tickets: 5,
+            soundEnabled: true,
+            player: {
+                level: 1,
+                exp: 0,
+                nextExp: 100,
+                title: 'たまご保育士'
+            },
+            rhythm: {
+                active: false,
+                score: 0,
+                highScore: 0,
+                combo: 0,
+                maxCombo: 0,
+                timeLeft: 25,
+                fever: false,
+                feverGauge: 0,
+                timerId: null,
+                notes: [],
+                particles: [],
+                shake: 0,
+                lastNoteTime: 0
+            },
+            theater: {
+                actor: 'bear',
+                item: 'apple',
+                bg: 'forest',
+                smileScore: 0
+            },
+            collection: new Set(),
+            isSpinning: false
+        };
+
+        const titles = [
+            { lvl: 1, name: 'たまご保育士' },
+            { lvl: 2, name: 'ひよこ実習生' },
+            { lvl: 3, name: 'みならいリトミック先生' },
+            { lvl: 4, name: 'あそびのスペシャリスト' },
+            { lvl: 5, name: '杜のネイチャーリーダー' },
+            { lvl: 7, name: '子ども心理マスター' },
+            { lvl: 10, name: '伝説のMG幼教マスター' }
+        ];
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            document.getElementById('soundIcon').textContent = state.soundEnabled ? '🔊' : '🔇';
+        }
+
+        // 8bit 矩形波
+        function play8bitBip(freq = 440, duration = 0.08, type = 'square') {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + duration);
+        }
+
+        // コイン音（チャリン）
+        function playCoinSound() {
+            if (!state.soundEnabled) return;
+            play8bitBip(987.77, 0.06);
+            setTimeout(() => play8bitBip(1318.51, 0.2), 60);
+        }
+
+        // FEVER突入音
+        function playFeverSound() {
+            if (!state.soundEnabled) return;
+            const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+            notes.forEach((f, i) => {
+                setTimeout(() => play8bitBip(f, 0.1, 'sawtooth'), i * 60);
+            });
+        }
+
+        // 8bit レベルアップファンファーレ
+        function playLevelUpSound() {
+            if (!state.soundEnabled) return;
+            const melody = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+            melody.forEach((f, i) => {
+                setTimeout(() => play8bitBip(f, 0.15, 'triangle'), i * 80);
+            });
+        }
+
+        // ガラガラノイズ
+        function play8bitNoise() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const bufferSize = ctx.sampleRate * 0.04;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.04);
+            noise.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start();
+        }
+
+        /* 経験値・レベルアップ処理 */
+        function addExp(amount) {
+            state.player.exp += amount;
+            while (state.player.exp >= state.player.nextExp) {
+                state.player.exp -= state.player.nextExp;
+                state.player.level++;
+                state.player.nextExp = Math.floor(state.player.nextExp * 1.4);
+                
+                const matched = titles.filter(t => t.lvl <= state.player.level).pop();
+                if (matched) state.player.title = matched.name;
+
+                state.tickets += 2;
+                playLevelUpSound();
+                alert(`🎉 LEVEL UP !!\nLv.${state.player.level}【${state.player.title}】になった！\n🪙 コイン2枚を獲得！`);
+            }
+            updatePlayerHUD();
+        }
+
+        function updatePlayerHUD() {
+            document.getElementById('playerRankBadge').textContent = `Lv.${state.player.level}`;
+            document.getElementById('playerTitle').textContent = state.player.title;
+            const percent = Math.min(100, Math.floor((state.player.exp / state.player.nextExp) * 100));
+            document.getElementById('expBar').style.width = `${percent}%`;
+            document.getElementById('ticketCount').textContent = state.tickets;
+        }
+
+        /* ==========================================
+           2. タブ切り替え
+           ========================================== */
+        function switchTab(tabId) {
+            getAudioContext();
+            play8bitBip(700, 0.04);
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-yellow-400', 'font-bold');
+                btn.classList.add('text-gray-500');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            activeNav.classList.remove('text-gray-500');
+            activeNav.classList.add('text-yellow-400', 'font-bold');
+
+            if (tabId === 'theater') drawTheater();
+            if (tabId === 'gacha') drawGacha(0);
+            if (tabId === 'zukan') renderZukan();
+        }
+
+        /* ==========================================
+           3. STAGE 1: 激熱！リトミック・ビート
+           ========================================== */
+        const rhythmCanvas = document.getElementById('rhythmCanvas');
+        const rhythmCtx = rhythmCanvas.getContext('2d');
+        const TARGET_X = 65;
+        const HIT_RADIUS = 28;
+
+        function startRhythmGame() {
+            getAudioContext();
+            document.getElementById('rhythmOverlay').classList.add('hidden');
+            document.getElementById('rhythmTapBtn').disabled = false;
+
+            state.rhythm.active = true;
+            state.rhythm.score = 0;
+            state.rhythm.combo = 0;
+            state.rhythm.maxCombo = 0;
+            state.rhythm.timeLeft = 25;
+            state.rhythm.fever = false;
+            state.rhythm.feverGauge = 0;
+            state.rhythm.notes = [];
+            state.rhythm.particles = [];
+            state.rhythm.shake = 0;
+            state.rhythm.lastNoteTime = performance.now();
+
+            updateRhythmHUD();
+
+            if (state.rhythm.timerId) clearInterval(state.rhythm.timerId);
+            state.rhythm.timerId = setInterval(() => {
+                state.rhythm.timeLeft--;
+                updateRhythmHUD();
+
+                if (state.rhythm.fever) {
+                    state.rhythm.feverGauge -= 15;
+                    if (state.rhythm.feverGauge <= 0) {
+                        state.rhythm.fever = false;
+                        state.rhythm.feverGauge = 0;
+                        document.getElementById('rhythmModeLabel').textContent = 'NORMAL MODE';
+                        document.getElementById('rhythmModeLabel').className = 'text-white';
+                    }
+                }
+                updateFeverBar();
+
+                if (state.rhythm.timeLeft <= 0) endRhythmGame();
+            }, 1000);
+
+            requestAnimationFrame(rhythmLoop);
+        }
+
+        function rhythmLoop(timestamp) {
+            if (!state.rhythm.active) return;
+
+            const interval = state.rhythm.fever ? 450 : 750;
+            if (timestamp - state.rhythm.lastNoteTime > interval) {
+                spawnNote();
+                state.rhythm.lastNoteTime = timestamp;
+            }
+
+            updateNotes();
+            updateParticles();
+            drawRhythmFrame();
+
+            requestAnimationFrame(rhythmLoop);
+        }
+
+        function spawnNote() {
+            const pitches = [523.25, 587.33, 659.25, 698.46, 783.99, 880];
+            const speed = state.rhythm.fever ? 4.5 : 3.2;
+            state.rhythm.notes.push({
+                x: rhythmCanvas.width + 20,
+                y: 110,
+                speed: speed,
+                hit: false,
+                pitch: pitches[Math.floor(Math.random() * pitches.length)],
+                char: ['🎵', '🎶', '⭐', '👶', '🎹'][Math.floor(Math.random() * 5)]
+            });
+        }
+
+        function updateNotes() {
+            for (let i = state.rhythm.notes.length - 1; i >= 0; i--) {
+                const note = state.rhythm.notes[i];
+                note.x -= note.speed;
+
+                if (note.x < TARGET_X - HIT_RADIUS && !note.hit) {
+                    note.hit = true;
+                    state.rhythm.combo = 0;
+                    document.getElementById('tapFeedback').textContent = 'MISS...';
+                    document.getElementById('tapFeedback').className = 'text-[10px] text-gray-400 font-normal mt-0.5';
+                    state.rhythm.notes.splice(i, 1);
+                    updateRhythmHUD();
+                }
+            }
+        }
+
+        function onRhythmTap(e) {
+            if (e) e.preventDefault();
+            if (!state.rhythm.active) return;
+
+            let closest = null;
+            let minDist = 999;
+            let closestIndex = -1;
+
+            state.rhythm.notes.forEach((note, idx) => {
+                if (!note.hit) {
+                    const dist = Math.abs(note.x - TARGET_X);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = note;
+                        closestIndex = idx;
+                    }
+                }
+            });
+
+            if (closest && minDist <= HIT_RADIUS + 15) {
+                closest.hit = true;
+                const isFever = state.rhythm.fever;
+                const multiplier = isFever ? 2 : 1;
+
+                if (minDist <= 10) {
+                    handleHit('PERFECT!!', '#ffff00', 300 * multiplier, closest.pitch);
+                } else if (minDist <= 22) {
+                    handleHit('GREAT!', '#00ffcc', 180 * multiplier, closest.pitch);
+                } else {
+                    handleHit('GOOD', '#ffffff', 80 * multiplier, closest.pitch);
+                }
+
+                createExplosion(TARGET_X, 110, isFever ? '#ff00ff' : '#00ffff');
+                state.rhythm.notes.splice(closestIndex, 1);
+            } else {
+                play8bitBip(200, 0.05, 'sawtooth');
+            }
+        }
+
+        function handleHit(text, color, points, pitch) {
+            play8bitBip(pitch, 0.1, state.rhythm.fever ? 'sawtooth' : 'square');
+            state.rhythm.score += points;
+            state.rhythm.combo++;
+            if (state.rhythm.combo > state.rhythm.maxCombo) state.rhythm.maxCombo = state.rhythm.combo;
+
+            state.rhythm.shake = 6;
+
+            if (!state.rhythm.fever) {
+                state.rhythm.feverGauge += 12;
+                if (state.rhythm.feverGauge >= 100) {
+                    state.rhythm.feverGauge = 100;
+                    state.rhythm.fever = true;
+                    playFeverSound();
+                    document.getElementById('rhythmModeLabel').textContent = '🔥 FEVER MODE 🔥';
+                    document.getElementById('rhythmModeLabel').className = 'text-yellow-300 font-bold animate-pulse';
+                }
+            }
+
+            document.getElementById('tapFeedback').textContent = `${text} (+${points}pt)`;
+            document.getElementById('tapFeedback').style.color = color;
+            updateFeverBar();
+            updateRhythmHUD();
+
+            if (state.rhythm.combo % 10 === 0) playCoinSound();
+        }
+
+        function updateFeverBar() {
+            const gauge = Math.max(0, Math.min(100, state.rhythm.feverGauge));
+            document.getElementById('feverBar').style.width = `${gauge}%`;
+            document.getElementById('feverText').textContent = state.rhythm.fever ? '★ FEVER ACTIVE (x2 SCORE) ★' : `FEVER GAUGE (${gauge}%)`;
+        }
+
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 12; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 2 + Math.random() * 4;
+                state.rhythm.particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 0,
+                    maxLife: 20 + Math.random() * 10,
+                    color: color,
+                    size: 3 + Math.random() * 3
+                });
+            }
+        }
+
+        function updateParticles() {
+            for (let i = state.rhythm.particles.length - 1; i >= 0; i--) {
+                const p = state.rhythm.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life++;
+                if (p.life >= p.maxLife) state.rhythm.particles.splice(i, 1);
+            }
+        }
+
+        function drawRhythmFrame() {
+            const ctx = rhythmCtx;
+            const w = rhythmCanvas.width;
+            const h = rhythmCanvas.height;
+
+            ctx.save();
+            if (state.rhythm.shake > 0) {
+                const dx = (Math.random() - 0.5) * state.rhythm.shake;
+                const dy = (Math.random() - 0.5) * state.rhythm.shake;
+                ctx.translate(dx, dy);
+                state.rhythm.shake *= 0.8;
+                if (state.rhythm.shake < 0.5) state.rhythm.shake = 0;
+            }
+
+            ctx.clearRect(0, 0, w, h);
+
+            if (state.rhythm.fever) {
+                ctx.fillStyle = (Math.floor(performance.now() / 150) % 2 === 0) ? '#2b0938' : '#0f1a3a';
+            } else {
+                ctx.fillStyle = '#0a111e';
+            }
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.fillStyle = '#111e33';
+            ctx.fillRect(0, 80, w, 60);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 80, w, 60);
+
+            ctx.strokeStyle = state.rhythm.fever ? '#ffff00' : '#00ffff';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(TARGET_X, 110, 22, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(20, h - 70, 36, 45);
+            ctx.fillStyle = '#ec4899';
+            ctx.fillRect(w - 60, h - 55, 30, 30);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '11px DotGothic16';
+            ctx.fillText('せんせい 🎹', 12, h - 76);
+            ctx.fillText('えんじ 👶', w - 66, h - 62);
+
+            state.rhythm.notes.forEach(note => {
+                ctx.font = '24px sans-serif';
+                ctx.fillText(note.char, note.x - 12, note.y + 8);
+            });
+
+            state.rhythm.particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+
+            if (state.rhythm.combo >= 3) {
+                ctx.fillStyle = '#ffff00';
+                ctx.font = 'bold 16px DotGothic16';
+                ctx.fillText(`${state.rhythm.combo} COMBO !!`, TARGET_X - 10, 60);
+            }
+
+            ctx.restore();
+        }
+
+        function updateRhythmHUD() {
+            document.getElementById('rhythmTimer').textContent = state.rhythm.timeLeft;
+            document.getElementById('rhythmScore').textContent = state.rhythm.score;
+            document.getElementById('rhythmCombo').textContent = state.rhythm.combo;
+            document.getElementById('rhythmHighScore').textContent = state.rhythm.highScore;
+        }
+
+        function endRhythmGame() {
+            state.rhythm.active = false;
+            clearInterval(state.rhythm.timerId);
+            document.getElementById('rhythmTapBtn').disabled = true;
+
+            if (state.rhythm.score > state.rhythm.highScore) {
+                state.rhythm.highScore = state.rhythm.score;
+            }
+
+            playLevelUpSound();
+
+            const earnedExp = Math.max(30, Math.floor(state.rhythm.score / 15));
+            const earnedCoins = Math.max(1, Math.floor(state.rhythm.score / 1200));
+            state.tickets += earnedCoins;
+            addExp(earnedExp);
+
+            const overlay = document.getElementById('rhythmOverlay');
+            overlay.classList.remove('hidden');
+            overlay.innerHTML = `
+                <div class="text-3xl mb-1 animate-bounce">🎺 STAGE CLEAR !!</div>
+                <h3 class="text-sm font-bold text-yellow-400">リトミックたいけん 完了！</h3>
+                <div class="my-2 bg-gray-900 border border-white p-2 text-[11px] text-left leading-relaxed">
+                    <div>★ スコア: <span class="text-green-400 font-bold">${state.rhythm.score} pt</span></div>
+                    <div>★ MAXコンボ: <span class="text-cyan-400 font-bold">${state.rhythm.maxCombo} 連</span></div>
+                    <div class="text-yellow-300 font-bold">✨ +${earnedExp} EXP を獲得！</div>
+                    <div class="text-yellow-400 font-bold">🪙 +${earnedCoins} 枚のコインを獲得！</div>
+                </div>
+                <button onclick="startRhythmGame()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-6 border-2 border-yellow-400 text-xs shadow active:translate-y-0.5">
+                    ▶ もう一度プレイする
+                </button>
+            `;
+        }
+
+        /* ==========================================
+           4. STAGE 2: 園児笑顔MAXシアター
+           ========================================== */
+        const theaterCanvas = document.getElementById('theaterCanvas');
+        const theaterCtx = theaterCanvas.getContext('2d');
+
+        const theaterItems = {
+            actor: [
+                { id: 'bear', name: 'くまさん', icon: '🐻' },
+                { id: 'rabbit', name: 'うさぎさん', icon: '🐰' },
+                { id: 'child', name: 'ようじ', icon: '👶' },
+                { id: 'cat', name: 'こねこ', icon: '🐱' }
+            ],
+            item: [
+                { id: 'apple', name: '完熟りんご', icon: '🍎' },
+                { id: 'piano', name: 'グランドピアノ', icon: '🎹' },
+                { id: 'star', name: 'きらきら星', icon: '⭐' },
+                { id: 'book', name: '手作り絵本', icon: '📖' }
+            ],
+            bg: [
+                { id: 'forest', name: 'MG豊かな森', color: '#1b4332' },
+                { id: 'kindergarten', name: 'おゆうぎ保育室', color: '#7f4f24' },
+                { id: 'music_room', name: 'ピアノ個人レッスン室', color: '#2b2d42' }
+            ]
+        };
+
+        const synergies = [
+            { actor: 'bear', item: 'apple', bg: 'forest', title: '【奇跡の森のおやつ会】', bonus: 450, msg: '「森のくまさんがリンゴをもぐもぐ！園児たちが大爆笑！」' },
+            { actor: 'child', item: 'piano', bg: 'music_room', title: '【神童のピアノリサイタル】', bonus: 500, msg: '「先生のやさしい指導でメロディが響き渡る！」' },
+            { actor: 'rabbit', item: 'star', bg: 'kindergarten', title: '【お星さまダンスフェス】', bonus: 400, msg: '「うさぎさんと一緒にみんなでジャンプ！」' },
+            { actor: 'cat', item: 'book', bg: 'kindergarten', title: '【こねこの絵本読み聞かせ】', bonus: 420, msg: '「みんな絵本に釘付け！集中力がアップした！」' }
+        ];
+
+        let currentTheaterCat = 'actor';
+
+        function switchTheaterCat(cat) {
+            currentTheaterCat = cat;
+            document.querySelectorAll('.theater-cat-btn').forEach(b => {
+                b.classList.remove('text-yellow-400', 'font-bold');
+                b.classList.add('text-gray-400');
+            });
+            const active = document.getElementById(`cat-${cat}`);
+            active.classList.remove('text-gray-400');
+            active.classList.add('text-yellow-400', 'font-bold');
+            renderTheaterOptions();
+        }
+
+        function renderTheaterOptions() {
+            const container = document.getElementById('theaterOptionsList');
+            container.innerHTML = '';
+            const list = theaterItems[currentTheaterCat];
+
+            list.forEach(item => {
+                const btn = document.createElement('button');
+                const isSelected = state.theater[currentTheaterCat] === item.id;
+                btn.className = `px-2 py-1 text-[11px] border whitespace-nowrap ${isSelected ? 'bg-yellow-500 text-black border-white font-bold' : 'bg-black text-white border-gray-700'}`;
+                btn.textContent = `${item.icon || '■'} ${item.name}`;
+                btn.onclick = () => {
+                    state.theater[currentTheaterCat] = item.id;
+                    play8bitBip(750, 0.04);
+                    renderTheaterOptions();
+                    drawTheater();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function drawTheater() {
+            const ctx = theaterCtx;
+            const w = theaterCanvas.width;
+            const h = theaterCanvas.height;
+            const cx = w / 2;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const bgConfig = theaterItems.bg.find(b => b.id === state.theater.bg) || theaterItems.bg[0];
+            ctx.fillStyle = bgConfig.color;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.fillStyle = '#f4a261';
+            ctx.fillRect(cx - 50, 35, 100, 140);
+            ctx.fillStyle = '#e76f51';
+            ctx.fillRect(cx - 35, 75, 70, 80);
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(cx - 30, 15, 60, 20);
+
+            const actor = theaterItems.actor.find(a => a.id === state.theater.actor);
+            ctx.font = '38px sans-serif';
+            ctx.fillText(actor.icon, cx - 19, 120);
+
+            const item = theaterItems.item.find(i => i.id === state.theater.item);
+            ctx.font = '30px sans-serif';
+            ctx.fillText(item.icon, cx + 15, 85);
+        }
+
+        function playTheaterAction() {
+            playLevelUpSound();
+
+            const act = state.theater.actor;
+            const it = state.theater.item;
+            const bg = state.theater.bg;
+
+            const syn = synergies.find(s => s.actor === act && s.item === it && s.bg === bg);
+            let gainedPoints = 150 + Math.floor(Math.random() * 80);
+            let feedbackText = '「せんせいのお話、とってもおもしろいよ！」▼';
+
+            if (syn) {
+                gainedPoints += syn.bonus;
+                feedbackText = `🌟 ${syn.title} が発動！\n${syn.msg}▼`;
+                document.getElementById('synergyBanner').textContent = `${syn.title} (+${syn.bonus} SMILE !!)`;
+                document.getElementById('synergyBanner').classList.remove('hidden');
+                setTimeout(() => document.getElementById('synergyBanner').classList.add('hidden'), 2500);
+            }
+
+            state.theater.smileScore += gainedPoints;
+            addExp(Math.floor(gainedPoints / 4));
+
+            if (state.theater.smileScore >= 1000) {
+                state.theater.smileScore -= 1000;
+                state.tickets += 2;
+                alert('❤️ 園児スマイルメーターがMAX到達！\n🪙 ボーナスコイン2枚を獲得！');
+            }
+
+            const percent = Math.min(100, Math.floor((state.theater.smileScore / 1000) * 100));
+            document.getElementById('smileBar').style.width = `${percent}%`;
+            document.getElementById('smileScoreText').textContent = `${state.theater.smileScore} / 1000 pt`;
+
+            document.getElementById('theaterDialogText').innerText = feedbackText;
+            document.getElementById('theaterDialog').classList.remove('hidden');
+        }
+
+        function closeTheaterDialog() {
+            document.getElementById('theaterDialog').classList.add('hidden');
+        }
+
+        /* ==========================================
+           5. STAGE 3: 8bit ガラポンスロット
+           ========================================== */
+        const gachaCanvas = document.getElementById('gachaCanvas');
+        const gachaCtx = gachaCanvas.getContext('2d');
+        let gachaAngle = 0;
+
+        function drawGacha(angle = 0) {
+            const ctx = gachaCtx;
+            const w = gachaCanvas.width;
+            const h = gachaCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2 - 10;
+
+            ctx.clearRect(0, 0, w, h);
+
+            ctx.fillStyle = '#8b5a2b';
+            ctx.fillRect(cx - 50, cy + 45, 100, 16);
+            ctx.fillRect(cx - 8, cy, 16, 45);
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+            ctx.fillStyle = '#d4a373';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const a = (i / 8) * Math.PI * 2;
+                const x = Math.cos(a) * 45;
+                const y = Math.sin(a) * 45;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#e70012';
+            ctx.fillRect(0, -4, 28, 8);
+            ctx.restore();
+
+            ctx.fillStyle = '#495057';
+            ctx.fillRect(cx + 30, cy + 40, 35, 12);
+        }
+
+        const retroRewards = [
+            { id: 1, rank: '金賞', icon: '👜', title: 'MGオリジナルトートバッグ', desc: 'オープンキャンパス限定の特製バッグを手に入れた！', detail: '通学やお弁当入れ、実習バッグとしても大人気のMGオリジナル限定トートバッグです。' },
+            { id: 2, rank: '銀賞', icon: '☕', title: '学食カフェ体験チケット', desc: '大学内の人気カフェで使えるチケットを手に入れた！', detail: 'キャンパス内のカフェ・学食で使える体験チケット。先輩たちとおしゃべりしながらリフレッシュできます。' },
+            { id: 3, rank: '赤賞', icon: '✏️', title: 'MG幼教 ドット文具セット', desc: '授業で使えるかわいいステーショナリーを手に入れた！', detail: '実習日誌や講義ノートに使える、書き心地抜群のMG幼教特製ステーショナリー。' },
+            { id: 4, rank: '緑賞', icon: '🔖', title: '合格祈願 ドット絵しおり', desc: '受験勉強のお守りになる特製しおりを手に入れた！', detail: '「サクラサク」願いを込めたレトロドット絵の限定しおり。受験本番まで大切に使ってください！' },
+            { id: 5, rank: '白賞', icon: '📜', title: '学びカード: ピアノ個別レッスン', desc: '初心者の不安を自信に変えるマンツーマン指導！', detail: '【ピアノ初心者も安心！】個別のレッスン室を完備し、一人ひとりのレベルに合わせて教員がマンツーマンで指導。入学後に初めて鍵盤に触れた学生も、卒業時にはスラスラ弾き歌いができるようになります。' },
+            { id: 6, rank: '白賞', icon: '📜', title: '学びカード: 森の自然あそび保育', desc: '緑豊かなキャンパスで行う体験型授業！', detail: '【キャンパス全体が学びのフィールド】宮城学院の豊かな森や自然環境を活用し、四季の草花や生き物と触れ合う「自然保育・森のワークショップ」を実践します。' },
+            { id: 7, rank: '白賞', icon: '📜', title: '学びカード: 子どものこころ心理学', desc: '子どもの行動の意味を科学的に学ぶ！', detail: '【発達心理学のプロフェッショナル】「なぜ子どもはイヤイヤ期になるのか？」「どう寄り添えば安心するのか？」を科学的エビデンスに基づいて学びます。' },
+            { id: 8, rank: '白賞', icon: '📜', title: '学びカード: 手作り木育おもちゃ', desc: '温もりある素材で子どもの五感を刺激！', detail: '【造形表現＆木育実習】自然素材や木を使った手作りおもちゃの製作。子どもの五感と創造力を育む遊びの環境をデザインします。' },
+            { id: 9, rank: '白賞', icon: '📜', title: '学びカード: 附属園との密接な連携', desc: 'いつでも子どもたちと触れ合える環境！', detail: '【日常的な子どもとの触れ合い】キャンパス内に附属幼稚園・こども園があり、授業や空き時間に日常的に子どもたちの姿を観察・実習できます。' },
+            { id: 10, rank: '白賞', icon: '📜', title: '学びカード: 先輩ボイス・実習編', desc: '「最初は不安だったけど先生のサポートで安心！」', detail: '【先輩学生メッセージ】「実習前の模擬授業で先生方が丁寧にアドバイスしてくれたので、本番も落ち着いて子どもたちと笑顔で過ごせました！」' },
+            { id: 11, rank: '白賞', icon: '📜', title: '学びカード: 就職・進路サポート', desc: '高い採用実績と丁寧なキャリア支援！', detail: '【公務員・私立園への高い就職実績】専任スタッフと教員によるダブルサポート体制で、公立保育士・幼稚園教諭採用試験や優良園への就職を徹底支援。' },
+            { id: 12, rank: '白賞', icon: '📜', title: '学びカード: キャンパスライフ編', desc: 'あたたかい仲間と過ごす充実の4年間！', detail: '【MG幼教の温かなコミュニティ】少人数制のアットホームな環境で、同じ夢を持つ仲間たちと助け合いながら、かけがえのない4年間を過ごせます。' }
+        ];
+
+        function spinRetroGacha(count = 1) {
+            if (state.isSpinning) return;
+            const requiredCoins = count === 5 ? 4 : 1;
+
+            if (state.tickets < requiredCoins) {
+                alert(`🪙 コインが足りません！ (必要: ${requiredCoins}枚)\n「リズムレッスン」や「シアター」でコインを稼ぎましょう！`);
+                return;
+            }
+
+            state.tickets -= requiredCoins;
+            updatePlayerHUD();
+            state.isSpinning = true;
+            document.getElementById('spinGacha1Btn').disabled = true;
+            document.getElementById('spinGacha5Btn').disabled = true;
+
+            const isSuperHot = Math.random() < 0.25;
+            if (isSuperHot) {
+                document.getElementById('gachaCutin').classList.remove('hidden');
+                playFeverSound();
+                setTimeout(() => document.getElementById('gachaCutin').classList.add('hidden'), 1200);
+            }
+
+            let spins = 0;
+            const maxSpins = count === 5 ? 30 : 20;
+            const timer = setInterval(() => {
+                gachaAngle += 0.45;
+                spins++;
+                drawGacha(gachaAngle);
+                play8bitNoise();
+
+                if (spins >= maxSpins) {
+                    clearInterval(timer);
+                    state.isSpinning = false;
+                    document.getElementById('spinGacha1Btn').disabled = false;
+                    document.getElementById('spinGacha5Btn').disabled = false;
+                    drawGacha(gachaAngle);
+                    executeGachaResults(count, isSuperHot);
+                }
+            }, 50);
+        }
+
+        function executeGachaResults(count, isSuperHot) {
+            playLevelUpSound();
+            const results = [];
+
+            for (let i = 0; i < count; i++) {
+                const rand = Math.random() * 100;
+                let item;
+                if (isSuperHot && i === 0) {
+                    item = Math.random() < 0.5 ? retroRewards[0] : retroRewards;
+                } else if (rand < 6) item = retroRewards[0];
+                else if (rand < 20) item = retroRewards;
+                else if (rand < 45) item = retroRewards[Math.floor(Math.random() * 2) + 2];
+                else item = retroRewards[Math.floor(Math.random() * 8) + 4];
+
+                results.push(item);
+            }
+
+            const topItem = results[0];
+            let bonusText = '';
+
+            results.forEach(it => {
+                if (state.collection.has(it.id)) {
+                    addExp(50);
+                    bonusText += `【重複ボーナス】+50 EXP 獲得！ `;
+                } else {
+                    state.collection.add(it.id);
+                    addExp(100);
+                    bonusText += `【新規カード獲得】+100 EXP 獲得！ `;
+                }
+            });
+
+            document.getElementById('modalHeader').textContent = count === 5 ? `🎉 5連ガチャ結果 (${topItem.rank})` : `🎉 ${topItem.rank} 当選！！`;
+            document.getElementById('modalItemIcon').textContent = topItem.icon;
+            document.getElementById('modalTitle').textContent = count === 5 ? `${topItem.title} ほか` : topItem.title;
+            document.getElementById('modalDesc').textContent = topItem.desc;
+            document.getElementById('modalBonusExp').textContent = bonusText;
+
+            document.getElementById('rewardModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('rewardModal').classList.add('hidden');
+        }
+
+        /* ==========================================
+           6. STAGE 4: 図鑑 & 認定証
+           ========================================== */
+        function renderZukan() {
+            const grid = document.getElementById('zukanGrid');
+            grid.innerHTML = '';
+            document.getElementById('collectedRatio').textContent = `${state.collection.size}/${retroRewards.length}`;
+
+            retroRewards.forEach(item => {
+                const isCollected = state.collection.has(item.id);
+                const card = document.createElement('div');
+                card.className = `p-1.5 border text-center flex flex-col items-center justify-between cursor-pointer transition ${
+                    isCollected 
+                        ? 'bg-black border-yellow-400 text-yellow-300 shadow hover:border-white' 
+                        : 'bg-gray-950 border-gray-800 text-gray-600 opacity-50'
+                }`;
+
+                card.innerHTML = `
+                    <div class="text-[8px] font-bold self-start">${isCollected ? item.rank : '???'}</div>
+                    <div class="text-2xl my-0.5">${isCollected ? item.icon : '❓'}</div>
+                    <div class="text-[9px] leading-tight font-bold line-clamp-1">${isCollected ? item.title.replace('学びカード: ', '') : '未開放'}</div>
+                `;
+
+                if (isCollected) {
+                    card.onclick = () => openCardDetail(item);
+                }
+                grid.appendChild(card);
+            });
+        }
+
+        function openCardDetail(item) {
+            play8bitBip(800, 0.05);
+            document.getElementById('cardDetailIcon').textContent = item.icon;
+            document.getElementById('cardDetailTitle').textContent = item.title;
+            document.getElementById('cardDetailBody').innerHTML = `
+                <div class="text-yellow-300 font-bold mb-1">【${item.rank}】</div>
+                <div class="mb-2">${item.desc}</div>
+                <div class="border-t border-gray-700 pt-1 text-stone-300">${item.detail}</div>
+            `;
+            document.getElementById('cardDetailModal').classList.remove('hidden');
+        }
+
+        function closeCardDetailModal() {
+            document.getElementById('cardDetailModal').classList.add('hidden');
+        }
+
+        function openLicenseModal() {
+            playLevelUpSound();
+            const rate = Math.floor((state.collection.size / retroRewards.length) * 100);
+            document.getElementById('licensePlayerTitle').textContent = state.player.title;
+            document.getElementById('licenseRate').textContent = `${rate}% (${state.collection.size}/12枚)`;
+            document.getElementById('licenseModal').classList.remove('hidden');
+        }
+
+        function closeLicenseModal() {
+            document.getElementById('licenseModal').classList.add('hidden');
+        }
+
+        /* ==========================================
+           7. 初期化処理
+           ========================================== */
+        window.addEventListener('load', () => {
+            updatePlayerHUD();
+            drawRhythmFrame();
+            drawTheater();
+            drawGacha(0);
+            renderTheaterOptions();
+        });
+    </script>
+</body>
+</html>
