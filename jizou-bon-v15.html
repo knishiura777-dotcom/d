@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>地蔵盆まつりゲーム</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        jizoRed: '#C0392B',
+                        jizoGold: '#F39C12',
+                        jizoBg: '#FFF8E7',
+                        jizoDark: '#2C3E50',
+                        jizoGreen: '#27AE60'
+                    },
+                    keyframes: {
+                        sway: {
+                            '0%, 100%': { transform: 'rotate(-5deg)' },
+                            '50%': { transform: 'rotate(5deg)' }
+                        },
+                        pop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        },
+                        glow: {
+                            '0%, 100%': { filter: 'drop-shadow(0 0 5px #F39C12)' },
+                            '50%': { filter: 'drop-shadow(0 0 20px #F1C40F)' }
+                        },
+                        gaugeShake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '20%, 60%': { transform: 'translateX(-4px)' },
+                            '40%, 80%': { transform: 'translateX(4px)' }
+                        }
+                    },
+                    animation: {
+                        sway: 'sway 3s ease-in-out infinite',
+                        pop: 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        glow: 'glow 2s infinite',
+                        gaugeShake: 'gaugeShake 0.3s ease-in-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF8E7;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+        .japanese-pattern {
+            background-color: #7b1d1d;
+            background-image: radial-gradient(#a32a2a 15%, transparent 16%), radial-gradient(#a32a2a 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        /* スクロールバー非表示 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .poi-damage-anim {
+            animation: gaugeShake 0.35s cubic-bezier(.36,.07,.19,.97) both;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- ヘッダー / ステータスバー -->
+    <header class="japanese-pattern text-amber-100 p-3 shadow-lg sticky top-0 z-50 border-b-4 border-amber-500">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl animate-sway inline-block">🏮</span>
+                <h1 class="font-bold text-lg tracking-wider text-amber-200 shadow-text">地蔵盆まつり</h1>
+            </div>
+            
+            <!-- チケット・サウンド保持状況 -->
+            <div class="flex items-center gap-3">
+                <div class="bg-red-950/70 border border-amber-400/50 rounded-full px-3 py-1 flex items-center gap-1.5 text-sm font-bold">
+                    <span>🎫</span>
+                    <span id="ticketCount" class="text-amber-300">0</span>枚
+                </div>
+                <button id="soundToggleBtn" onclick="toggleSound()" class="bg-red-900 border border-amber-400/50 p-1.5 rounded-full text-sm hover:bg-red-800 active:scale-95 transition">
+                    <span id="soundIcon">🔊</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインビュー領域 -->
+    <main class="max-w-md mx-auto w-full flex-1 flex flex-col p-4 relative">
+
+        <!-- ===== タブ1: トップ / 数珠まわしゲーム ===== -->
+        <section id="tab-juzu" class="tab-content flex-1 flex flex-col justify-between">
+            <div class="text-center my-2">
+                <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
+                    📿 みんなで数珠まわし
+                </h2>
+                <p class="text-xs text-stone-600 mt-1">タイミングよくタップして大数珠を回そう！</p>
+            </div>
+
+            <!-- ゲームスコア・タイマー表示 -->
+            <div class="flex justify-between items-center bg-amber-100/80 p-2.5 rounded-xl border border-amber-300 shadow-sm mb-2">
+                <div class="text-center px-3">
+                    <div class="text-xs text-stone-500">残り時間</div>
+                    <div id="juzuTimer" class="text-2xl font-black text-red-700">30</div>
+                </div>
+                <div class="text-center px-3 border-x border-amber-300 flex-1">
+                    <div class="text-xs text-stone-500">回転数 (周)</div>
+                    <div id="juzuLaps" class="text-3xl font-black text-amber-600">0.0</div>
+                </div>
+                <div class="text-center px-3">
+                    <div class="text-xs text-stone-500">コンボ</div>
+                    <div id="juzuCombo" class="text-xl font-bold text-orange-600">0</div>
+                </div>
+            </div>
+
+            <!-- キャンバス表示（数珠回しアニメーション） -->
+            <div class="relative flex-1 flex items-center justify-center my-2 min-h-[260px]">
+                <canvas id="juzuCanvas" width="320" height="320" class="w-full max-w-[320px] h-auto touch-none cursor-pointer"></canvas>
+                
+                <!-- スタート前オーバーレイ -->
+                <div id="juzuStartOverlay" class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4 text-white text-center">
+                    <div class="text-4xl mb-2">📿</div>
+                    <h3 class="text-lg font-bold text-amber-300 mb-1">大数珠回しのお祈り</h3>
+                    <p class="text-xs text-stone-200 mb-4 max-w-[240px]">
+                        みんなで大きな数珠を回して無病息災を願います。<br>「なむなむ」の合図に合わせて画面を連打！
+                    </p>
+                    <button onclick="startJuzuGame()" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold py-3 px-8 rounded-full shadow-lg border-2 border-amber-300 text-lg active:scale-95 transition">
+                        ゲームスタート！
+                    </button>
+                </div>
+            </div>
+
+            <!-- 操作・タップ領域 -->
+            <div class="mt-2">
+                <button id="juzuTapBtn" onclick="onJuzuTap()" disabled class="w-full py-5 bg-gradient-to-b from-red-600 to-red-800 text-amber-100 font-bold text-xl rounded-2xl shadow-lg border-b-4 border-red-950 active:translate-y-1 active:border-b-0 transition flex flex-col items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span>📿 タップして数珠を回す！</span>
+                    <span id="juzuHint" class="text-xs text-amber-200/80 font-normal mt-0.5">南無阿弥陀仏...</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== タブ2: 金魚すくい×リトミックゲーム ===== -->
+        <section id="tab-kingyo" class="tab-content hidden flex-1 flex flex-col justify-between">
+            <div class="text-center my-1">
+                <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
+                    🐟 おはやし金魚すくい
+                </h2>
+                <p class="text-xs text-stone-600">お囃子太鼓のリズムに合わせて金魚をすくおう！</p>
+            </div>
+
+            <!-- ステータス表示（残り時間・スコア・ポイ耐久度・リズム指示） -->
+            <div class="bg-amber-100/90 p-2.5 rounded-xl border border-amber-300 shadow-sm mb-1.5 flex flex-col gap-1.5">
+                <div class="flex justify-between items-center text-center">
+                    <div class="px-2">
+                        <div class="text-[10px] text-stone-500">タイム</div>
+                        <div id="kingyoTimer" class="text-xl font-black text-red-700">30</div>
+                    </div>
+                    <div class="px-2 border-x border-amber-300 flex-1">
+                        <div class="text-[10px] text-stone-500">すくった数 / スコア</div>
+                        <div class="flex items-center justify-center gap-1">
+                            <span id="kingyoCount" class="text-lg font-black text-amber-700">0匹</span>
+                            <span class="text-xs text-stone-400">|</span>
+                            <span id="kingyoScore" class="text-lg font-black text-red-600">0点</span>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <div class="text-[10px] text-stone-500">コンボ</div>
+                        <div id="kingyoCombo" class="text-lg font-black text-orange-600">0</div>
+                    </div>
+                </div>
+
+                <!-- リズム合図バー＆ポイ耐久バー -->
+                <div class="flex items-center gap-2 pt-1 border-t border-amber-200/80 text-xs">
+                    <div class="flex-1 flex items-center gap-1.5 bg-white/80 px-2 py-1 rounded-lg border border-amber-300">
+                        <span id="rhythmBeatIcon" class="text-base animate-bounce inline-block">🥁</span>
+                        <span id="rhythmGuideText" class="font-bold text-red-700 text-xs">ドン！に合わせてすくおう</span>
+                    </div>
+                    <!-- ポイの強さ・耐久度ゲージ -->
+                    <div id="poiGaugeContainer" class="w-32 flex flex-col bg-white/90 p-1.5 rounded-lg border border-amber-300 transition-transform">
+                        <div class="flex justify-between items-center text-[10px] font-bold">
+                            <span class="flex items-center gap-0.5 text-stone-700">
+                                <span>🥢</span>ポイ紙
+                            </span>
+                            <span id="poiLifeStatus" class="text-green-600 font-extrabold text-[9px]">じょうぶ</span>
+                            <span id="poiLifeText" class="text-stone-800">100%</span>
+                        </div>
+                        <div class="w-full bg-stone-200 rounded-full h-2.5 mt-0.5 overflow-hidden border border-stone-300 relative">
+                            <div id="poiLifeBar" class="bg-gradient-to-r from-emerald-400 to-green-500 h-2.5 rounded-full transition-all duration-200" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 金魚すくいキャンバス -->
+            <div id="kingyoCanvasWrapper" class="relative flex-1 flex items-center justify-center my-1 min-h-[260px] transition-transform">
+                <canvas id="kingyoCanvas" width="320" height="320" class="w-full max-w-[320px] h-auto rounded-2xl shadow-inner border-4 border-amber-700 bg-sky-200 touch-none cursor-crosshair"></canvas>
+                
+                <!-- スタート前・結果オーバーレイ -->
+                <div id="kingyoStartOverlay" class="absolute inset-0 bg-stone-900/70 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4 text-white text-center">
+                    <div class="text-4xl mb-1">🐟🥁</div>
+                    <h3 class="text-lg font-bold text-amber-300 mb-1">リトミック金魚すくい</h3>
+                    <p class="text-xs text-stone-200 mb-3 max-w-[250px] leading-relaxed">
+                        太鼓のリズム（ドン・カッ）に合わせて泳ぐ金魚をタップ！<br>
+                        リズムを外したり「おやすみ」で触るとポイが破れちゃうよ！
+                    </p>
+                    <div class="flex gap-2 text-[11px] bg-red-950/60 p-2 rounded-lg border border-amber-500/50 mb-4 text-amber-200">
+                        <span>🔴和金: 100点</span>
+                        <span>⚫出目金: 200点</span>
+                        <span>🟡金魚: 300点</span>
+                    </div>
+                    <button onclick="startKingyoGame()" class="bg-gradient-to-r from-teal-600 to-amber-600 hover:from-teal-500 hover:to-amber-500 text-white font-bold py-3 px-8 rounded-full shadow-lg border-2 border-amber-300 text-base active:scale-95 transition">
+                        すくいスタート！
+                    </button>
+                </div>
+            </div>
+
+            <!-- 操作案内ヒント -->
+            <div class="mt-1 text-center bg-amber-50 rounded-lg p-1.5 border border-amber-200 text-xs text-stone-600">
+                💡 <span class="font-bold text-red-700">音をよく聴いて！</span> リズムリングが金魚と重なるタイミングですくおう！
+            </div>
+        </section>
+
+        <!-- ===== タブ: お囃子リズム的当て（射的ゲーム） ===== -->
+        <section id="tab-mato" class="tab-content hidden flex-1 flex flex-col justify-between">
+            <div class="text-center my-1">
+                <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
+                    🎯 お囃子リズム的当て
+                </h2>
+                <p class="text-xs text-stone-600">拍子木と太鼓のリズムに合わせて的を撃ち抜こう！</p>
+            </div>
+
+            <!-- ステータス表示（残り時間・スコア・コンボ・リズムガイド） -->
+            <div class="bg-amber-100/90 p-2 rounded-xl border border-amber-300 shadow-sm mb-1.5 flex flex-col gap-1">
+                <div class="flex justify-between items-center text-center">
+                    <div class="px-2">
+                        <div class="text-[10px] text-stone-500">タイム</div>
+                        <div id="matoTimer" class="text-xl font-black text-red-700">30</div>
+                    </div>
+                    <div class="px-2 border-x border-amber-300 flex-1">
+                        <div class="text-[10px] text-stone-500">倒した数 / スコア</div>
+                        <div class="flex items-center justify-center gap-1">
+                            <span id="matoHitCount" class="text-lg font-black text-amber-700">0個</span>
+                            <span class="text-xs text-stone-400">|</span>
+                            <span id="matoScore" class="text-lg font-black text-red-600">0点</span>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <div class="text-[10px] text-stone-500">コンボ</div>
+                        <div id="matoCombo" class="text-lg font-black text-orange-600">0</div>
+                    </div>
+                </div>
+
+                <!-- リズム合図バー -->
+                <div class="flex items-center justify-between gap-1.5 bg-white/80 px-2.5 py-1 rounded-lg border border-amber-300 text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span id="matoBeatIcon" class="text-base inline-block animate-bounce">🪵</span>
+                        <span id="matoGuideText" class="font-bold text-red-700 text-xs">カン！のリズムで狙い撃ち！</span>
+                    </div>
+                    <span id="matoRushBadge" class="hidden bg-gradient-to-r from-red-600 to-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">🔥 RUSH!</span>
+                </div>
+            </div>
+
+            <!-- 射的キャンバス -->
+            <div id="matoCanvasWrapper" class="relative flex-1 flex items-center justify-center my-1 min-h-[260px]">
+                <canvas id="matoCanvas" width="320" height="320" class="w-full max-w-[320px] h-auto rounded-2xl shadow-inner border-4 border-amber-800 bg-amber-950 touch-none cursor-crosshair"></canvas>
+                
+                <!-- スタート前オーバーレイ -->
+                <div id="matoStartOverlay" class="absolute inset-0 bg-stone-900/75 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4 text-white text-center">
+                    <div class="text-4xl mb-1">🎯🏮</div>
+                    <h3 class="text-lg font-bold text-amber-300 mb-1">お囃子リズム的当て</h3>
+                    <p class="text-xs text-stone-200 mb-3 max-w-[250px] leading-relaxed">
+                        リズム（拍子木・太鼓）に合わせて動く的をタップしてコルク銃を発射！<br>
+                        ビートと重なる瞬間に撃つと高得点＆吹き飛び爽快！
+                    </p>
+                    <div class="grid grid-cols-2 gap-1 text-[11px] bg-red-950/60 p-2 rounded-lg border border-amber-500/50 mb-3 text-amber-200 text-left">
+                        <span>👺 だるま/お面: 150点</span>
+                        <span>🐱 まねき猫: 250点</span>
+                        <span>🏮 提灯ボム: 周囲誘爆!</span>
+                        <span>✨ 黄金の的: 500点</span>
+                    </div>
+                    <button onclick="startMatoGame()" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold py-3 px-8 rounded-full shadow-lg border-2 border-amber-300 text-base active:scale-95 transition">
+                        的当てスタート！
+                    </button>
+                </div>
+            </div>
+
+            <!-- 操作案内ヒント -->
+            <div class="mt-1 text-center bg-amber-50 rounded-lg p-1.5 border border-amber-200 text-xs text-stone-600">
+                💡 <span class="font-bold text-red-700">的を直接タップ</span> して撃ち落とそう！赤い照準が重なる瞬間がチャンス！
+            </div>
+        </section>
+
+        <!-- ===== タブ3: お地蔵様デコレーション ===== -->
+        <section id="tab-decorate" class="tab-content hidden flex-1 flex flex-col">
+            <div class="text-center my-1">
+                <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
+                    🌸 お地蔵様を飾ろう
+                </h2>
+                <p class="text-xs text-stone-600">前掛けやお供え物を選んで、お参りしましょう</p>
+            </div>
+
+            <!-- お地蔵様キャンバス -->
+            <div class="relative flex-1 flex items-center justify-center my-2 bg-gradient-to-b from-amber-50 to-orange-100 rounded-2xl border-2 border-amber-200 shadow-inner p-2 min-h-[250px]">
+                <canvas id="jizoDecorateCanvas" width="300" height="300" class="w-full max-w-[280px] h-auto"></canvas>
+                
+                <!-- お参り吹き出し -->
+                <div id="omikujiBubble" class="hidden absolute top-4 inset-x-6 bg-white/95 border-2 border-red-500 rounded-xl p-3 shadow-xl animate-pop text-center">
+                    <div class="text-xs font-bold text-red-600">🙏 お地蔵様のお言葉</div>
+                    <div id="omikujiText" class="text-sm font-semibold text-stone-800 my-1"></div>
+                    <button onclick="closeOmikuji()" class="text-xs bg-red-100 text-red-700 px-3 py-1 rounded-full mt-1 font-bold">閉じる</button>
+                </div>
+            </div>
+
+            <!-- 着せ替えカテゴリー・選択肢 -->
+            <div class="bg-white rounded-xl p-3 border border-amber-200 shadow-sm">
+                <!-- カテゴリタブ -->
+                <div class="flex border-b border-amber-200 mb-2 text-xs font-bold">
+                    <button onclick="switchDecoCategory('bib')" id="cat-bib" class="deco-cat-btn flex-1 py-1.5 text-center text-red-700 border-b-2 border-red-600">前掛け</button>
+                    <button onclick="switchDecoCategory('cap')" id="cat-cap" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">頭飾り</button>
+                    <button onclick="switchDecoCategory('offering')" id="cat-offering" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">お供え物</button>
+                    <button onclick="switchDecoCategory('bg')" id="cat-bg" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">背景</button>
+                </div>
+
+                <!-- アイテム一覧リスト -->
+                <div id="decoItemList" class="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                    <!-- JSで動的生成 -->
+                </div>
+
+                <!-- お参りボタン -->
+                <button onclick="prayJizo()" class="w-full mt-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow border-b-2 border-amber-700 active:translate-y-0.5 flex items-center justify-center gap-2">
+                    <span>🙏 お手を合わせてお参りする</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== タブ4: 福引き（ガラポン） ===== -->
+        <section id="tab-fukubiki" class="tab-content hidden flex-1 flex flex-col justify-between">
+            <div class="text-center my-1">
+                <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
+                    🎰 地蔵盆のガラガラ福引き
+                </h2>
+                <p class="text-xs text-stone-600">福引き券を使ってお菓子や景品を当てよう！</p>
+            </div>
+
+            <!-- 福引きガラポン表示 -->
+            <div class="relative flex-1 flex flex-col items-center justify-center my-2 bg-amber-50/50 rounded-2xl border border-amber-200 p-2 min-h-[250px]">
+                <canvas id="garaponCanvas" width="280" height="240" class="max-w-[280px] h-auto"></canvas>
+
+                <!-- ガラガラ回すボタン -->
+                <button id="spinGaraponBtn" onclick="spinGarapon()" class="mt-2 px-8 py-3 bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-lg rounded-full shadow-lg border-2 border-amber-300 active:scale-95 transition disabled:opacity-50">
+                    ガラガラを回す！ (🎫1枚)
+                </button>
+            </div>
+
+            <!-- 賞品案内 -->
+            <div class="bg-amber-100/70 rounded-xl p-3 border border-amber-300 text-xs text-stone-700">
+                <div class="font-bold text-red-800 mb-1 flex justify-between">
+                    <span>🎁 景品一覧</span>
+                    <span class="text-[10px] text-stone-500">全12種類のお菓子</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1 text-[11px]">
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>金賞: 特大花火＆駄菓子セット</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>銀賞: 地蔵盆お楽しみ袋</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>赤賞: うまい棒＆ジュース</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>緑賞: 飴＆ラムネセット</div>
+                    <div class="flex items-center gap-1 col-span-2"><span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-400"></span>白賞: ポケットティッシュ＆おみくじ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== タブ5: お菓子コレクション図鑑 ===== -->
+        <section id="tab-zukan" class="tab-content hidden flex-1 flex flex-col">
+            <div class="text-center my-1">
+                <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
+                    🍬 お菓子コレクション
+                </h2>
+                <p class="text-xs text-stone-600">地蔵盆でもらったお下がりお菓子 (<span id="collectedRatio">0/12</span>)</p>
+            </div>
+
+            <!-- お菓子グリッド表示 -->
+            <div id="zukanGrid" class="flex-1 grid grid-cols-3 gap-2 overflow-y-auto max-h-[380px] p-1 my-2 no-scrollbar">
+                <!-- JSで動的生成 -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 結果・当選モーダル -->
+    <div id="rewardModal" class="hidden fixed inset-0 bg-stone-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-amber-50 border-4 border-amber-400 rounded-2xl max-w-xs w-full p-5 shadow-2xl text-center relative animate-pop">
+            <div id="modalHeader" class="text-xs font-bold text-amber-800 bg-amber-200/80 rounded-full py-1 px-3 inline-block mb-2">🎉 福引き結果</div>
+            <div id="modalBall" class="text-5xl my-2">⚪</div>
+            <h3 id="modalTitle" class="text-lg font-bold text-red-700">うまい棒セット！</h3>
+            <p id="modalDesc" class="text-xs text-stone-600 my-2">地蔵盆の定番駄菓子。サクサク美味しくて大人気！</p>
+            <div id="modalItemIcon" class="text-4xl my-2">🔴</div>
+            <button onclick="closeModal()" class="w-full mt-3 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow active:scale-95 transition">
+                受け取る！
+            </button>
+        </div>
+    </div>
+
+    <!-- フッターナビゲーション -->
+    <nav class="bg-stone-900 text-stone-300 border-t-2 border-amber-500 sticky bottom-0 z-40">
+        <div class="max-w-md mx-auto flex justify-around items-center py-1.5 text-center text-xs">
+            <button onclick="switchTab('juzu')" id="nav-juzu" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-amber-400 font-bold px-1">
+                <span class="text-base">📿</span>
+                <span class="text-[10px]">数珠回し</span>
+            </button>
+            <button onclick="switchTab('kingyo')" id="nav-kingyo" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
+                <span class="text-base">🐟</span>
+                <span class="text-[10px]">金魚</span>
+            </button>
+            <button onclick="switchTab('mato')" id="nav-mato" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
+                <span class="text-base">🎯</span>
+                <span class="text-[10px]">的当て</span>
+            </button>
+            <button onclick="switchTab('decorate')" id="nav-decorate" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
+                <span class="text-base">🌸</span>
+                <span class="text-[10px]">お地蔵様</span>
+            </button>
+            <button onclick="switchTab('fukubiki')" id="nav-fukubiki" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
+                <span class="text-base">🎰</span>
+                <span class="text-[10px]">福引き</span>
+            </button>
+            <button onclick="switchTab('zukan')" id="nav-zukan" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
+                <span class="text-base">🍬</span>
+                <span class="text-[10px]">図鑑</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- JavaScript ロジック -->
+    <script>
+        /* ==========================================
+           1. グローバル状態・Sound Synthesizer (Web Audio API)
+           ========================================== */
+        const state = {
+            tickets: 3, // 初期所持福引き券
+            soundEnabled: true,
+            // 数珠ゲーム状態
+            juzu: {
+                active: false,
+                angle: 0,
+                laps: 0,
+                combo: 0,
+                timeLeft: 30,
+                timerId: null,
+                targetAngle: 0
+            },
+            // 金魚リトミック状態
+            kingyo: {
+                active: false,
+                timeLeft: 30,
+                score: 0,
+                count: 0,
+                combo: 0,
+                poiLife: 100,
+                timerId: null,
+                bpm: 110,
+                beatInterval: 60000 / 110,
+                beatTimerId: null,
+                lastBeatTime: 0,
+                beatCount: 0,
+                currentPattern: 'dong', // 'dong', 'tata', 'rest'
+                fishes: [],
+                particles: [],
+                paperScraps: [],      // 破れた紙片パーティクル
+                waterRipples: [],
+                screenShake: 0,       // 画面の揺れ
+                feverTime: 0,         // 大漁フィーバー残り時間
+                poiPos: { x: 160, y: 160, down: false, radius: 28 },
+                animationFrameId: null
+            },
+            // リズム的当て状態
+            mato: {
+                active: false,
+                timeLeft: 30,
+                score: 0,
+                hitCount: 0,
+                combo: 0,
+                timerId: null,
+                bpm: 120,
+                beatInterval: 60000 / 120,
+                beatTimerId: null,
+                lastBeatTime: 0,
+                beatCount: 0,
+                rushTime: 0,
+                targets: [],
+                particles: [],
+                corks: [],
+                sightPos: { x: 160, y: 160 },
+                screenShake: 0,
+                animationFrameId: null
+            },
+            // お地蔵様デコ状態
+            jizoDeco: {
+                bib: 'red',      // red, gold, pink, blue
+                cap: 'none',     // none, red_hat, flower, hachimaki
+                offering: 'dango',// dango, watermelon, sweets, tea
+                bg: 'temple'     // temple, festival, nature
+            },
+            // 図鑑コレクション (ID保持)
+            collection: new Set([1, 4]) // 初期所持
+        };
+
+        // Web Audio APIサウンド発生器
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            document.getElementById('soundIcon').textContent = state.soundEnabled ? '🔊' : '🔇';
+        }
+
+        // 効果音：太鼓「ドン」 (リトミック基音)
+        function playTaikoDong() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(160, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+
+            gain.gain.setValueAtTime(0.9, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.18);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.18);
+        }
+
+        // 効果音：太鼓「カッ」（フチ打ち）
+        function playTaikoKack() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.05);
+
+            gain.gain.setValueAtTime(0.6, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.05);
+        }
+
+        // 効果音：ポイが破れるリアル音（紙の破断ノイズ ＋ 水漏れ音）
+        function playPoiRipSound(isDestroyed = false) {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            // 1. ノイズによる紙のビリッという摩擦音
+            const bufferSize = Math.floor(ctx.sampleRate * (isDestroyed ? 0.35 : 0.18));
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.4));
+            }
+
+            const whiteNoise = ctx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+
+            // フィルターで紙の破れる周波数を強調
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(isDestroyed ? 1200 : 2200, ctx.currentTime);
+            filter.Q.setValueAtTime(3.0, ctx.currentTime);
+
+            const noiseGain = ctx.createGain();
+            noiseGain.gain.setValueAtTime(isDestroyed ? 1.0 : 0.6, ctx.currentTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (isDestroyed ? 0.35 : 0.18));
+
+            whiteNoise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(ctx.destination);
+
+            whiteNoise.start();
+
+            // 2. 水の衝撃低音・破断ピッチダウン
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+            osc.type = isDestroyed ? 'sawtooth' : 'triangle';
+            osc.frequency.setValueAtTime(isDestroyed ? 280 : 380, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(isDestroyed ? 40 : 120, ctx.currentTime + (isDestroyed ? 0.4 : 0.15));
+
+            oscGain.gain.setValueAtTime(isDestroyed ? 0.7 : 0.4, ctx.currentTime);
+            oscGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (isDestroyed ? 0.4 : 0.15));
+
+            osc.connect(oscGain);
+            oscGain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + (isDestroyed ? 0.4 : 0.15));
+        }
+
+        // 効果音：水しぶき・すくい音
+        function playSplashSound(success = true) {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            if (success) {
+                // 水のちゃぷん音＋高音チャイム
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(1046.5, ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            }
+        }
+
+        // 効果音：木魚（ポクポク）
+        function playMokugyoSound() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(480, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.08);
+
+            gain.gain.setValueAtTime(0.8, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.08);
+        }
+
+        // 効果音：鐘・ベル（リン/チリン）
+        function playBellSound(freq = 880) {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+            gain.gain.setValueAtTime(0.5, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.6);
+        }
+
+        // 効果音：拍子木「カンッ！」（リズム的当て基音）
+        function playHyoshigiSound() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1400, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.06);
+
+            gain.gain.setValueAtTime(0.8, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.07);
+        }
+
+        // 効果音：コルク銃「ポンッ！」
+        function playCorkShotSound() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(320, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.08);
+
+            gain.gain.setValueAtTime(0.9, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.09);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.09);
+        }
+
+        // 効果音：的命中「ガシャン！コトン！」
+        function playMatoHitSound(isBomb = false, isGold = false) {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            if (isBomb) {
+                // 爆発・誘爆音
+                const bufferSize = Math.floor(ctx.sampleRate * 0.25);
+                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = noiseBuffer;
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(1.0, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                noise.connect(gain);
+                gain.connect(ctx.destination);
+                noise.start();
+            } else {
+                // 命中・木片倒れ音
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = isGold ? 'triangle' : 'square';
+                osc.frequency.setValueAtTime(isGold ? 987.77 : 587.33, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(isGold ? 1318.51 : 220, ctx.currentTime + 0.12);
+
+                gain.gain.setValueAtTime(0.6, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.14);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.14);
+            }
+        }
+
+        // 効果音：ガラガラ抽選
+        function playGaraponSound() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(200 + Math.random() * 300, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.03);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.03);
+                }, i * 60);
+            }
+        }
+
+        // ファンファーレ
+        function playFanfareSound() {
+            if (!state.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                setTimeout(() => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                }, idx * 120);
+            });
+        }
+
+        /* ==========================================
+           2. タブ切り替え制御
+           ========================================== */
+        function switchTab(tabId) {
+            getAudioContext();
+            playBellSound(600);
+
+            // 全コンテンツ非表示
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-amber-400', 'font-bold');
+                btn.classList.add('text-stone-400');
+            });
+
+            // 選択表示
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            activeNav.classList.remove('text-stone-400');
+            activeNav.classList.add('text-amber-400', 'font-bold');
+
+            // 他ゲーム停止処理
+            if (tabId !== 'kingyo' && state.kingyo.active) {
+                endKingyoGame(false);
+            }
+            if (tabId !== 'mato' && state.mato.active) {
+                endMatoGame(false);
+            }
+
+            // タブ変更時の再描画処理
+            if (tabId === 'kingyo') initKingyoCanvas();
+            if (tabId === 'mato') initMatoCanvas();
+            if (tabId === 'decorate') drawJizoDecorate();
+            if (tabId === 'fukubiki') drawGarapon(garaponAngle);
+            if (tabId === 'zukan') renderZukan();
+        }
+
+        /* ==========================================
+           3. ゲーム1: みんなで数珠まわし
+           ========================================== */
+        const juzuCanvas = document.getElementById('juzuCanvas');
+        const juzuCtx = juzuCanvas.getContext('2d');
+
+        function drawJuzu() {
+            const ctx = juzuCtx;
+            const width = juzuCanvas.width;
+            const height = juzuCanvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = 100;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // 背景光
+            const grad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, 150);
+            grad.addColorStop(0, '#FFF2D6');
+            grad.addColorStop(1, 'rgba(255, 248, 231, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 中央のお地蔵様グラフィック
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            
+            // お顔
+            ctx.fillStyle = '#E5C09B';
+            ctx.beginPath();
+            ctx.arc(0, -10, 32, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 赤い前掛け
+            ctx.fillStyle = '#C0392B';
+            ctx.beginPath();
+            ctx.arc(0, 15, 28, 0, Math.PI);
+            ctx.fill();
+
+            // 笑顔
+            ctx.strokeStyle = '#5D4037';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(-10, -14, 6, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.arc(10, -14, 6, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+
+            // びんちょう（赤いポチ）
+            ctx.fillStyle = '#E74C3C';
+            ctx.beginPath();
+            ctx.arc(-16, -8, 3, 0, Math.PI * 2);
+            ctx.arc(16, -8, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // 数珠の描画（円状に玉を配置）
+            const beadCount = 24;
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(state.juzu.angle);
+
+            for (let i = 0; i < beadCount; i++) {
+                const angle = (i / beadCount) * Math.PI * 2;
+                const bx = Math.cos(angle) * radius;
+                const by = Math.sin(angle) * radius;
+
+                // 親玉（親珠）は大きく、親房付き
+                const isMasterBead = (i === 0);
+                const beadRadius = isMasterBead ? 14 : 9;
+
+                // 数珠玉の影
+                ctx.fillStyle = 'rgba(0,0,0,0.15)';
+                ctx.beginPath();
+                ctx.arc(bx + 2, by + 2, beadRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 数珠玉グラデーション
+                const beadGrad = ctx.createRadialGradient(bx - 3, by - 3, 1, bx, by, beadRadius);
+                if (isMasterBead) {
+                    beadGrad.addColorStop(0, '#F39C12');
+                    beadGrad.addColorStop(1, '#D35400');
+                } else {
+                    beadGrad.addColorStop(0, '#A0522D');
+                    beadGrad.addColorStop(1, '#5C2C16');
+                }
+
+                ctx.fillStyle = beadGrad;
+                ctx.beginPath();
+                ctx.arc(bx, by, beadRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 親房（ふさ）
+                if (isMasterBead) {
+                    ctx.strokeStyle = '#C0392B';
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(bx, by);
+                    ctx.lineTo(bx * 1.3, by * 1.3);
+                    ctx.stroke();
+                }
+            }
+            ctx.restore();
+        }
+
+        function startJuzuGame() {
+            getAudioContext();
+            document.getElementById('juzuStartOverlay').classList.add('hidden');
+            document.getElementById('juzuTapBtn').disabled = false;
+
+            state.juzu.active = true;
+            state.juzu.laps = 0;
+            state.juzu.combo = 0;
+            state.juzu.timeLeft = 30;
+            state.juzu.angle = 0;
+
+            updateJuzuUI();
+
+            if (state.juzu.timerId) clearInterval(state.juzu.timerId);
+            state.juzu.timerId = setInterval(() => {
+                state.juzu.timeLeft--;
+                updateJuzuUI();
+
+                if (state.juzu.timeLeft <= 0) {
+                    endJuzuGame();
+                }
+            }, 1000);
+
+            drawJuzu();
+        }
+
+        function onJuzuTap() {
+            if (!state.juzu.active) return;
+
+            playMokugyoSound();
+
+            // 回転を進める
+            const step = (Math.PI * 2) / 24; // 1玉分進む
+            state.juzu.angle += step;
+            state.juzu.laps += 1 / 24;
+            state.juzu.combo++;
+
+            // ひといきボーナス
+            if (Math.floor(state.juzu.laps * 24) % 24 === 0) {
+                playBellSound(1046.5);
+            }
+
+            updateJuzuUI();
+            drawJuzu();
+        }
+
+        function updateJuzuUI() {
+            document.getElementById('juzuTimer').textContent = state.juzu.timeLeft;
+            document.getElementById('juzuLaps').textContent = state.juzu.laps.toFixed(1);
+            document.getElementById('juzuCombo').textContent = state.juzu.combo;
+        }
+
+        function endJuzuGame() {
+            state.juzu.active = false;
+            clearInterval(state.juzu.timerId);
+            document.getElementById('juzuTapBtn').disabled = true;
+
+            playFanfareSound();
+
+            // 回転数に応じて福引き券獲得
+            const earnedTickets = Math.max(1, Math.floor(state.juzu.laps / 2));
+            state.tickets += earnedTickets;
+            document.getElementById('ticketCount').textContent = state.tickets;
+
+            // 終了モーダルオーバーレイ表示
+            const overlay = document.getElementById('juzuStartOverlay');
+            overlay.classList.remove('hidden');
+            overlay.innerHTML = `
+                <div class="text-4xl mb-1">🎉</div>
+                <h3 class="text-xl font-bold text-amber-300">タイムアップ！</h3>
+                <p class="text-sm my-2">数珠回し結果: <span class="text-amber-200 font-bold text-lg">${state.juzu.laps.toFixed(1)}周</span></p>
+                <div class="bg-red-900/80 px-4 py-2 rounded-xl border border-amber-400 mb-4 text-xs text-amber-100">
+                    🎫 福引き券を <span class="text-amber-300 font-bold text-sm">${earnedTickets}枚</span> 獲得！
+                </div>
+                <button onclick="startJuzuGame()" class="bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold py-2.5 px-6 rounded-full border border-amber-300 shadow active:scale-95 transition">
+                    もう一度挑戦する
+                </button>
+            `;
+        }
+
+        /* ==========================================
+           3.5 ゲーム: リトミック金魚すくい
+           ========================================== */
+        const kingyoCanvas = document.getElementById('kingyoCanvas');
+        const kingyoCtx = kingyoCanvas.getContext('2d');
+
+        // 金魚の種類定義（レア種・大漁ボーナス追加）
+        const FISH_TYPES = [
+            { id: 'wakin', name: '和金', color: '#E74C3C', finColor: '#FF7675', score: 100, speed: 1.3, radius: 14, icon: '🐟' },
+            { id: 'demekin', name: '出目金', color: '#2C3E50', finColor: '#7F8C8D', score: 200, speed: 1.0, radius: 16, icon: '⚫' },
+            { id: 'sarasa', name: '更紗琉金', color: '#E67E22', finColor: '#FFFFFF', score: 250, speed: 1.4, radius: 15, icon: '🐠' },
+            { id: 'golden', name: '黄金魚', color: '#F1C40F', finColor: '#F39C12', score: 350, speed: 1.8, radius: 13, icon: '✨' },
+            { id: 'rainbow', name: '七色らんちゅう', color: '#9B59B6', finColor: '#1ABC9C', score: 500, speed: 2.0, radius: 17, icon: '🌈' },
+            { id: 'duck', name: 'アヒル隊長', color: '#F39C12', finColor: '#E67E22', score: 600, speed: 0.8, radius: 18, isDuck: true, icon: '🦆' }
+        ];
+
+        function initKingyoCanvas() {
+            drawKingyoScene();
+            // イベントリスナー設定（タッチ＆クリック）
+            kingyoCanvas.onpointerdown = handleKingyoPointerDown;
+            kingyoCanvas.onpointermove = handleKingyoPointerMove;
+        }
+
+        function handleKingyoPointerMove(e) {
+            const rect = kingyoCanvas.getBoundingClientRect();
+            const scaleX = kingyoCanvas.width / rect.width;
+            const scaleY = kingyoCanvas.height / rect.height;
+            state.kingyo.poiPos.x = (e.clientX - rect.left) * scaleX;
+            state.kingyo.poiPos.y = (e.clientY - rect.top) * scaleY;
+        }
+
+        function handleKingyoPointerDown(e) {
+            e.preventDefault();
+            getAudioContext();
+            handleKingyoPointerMove(e);
+
+            if (!state.kingyo.active) return;
+            attemptScoop(state.kingyo.poiPos.x, state.kingyo.poiPos.y);
+        }
+
+        // 金魚の常時湧き・水槽端からのスマートスポーン
+        function spawnFish(forceRare = false) {
+            const isFever = state.kingyo.feverTime > 0;
+            let type;
+
+            if (forceRare || isFever) {
+                // フィーバー中は高得点レア金魚が高確率で出現
+                const rarePool = [FISH_TYPES[2], FISH_TYPES[3], FISH_TYPES[4], FISH_TYPES[5]];
+                type = rarePool[Math.floor(Math.random() * rarePool.length)];
+            } else {
+                // 通常時：確率抽選
+                const r = Math.random();
+                if (r < 0.45) type = FISH_TYPES[0];      // 和金
+                else if (r < 0.70) type = FISH_TYPES[1]; // 出目金
+                else if (r < 0.88) type = FISH_TYPES[2]; // 更紗
+                else if (r < 0.96) type = FISH_TYPES[3]; // 黄金魚
+                else type = (Math.random() < 0.5 ? FISH_TYPES[4] : FISH_TYPES[5]); // 虹色またはアヒル
+            }
+
+            // 水槽の4辺の端から中央に向かって泳ぎ込む
+            const side = Math.floor(Math.random() * 4);
+            let x, y, angle;
+            const w = kingyoCanvas.width;
+            const h = kingyoCanvas.height;
+
+            if (side === 0) { // 上から
+                x = 30 + Math.random() * (w - 60);
+                y = 10;
+                angle = Math.PI * 0.25 + Math.random() * Math.PI * 0.5;
+            } else if (side === 1) { // 右から
+                x = w - 10;
+                y = 30 + Math.random() * (h - 60);
+                angle = Math.PI * 0.75 + Math.random() * Math.PI * 0.5;
+            } else if (side === 2) { // 下から
+                x = 30 + Math.random() * (w - 60);
+                y = h - 10;
+                angle = -Math.PI * 0.25 - Math.random() * Math.PI * 0.5;
+            } else { // 左から
+                x = 10;
+                y = 30 + Math.random() * (h - 60);
+                angle = -Math.PI * 0.25 + Math.random() * Math.PI * 0.5;
+            }
+
+            const speed = type.speed * (0.85 + Math.random() * 0.35);
+
+            state.kingyo.fishes.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                type,
+                tailPhase: Math.random() * Math.PI * 2,
+                alive: true,
+                scooped: false,
+                jumpScale: 1,
+                jumpY: 0,
+                jumpAlpha: 1,
+                scale: 1,
+                hitRadius: type.radius + 14
+            });
+        }
+
+        function startKingyoGame() {
+            getAudioContext();
+            document.getElementById('kingyoStartOverlay').classList.add('hidden');
+
+            state.kingyo.active = true;
+            state.kingyo.timeLeft = 30;
+            state.kingyo.score = 0;
+            state.kingyo.count = 0;
+            state.kingyo.combo = 0;
+            state.kingyo.poiLife = 100;
+            state.kingyo.feverTime = 0;
+            state.kingyo.fishes = [];
+            state.kingyo.particles = [];
+            state.kingyo.paperScraps = [];
+            state.kingyo.waterRipples = [];
+            state.kingyo.screenShake = 0;
+            state.kingyo.beatCount = 0;
+            state.kingyo.lastBeatTime = performance.now();
+
+            // 初期金魚をしっかり7匹投入
+            for (let i = 0; i < 7; i++) spawnFish();
+
+            updateKingyoUI();
+
+            // ゲームタイマー（30秒）
+            if (state.kingyo.timerId) clearInterval(state.kingyo.timerId);
+            state.kingyo.timerId = setInterval(() => {
+                state.kingyo.timeLeft--;
+                if (state.kingyo.feverTime > 0) state.kingyo.feverTime--;
+                updateKingyoUI();
+                if (state.kingyo.timeLeft <= 0) {
+                    endKingyoGame(true);
+                }
+            }, 1000);
+
+            // リトミック・お囃子ビートエンジン開始
+            startRhythmLoop();
+
+            // アニメーションループ開始
+            if (state.kingyo.animationFrameId) cancelAnimationFrame(state.kingyo.animationFrameId);
+            animateKingyo();
+        }
+
+        // リトミック（リズム・お囃子）エンジン
+        function startRhythmLoop() {
+            if (state.kingyo.beatTimerId) clearInterval(state.kingyo.beatTimerId);
+
+            state.kingyo.beatTimerId = setInterval(() => {
+                if (!state.kingyo.active) {
+                    clearInterval(state.kingyo.beatTimerId);
+                    return;
+                }
+
+                state.kingyo.beatCount++;
+                state.kingyo.lastBeatTime = performance.now();
+
+                // 4小節（16拍）ごとのリトミックパターン変化
+                const cycle = state.kingyo.beatCount % 16;
+                let patternText = '🥁 ドン！に合わせてすくおう';
+                let patternIcon = '🥁';
+
+                if (state.kingyo.feverTime > 0) {
+                    patternText = '🏮 大漁フィーバー中！ボーナスラッシュ！';
+                    patternIcon = '🔥';
+                    playTaikoDong();
+                } else if (cycle >= 12 && cycle <= 14) {
+                    // おやすみ（休符）モード：すくったらダメ！
+                    state.kingyo.currentPattern = 'rest';
+                    patternText = '🛑 おやすみ！(すくっちゃダメ)';
+                    patternIcon = '🤫';
+                    playTaikoKack();
+                } else if (cycle >= 8 && cycle <= 11) {
+                    // タタ！（連打ビート）
+                    state.kingyo.currentPattern = 'tata';
+                    patternText = '⚡ トントン！早打ちリズム！';
+                    patternIcon = '🎵';
+                    playTaikoDong();
+                    setTimeout(() => { if (state.kingyo.active) playTaikoKack(); }, state.kingyo.beatInterval / 2);
+                } else {
+                    // 通常のドン！
+                    state.kingyo.currentPattern = 'dong';
+                    patternText = '🥁 ドン！に合わせてすくおう';
+                    patternIcon = '🥁';
+                    playTaikoDong();
+                }
+
+                // 水面の全体リップル
+                state.kingyo.waterRipples.push({
+                    x: kingyoCanvas.width / 2,
+                    y: kingyoCanvas.height / 2,
+                    r: 10,
+                    maxR: 160,
+                    alpha: 0.6
+                });
+
+                // UI更新
+                document.getElementById('rhythmGuideText').textContent = patternText;
+                document.getElementById('rhythmBeatIcon').textContent = patternIcon;
+
+                // 生きている金魚の数を数え、常に6〜7匹以上になるよう自動補充
+                const aliveFishes = state.kingyo.fishes.filter(f => f.alive && !f.scooped);
+                if (aliveFishes.length < 6) {
+                    const toSpawn = 6 - aliveFishes.length;
+                    for (let s = 0; s < toSpawn; s++) spawnFish();
+                }
+
+            }, state.kingyo.beatInterval);
+        }
+
+        // すくい判定処理
+        function attemptScoop(px, py) {
+            const now = performance.now();
+            const timeSinceBeat = (now - state.kingyo.lastBeatTime) % state.kingyo.beatInterval;
+            const diffFromNearestBeat = Math.min(timeSinceBeat, state.kingyo.beatInterval - timeSinceBeat);
+
+            // リズム判定ウィンドウ (ミリ秒)
+            const isPerfect = diffFromNearestBeat < 120;
+            const isGood = diffFromNearestBeat < 230;
+
+            // 1. 「おやすみ（休符）」の時にすくってしまった場合（フィーバー中は免除）
+            if (state.kingyo.currentPattern === 'rest' && state.kingyo.feverTime <= 0) {
+                damagePoi(28, px, py, 'おやすみ違反！-28%');
+                state.kingyo.combo = 0;
+                updateKingyoUI();
+                return;
+            }
+
+            // 2. 金魚との当たり判定（生きている金魚のみ）
+            let hitFishIndex = -1;
+            for (let i = state.kingyo.fishes.length - 1; i >= 0; i--) {
+                const f = state.kingyo.fishes[i];
+                if (!f.alive || f.scooped) continue;
+                const dist = Math.hypot(f.x - px, f.y - py);
+                if (dist < f.hitRadius) {
+                    hitFishIndex = i;
+                    break;
+                }
+            }
+
+            if (hitFishIndex !== -1) {
+                const fish = state.kingyo.fishes[hitFishIndex];
+
+                if (isPerfect || isGood) {
+                    // すくい大成功！
+                    fish.alive = false;
+                    fish.scooped = true; // ジャンプすくい上げアニメーション開始
+                    state.kingyo.count++;
+                    state.kingyo.combo++;
+
+                    const feverBonus = state.kingyo.feverTime > 0 ? 1.5 : 1.0;
+                    const comboMultiplier = 1 + Math.min(state.kingyo.combo * 0.1, 2.0);
+                    const earned = Math.round(fish.type.score * (isPerfect ? 1.5 : 1.0) * comboMultiplier * feverBonus);
+                    state.kingyo.score += earned;
+
+                    playSplashSound(true);
+
+                    // 5コンボごとに大漁フィーバー発動！
+                    if (state.kingyo.combo > 0 && state.kingyo.combo % 5 === 0) {
+                        triggerFever();
+                    }
+
+                    const label = isPerfect ? `PERFECT! +${earned}` : `GOOD! +${earned}`;
+                    const color = isPerfect ? '#F1C40F' : '#2ECC71';
+                    spawnFloatingText(fish.x, fish.y, label, color);
+
+                    // 水しぶきパーティクル
+                    for (let p = 0; p < 10; p++) {
+                        state.kingyo.particles.push({
+                            x: fish.x, y: fish.y,
+                            vx: (Math.random() - 0.5) * 5,
+                            vy: (Math.random() - 0.5) * 5 - 2,
+                            r: 3 + Math.random() * 3,
+                            color: '#FFFFFF',
+                            alpha: 1
+                        });
+                    }
+
+                    // 水波紋
+                    state.kingyo.waterRipples.push({
+                        x: fish.x, y: fish.y,
+                        r: 5, maxR: 45, alpha: 0.8
+                    });
+
+                    // すぐに新しい金魚を1〜2匹即時補充（途切れ防止！）
+                    setTimeout(() => {
+                        if (state.kingyo.active) {
+                            spawnFish();
+                            if (Math.random() < 0.4) spawnFish();
+                        }
+                    }, 200);
+
+                } else {
+                    // タイミング外れ（オフビート）で金魚が逃げる＆ポイダメージ
+                    damagePoi(16, px, py, 'タイミングミス！');
+                    state.kingyo.combo = 0;
+                    
+                    // 金魚がびっくりして急加速
+                    fish.vx *= 2.5;
+                    fish.vy *= 2.5;
+                }
+            } else {
+                // 空振り（水だけすくった）
+                damagePoi(10, px, py, 'からぶり！');
+                state.kingyo.combo = 0;
+            }
+
+            updateKingyoUI();
+        }
+
+        function triggerFever() {
+            state.kingyo.feverTime = 6; // 6秒間の大漁フィーバー
+            playBellSound(1200);
+            setTimeout(() => playBellSound(1500), 150);
+
+            spawnFloatingText(kingyoCanvas.width / 2, 80, '🏮 大漁フィーバー突入!! 🏮', '#FFD700');
+
+            // レア金魚を一気に3匹投入
+            for (let i = 0; i < 3; i++) {
+                spawnFish(true);
+            }
+        }
+
+        // ポイの破損処理（音・映像・パーティクル・振動）
+        function damagePoi(amount, px = state.kingyo.poiPos.x, py = state.kingyo.poiPos.y, text = 'ダメージ！') {
+            state.kingyo.poiLife = Math.max(0, state.kingyo.poiLife - amount);
+            const isBroken = state.kingyo.poiLife <= 0;
+
+            // 破れ音の再生
+            playPoiRipSound(isBroken);
+
+            // 画面の揺れ（シェイク）
+            state.kingyo.screenShake = isBroken ? 16 : 8;
+
+            // ポイゲージの揺れ＆警告アニメーション付与
+            const gaugeContainer = document.getElementById('poiGaugeContainer');
+            if (gaugeContainer) {
+                gaugeContainer.classList.remove('poi-damage-anim');
+                void gaugeContainer.offsetWidth; // リフロー発生で再アニメーション
+                gaugeContainer.classList.add('poi-damage-anim');
+            }
+
+            // 破れた紙片パーティクルの発生
+            const scrapCount = isBroken ? 18 : 7;
+            for (let i = 0; i < scrapCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1.0 + Math.random() * 3.5;
+                state.kingyo.paperScraps.push({
+                    x: px + (Math.random() - 0.5) * 20,
+                    y: py + (Math.random() - 0.5) * 20,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed + 0.5,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.2,
+                    w: 4 + Math.random() * 6,
+                    h: 3 + Math.random() * 5,
+                    alpha: 1.0
+                });
+            }
+
+            // 破損テキスト・擬音の表示
+            spawnFloatingText(px, py - 15, isBroken ? '💥 バリィッ！！ (全壊)' : `⚡ ビリッ！ ${text}`, isBroken ? '#FF0000' : '#E74C3C');
+
+            if (isBroken) {
+                setTimeout(() => {
+                    endKingyoGame(false);
+                }, 400);
+            }
+        }
+
+        function spawnFloatingText(x, y, text, color) {
+            state.kingyo.particles.push({
+                x, y: y - 10,
+                text,
+                color,
+                alpha: 1,
+                vy: -1.2,
+                isText: true
+            });
+        }
+
+        function updateKingyoUI() {
+            document.getElementById('kingyoTimer').textContent = state.kingyo.timeLeft;
+            document.getElementById('kingyoScore').textContent = `${state.kingyo.score}点`;
+            document.getElementById('kingyoCount').textContent = `${state.kingyo.count}匹`;
+            document.getElementById('kingyoCombo').textContent = state.kingyo.combo;
+
+            const life = state.kingyo.poiLife;
+            document.getElementById('poiLifeText').textContent = `${life}%`;
+            const bar = document.getElementById('poiLifeBar');
+            const status = document.getElementById('poiLifeStatus');
+            bar.style.width = `${life}%`;
+            
+            if (life > 60) {
+                bar.className = 'bg-gradient-to-r from-emerald-400 to-green-500 h-2.5 rounded-full transition-all duration-200';
+                status.textContent = 'じょうぶ';
+                status.className = 'text-green-600 font-extrabold text-[9px]';
+            } else if (life > 25) {
+                bar.className = 'bg-gradient-to-r from-amber-400 to-orange-500 h-2.5 rounded-full transition-all duration-200';
+                status.textContent = 'うすい！';
+                status.className = 'text-amber-600 font-extrabold text-[9px]';
+            } else if (life > 0) {
+                bar.className = 'bg-gradient-to-r from-red-500 to-rose-600 h-2.5 rounded-full animate-pulse transition-all duration-200';
+                status.textContent = '破れそう!!';
+                status.className = 'text-red-600 font-black text-[9px] animate-bounce';
+            } else {
+                bar.className = 'bg-stone-500 h-2.5 rounded-full';
+                status.textContent = '破断!';
+                status.className = 'text-stone-700 font-black text-[9px]';
+            }
+        }
+
+        function endKingyoGame(timeUp = true) {
+            state.kingyo.active = false;
+            clearInterval(state.kingyo.timerId);
+            clearInterval(state.kingyo.beatTimerId);
+
+            playFanfareSound();
+
+            // スコアに応じて福引き券獲得 (700点ごとに1枚、最低1枚)
+            const earnedTickets = Math.max(1, Math.floor(state.kingyo.score / 700));
+            state.tickets += earnedTickets;
+            document.getElementById('ticketCount').textContent = state.tickets;
+
+            // 終了モーダルオーバーレイ
+            const overlay = document.getElementById('kingyoStartOverlay');
+            overlay.classList.remove('hidden');
+            overlay.innerHTML = `
+                <div class="text-4xl mb-1">${timeUp ? '🎉' : '💦'}</div>
+                <h3 class="text-xl font-bold text-amber-300">${timeUp ? 'タイムアップ！' : 'ポイが破れちゃった！'}</h3>
+                <div class="text-xs my-2 text-stone-200">
+                    すくった金魚: <b class="text-amber-300 text-base">${state.kingyo.count}匹</b><br>
+                    スコア: <b class="text-white text-lg">${state.kingyo.score}点</b>
+                </div>
+                <div class="bg-red-900/80 px-4 py-2 rounded-xl border border-amber-400 mb-4 text-xs text-amber-100">
+                    🎫 福引き券を <span class="text-amber-300 font-bold text-sm">${earnedTickets}枚</span> 獲得！
+                </div>
+                <button onclick="startKingyoGame()" class="bg-gradient-to-r from-teal-600 to-amber-600 text-white font-bold py-2.5 px-6 rounded-full border border-amber-300 shadow active:scale-95 transition">
+                    もう一度すくう！
+                </button>
+            `;
+        }
+
+        function animateKingyo() {
+            if (!state.kingyo.active) {
+                drawKingyoScene();
+                return;
+            }
+
+            updateKingyoPhysics();
+            drawKingyoScene();
+            state.kingyo.animationFrameId = requestAnimationFrame(animateKingyo);
+        }
+
+        function updateKingyoPhysics() {
+            const w = kingyoCanvas.width;
+            const h = kingyoCanvas.height;
+
+            // 画面シェイクの減衰
+            if (state.kingyo.screenShake > 0) {
+                state.kingyo.screenShake *= 0.82;
+                if (state.kingyo.screenShake < 0.2) state.kingyo.screenShake = 0;
+            }
+
+            // 金魚の移動と尾びれアニメーション
+            for (let i = state.kingyo.fishes.length - 1; i >= 0; i--) {
+                const fish = state.kingyo.fishes[i];
+
+                if (fish.scooped) {
+                    // すくい上げジャンプアニメーション
+                    fish.jumpY -= 3.5;
+                    fish.jumpScale += 0.04;
+                    fish.jumpAlpha -= 0.04;
+                    if (fish.jumpAlpha <= 0) {
+                        state.kingyo.fishes.splice(i, 1);
+                    }
+                    continue;
+                }
+
+                if (!fish.alive) continue;
+
+                fish.x += fish.vx;
+                fish.y += fish.vy;
+                fish.tailPhase += 0.16;
+
+                // 壁での反射
+                const margin = 18;
+                if (fish.x < margin) { fish.x = margin; fish.vx *= -1; }
+                if (fish.x > w - margin) { fish.x = w - margin; fish.vx *= -1; }
+                if (fish.y < margin) { fish.y = margin; fish.vy *= -1; }
+                if (fish.y > h - margin) { fish.y = h - margin; fish.vy *= -1; }
+
+                // たまに向きを変える
+                if (Math.random() < 0.025) {
+                    const angle = Math.atan2(fish.vy, fish.vx) + (Math.random() - 0.5);
+                    const speed = fish.type.speed;
+                    fish.vx = Math.cos(angle) * speed;
+                    fish.vy = Math.sin(angle) * speed;
+                }
+            }
+
+            // 泳いでいる金魚が少なくなったら即座に補充（最低5匹キープ）
+            const aliveCount = state.kingyo.fishes.filter(f => f.alive && !f.scooped).length;
+            if (aliveCount < 5 && state.kingyo.active) {
+                spawnFish();
+            }
+
+            // 破れた紙片パーティクルの更新
+            for (let i = state.kingyo.paperScraps.length - 1; i >= 0; i--) {
+                const s = state.kingyo.paperScraps[i];
+                s.x += s.vx;
+                s.y += s.vy;
+                s.rotation += s.rotSpeed;
+                s.alpha -= 0.018;
+                s.vx *= 0.95;
+                s.vy *= 0.95;
+                if (s.alpha <= 0) state.kingyo.paperScraps.splice(i, 1);
+            }
+
+            // 水波紋の更新
+            for (let i = state.kingyo.waterRipples.length - 1; i >= 0; i--) {
+                const r = state.kingyo.waterRipples[i];
+                r.r += 1.8;
+                r.alpha -= 0.02;
+                if (r.alpha <= 0 || r.r >= r.maxR) {
+                    state.kingyo.waterRipples.splice(i, 1);
+                }
+            }
+
+            // パーティクルの更新
+            for (let i = state.kingyo.particles.length - 1; i >= 0; i--) {
+                const p = state.kingyo.particles[i];
+                if (p.isText) {
+                    p.y += p.vy;
+                    p.alpha -= 0.022;
+                } else {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.1; // 重力
+                    p.alpha -= 0.03;
+                }
+                if (p.alpha <= 0) state.kingyo.particles.splice(i, 1);
+            }
+        }
+
+        function drawKingyoScene() {
+            const ctx = kingyoCtx;
+            const w = kingyoCanvas.width;
+            const h = kingyoCanvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // 画面振動（Screen Shake）の適用
+            ctx.save();
+            if (state.kingyo.screenShake > 0) {
+                const shakeX = (Math.random() - 0.5) * state.kingyo.screenShake;
+                const shakeY = (Math.random() - 0.5) * state.kingyo.screenShake;
+                ctx.translate(shakeX, shakeY);
+            }
+
+            // 1. 水槽の背景グラデーション（フィーバー中は黄金に輝く）
+            const isFever = state.kingyo.feverTime > 0;
+            const bgGrad = ctx.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, 170);
+            if (isFever) {
+                bgGrad.addColorStop(0, '#FFF9C4');
+                bgGrad.addColorStop(0.7, '#FFE082');
+                bgGrad.addColorStop(1, '#FFD54F');
+            } else {
+                bgGrad.addColorStop(0, '#E0F7FA');
+                bgGrad.addColorStop(0.7, '#80DEEA');
+                bgGrad.addColorStop(1, '#4DD0E1');
+            }
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // 水底の装飾（水草・小石）
+            ctx.fillStyle = isFever ? 'rgba(255, 179, 0, 0.4)' : 'rgba(77, 182, 172, 0.4)';
+            ctx.beginPath();
+            ctx.arc(40, 60, 18, 0, Math.PI * 2);
+            ctx.arc(w - 50, h - 60, 24, 0, Math.PI * 2);
+            ctx.arc(w / 2 + 40, 80, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. 水面の波紋描画
+            state.kingyo.waterRipples.forEach(rip => {
+                ctx.save();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${rip.alpha})`;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 3. リズムガイド（現在のビート進行に応じたリング）
+            const now = performance.now();
+            const timeSinceBeat = (now - state.kingyo.lastBeatTime) % state.kingyo.beatInterval;
+            const beatProgress = timeSinceBeat / state.kingyo.beatInterval; // 0.0 -> 1.0
+
+            // 4. 金魚の描画
+            state.kingyo.fishes.forEach(fish => {
+                ctx.save();
+                
+                if (fish.scooped) {
+                    // すくい上げ中の金魚（手前に大きくポップアップ）
+                    ctx.translate(fish.x, fish.y + fish.jumpY);
+                    ctx.scale(fish.jumpScale, fish.jumpScale);
+                    ctx.globalAlpha = Math.max(0, fish.jumpAlpha);
+                } else {
+                    ctx.translate(fish.x, fish.y);
+                }
+
+                const angle = Math.atan2(fish.vy, fish.vx);
+                ctx.rotate(angle);
+
+                // リズム収縮リング（金魚の周りに縮んでくる輪）
+                if (state.kingyo.active && !fish.scooped) {
+                    const ringRadius = fish.hitRadius + (1 - beatProgress) * 22;
+                    ctx.strokeStyle = (state.kingyo.currentPattern === 'rest' && !isFever)
+                        ? 'rgba(231, 76, 60, 0.5)' 
+                        : (beatProgress > 0.8 || beatProgress < 0.2 ? 'rgba(241, 196, 15, 0.95)' : 'rgba(255, 255, 255, 0.6)');
+                    ctx.lineWidth = isFever ? 3 : 2;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, ringRadius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                if (fish.type.isDuck) {
+                    // アヒルちゃん
+                    ctx.font = '26px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('🦆', 0, 0);
+                } else {
+                    // 金魚の魚体描画
+                    const r = fish.type.radius;
+
+                    // 尾びれ
+                    const tailWiggle = Math.sin(fish.tailPhase) * 6;
+                    ctx.fillStyle = fish.type.finColor;
+                    ctx.beginPath();
+                    ctx.moveTo(-r + 2, 0);
+                    ctx.lineTo(-r - 14, -8 + tailWiggle);
+                    ctx.lineTo(-r - 10, tailWiggle);
+                    ctx.lineTo(-r - 14, 8 + tailWiggle);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // 胸びれ（左右）
+                    ctx.beginPath();
+                    ctx.ellipse(-2, -r + 2, 6, 3, 0.5, 0, Math.PI * 2);
+                    ctx.ellipse(-2, r - 2, 6, 3, -0.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 胴体
+                    ctx.fillStyle = fish.type.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, r + 2, r - 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 目
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.beginPath();
+                    ctx.arc(r - 3, -4, 3, 0, Math.PI * 2);
+                    ctx.arc(r - 3, 4, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#000000';
+                    ctx.beginPath();
+                    ctx.arc(r - 2, -4, 1.5, 0, Math.PI * 2);
+                    ctx.arc(r - 2, 4, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            });
+
+            // 5. 破れた紙片パーティクルの描画（水中を舞う紙）
+            state.kingyo.paperScraps.forEach(s => {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.rotate(s.rotation);
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha * 0.9})`;
+                ctx.strokeStyle = `rgba(220, 220, 220, ${s.alpha * 0.7})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.rect(-s.w / 2, -s.h / 2, s.w, s.h);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 6. ポイ（すくい網）のカーソル描画 & 破れ表現
+            const poi = state.kingyo.poiPos;
+            const lifeRatio = state.kingyo.poiLife / 100;
+            ctx.save();
+            ctx.translate(poi.x, poi.y);
+
+            // ポイの柄
+            ctx.fillStyle = '#D35400';
+            ctx.beginPath();
+            ctx.rect(-3, poi.radius, 6, 26);
+            ctx.fill();
+
+            // ポイのプラスチック枠
+            ctx.strokeStyle = lifeRatio <= 0 ? '#7F8C8D' : (lifeRatio < 0.3 ? '#E74C3C' : '#E67E22');
+            ctx.lineWidth = 4.5;
+            ctx.beginPath();
+            ctx.arc(0, 0, poi.radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // ポイの和紙（破れていない部分）
+            if (lifeRatio > 0) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${0.15 + 0.3 * lifeRatio})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, poi.radius - 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // ポイの破れ目（亀裂・ギザギザ穴の拡大）
+            if (lifeRatio < 0.9) {
+                const tearSize = (1 - lifeRatio) * (poi.radius - 2);
+                
+                // 水の透過（穴があいた部分）
+                ctx.save();
+                ctx.fillStyle = isFever ? 'rgba(255, 213, 79, 0.95)' : 'rgba(77, 208, 225, 0.95)';
+                ctx.beginPath();
+                
+                // ギザギザの破れ目形状
+                const spikes = 10;
+                for (let k = 0; k < spikes; k++) {
+                    const a = (k / spikes) * Math.PI * 2;
+                    const rOffset = ((k % 2 === 0) ? 1.15 : 0.85);
+                    const rx = Math.cos(a) * tearSize * rOffset;
+                    const ry = Math.sin(a) * tearSize * rOffset;
+                    if (k === 0) ctx.moveTo(rx, ry);
+                    else ctx.lineTo(rx, ry);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                // 破れ目のフチ（白くケバ立った破断線）
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.lineWidth = 1.8;
+                ctx.stroke();
+
+                // 放射状の裂け目（クラック）
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-tearSize * 0.9, -tearSize * 0.8);
+                ctx.lineTo(-poi.radius + 5, -poi.radius + 6);
+                ctx.moveTo(tearSize * 0.9, tearSize * 0.7);
+                ctx.lineTo(poi.radius - 6, poi.radius - 6);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 危険状態のポイ光（破れそうな時の赤点滅）
+            if (lifeRatio > 0 && lifeRatio < 0.3 && Math.floor(Date.now() / 150) % 2 === 0) {
+                ctx.strokeStyle = 'rgba(231, 76, 60, 0.7)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(0, 0, poi.radius + 3, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // 7. パーティクル・浮遊テキスト
+            state.kingyo.particles.forEach(p => {
+                ctx.save();
+                if (p.isText) {
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = p.color;
+                    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                    ctx.shadowBlur = 4;
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillText(p.text, p.x, p.y);
+                } else {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            });
+
+            ctx.restore(); // Screen Shake の復帰
+        }
+
+        /* ==========================================
+           3.8 ゲーム: お囃子リズム的当て（射的）
+           ========================================== */
+        const matoCanvas = document.getElementById('matoCanvas');
+        const matoCtx = matoCanvas.getContext('2d');
+
+        // 的の種類定義
+        const MATO_TYPES = [
+            { id: 'daruma', name: '赤だるま', icon: '👺', score: 150, color: '#C0392B', w: 36, h: 42, isBomb: false, isGold: false },
+            { id: 'kitsune', name: '狐のお面', icon: '🦊', score: 180, color: '#E67E22', w: 34, h: 38, isBomb: false, isGold: false },
+            { id: 'neko', name: '招き猫', icon: '🐱', score: 250, color: '#F39C12', w: 38, h: 44, isBomb: false, isGold: false },
+            { id: 'chochin', name: '提灯ボム', icon: '🏮', score: 300, color: '#E74C3C', w: 32, h: 42, isBomb: true, isGold: false },
+            { id: 'gold_jizo', name: '黄金の宝仏', icon: '✨', score: 500, color: '#F1C40F', w: 40, h: 46, isBomb: false, isGold: true }
+        ];
+
+        // 的当て屋台の棚のY座標
+        const SHELF_ROWS = [
+            { y: 80, speed: 0.9 },   // 上段
+            { y: 155, speed: -1.2 }, // 中段（逆向き）
+            { y: 230, speed: 1.4 }   // 下段
+        ];
+
+        function initMatoCanvas() {
+            drawMatoScene();
+            matoCanvas.onpointerdown = handleMatoPointerDown;
+            matoCanvas.onpointermove = handleMatoPointerMove;
+        }
+
+        function handleMatoPointerMove(e) {
+            const rect = matoCanvas.getBoundingClientRect();
+            const scaleX = matoCanvas.width / rect.width;
+            const scaleY = matoCanvas.height / rect.height;
+            state.mato.sightPos.x = (e.clientX - rect.left) * scaleX;
+            state.mato.sightPos.y = (e.clientY - rect.top) * scaleY;
+        }
+
+        function handleMatoPointerDown(e) {
+            e.preventDefault();
+            getAudioContext();
+            handleMatoPointerMove(e);
+
+            if (!state.mato.active) return;
+            attemptShootMato(state.mato.sightPos.x, state.mato.sightPos.y);
+        }
+
+        function spawnMatoTarget(rowIndex = null, forceGold = false) {
+            const rowIdx = rowIndex !== null ? rowIndex : Math.floor(Math.random() * SHELF_ROWS.length);
+            const row = SHELF_ROWS[rowIdx];
+            const isRush = state.mato.rushTime > 0;
+
+            let type;
+            if (forceGold || (isRush && Math.random() < 0.45)) {
+                type = MATO_TYPES[4]; // 黄金
+            } else {
+                const r = Math.random();
+                if (r < 0.40) type = MATO_TYPES[0];      // だるま
+                else if (r < 0.70) type = MATO_TYPES[1]; // 狐
+                else if (r < 0.88) type = MATO_TYPES[2]; // 猫
+                else if (r < 0.96) type = MATO_TYPES[3]; // 提灯ボム
+                else type = MATO_TYPES[4];               // 黄金
+            }
+
+            const direction = row.speed > 0 ? 1 : -1;
+            const startX = direction > 0 ? -30 : matoCanvas.width + 30;
+
+            state.mato.targets.push({
+                x: startX,
+                baseY: row.y,
+                y: row.y,
+                rowIdx,
+                type,
+                vx: row.speed * (isRush ? 1.4 : 1.0),
+                alive: true,
+                hit: false,
+                fallVy: 0,
+                fallRot: 0,
+                fallRotSpeed: 0,
+                bouncePhase: Math.random() * Math.PI * 2,
+                scale: 1.0,
+                alpha: 1.0
+            });
+        }
+
+        function startMatoGame() {
+            getAudioContext();
+            document.getElementById('matoStartOverlay').classList.add('hidden');
+
+            state.mato.active = true;
+            state.mato.timeLeft = 30;
+            state.mato.score = 0;
+            state.mato.hitCount = 0;
+            state.mato.combo = 0;
+            state.mato.rushTime = 0;
+            state.mato.targets = [];
+            state.mato.particles = [];
+            state.mato.corks = [];
+            state.mato.screenShake = 0;
+            state.mato.beatCount = 0;
+            state.mato.lastBeatTime = performance.now();
+
+            // 初期棚配置（各棚に2つずつ配置）
+            SHELF_ROWS.forEach((row, rIdx) => {
+                for (let k = 0; k < 2; k++) {
+                    const type = MATO_TYPES[Math.floor(Math.random() * (MATO_TYPES.length - 1))];
+                    state.mato.targets.push({
+                        x: 50 + k * 130 + Math.random() * 40,
+                        baseY: row.y,
+                        y: row.y,
+                        rowIdx: rIdx,
+                        type,
+                        vx: row.speed,
+                        alive: true,
+                        hit: false,
+                        fallVy: 0,
+                        fallRot: 0,
+                        fallRotSpeed: 0,
+                        bouncePhase: Math.random() * Math.PI * 2,
+                        scale: 1.0,
+                        alpha: 1.0
+                    });
+                }
+            });
+
+            updateMatoUI();
+
+            // ゲームタイマー（30秒）
+            if (state.mato.timerId) clearInterval(state.mato.timerId);
+            state.mato.timerId = setInterval(() => {
+                state.mato.timeLeft--;
+                if (state.mato.rushTime > 0) {
+                    state.mato.rushTime--;
+                    if (state.mato.rushTime <= 0) {
+                        document.getElementById('matoRushBadge').classList.add('hidden');
+                    }
+                }
+                updateMatoUI();
+                if (state.mato.timeLeft <= 0) {
+                    endMatoGame(true);
+                }
+            }, 1000);
+
+            // リズム・お囃子エンジン開始
+            startMatoRhythmLoop();
+
+            // アニメーションループ開始
+            if (state.mato.animationFrameId) cancelAnimationFrame(state.mato.animationFrameId);
+            animateMato();
+        }
+
+        function startMatoRhythmLoop() {
+            if (state.mato.beatTimerId) clearInterval(state.mato.beatTimerId);
+
+            state.mato.beatTimerId = setInterval(() => {
+                if (!state.mato.active) {
+                    clearInterval(state.mato.beatTimerId);
+                    return;
+                }
+
+                state.mato.beatCount++;
+                state.mato.lastBeatTime = performance.now();
+
+                const isRush = state.mato.rushTime > 0;
+                const cycle = state.mato.beatCount % 8;
+
+                if (isRush) {
+                    playHyoshigiSound();
+                    setTimeout(() => { if (state.mato.active) playTaikoDong(); }, state.mato.beatInterval / 2);
+                    document.getElementById('matoGuideText').textContent = '🔥 お祭りラッシュ中！連打チャンス！';
+                    document.getElementById('matoBeatIcon').textContent = '⚡';
+                } else if (cycle === 0 || cycle === 4) {
+                    playTaikoDong();
+                    document.getElementById('matoGuideText').textContent = '🥁 ドン！重なる瞬間を狙え！';
+                    document.getElementById('matoBeatIcon').textContent = '🥁';
+                } else {
+                    playHyoshigiSound();
+                    document.getElementById('matoGuideText').textContent = '🪵 カン！のリズムで狙い撃ち！';
+                    document.getElementById('matoBeatIcon').textContent = '🪵';
+                }
+
+                // 的の定期補充（各棚に2つ以上キープ）
+                SHELF_ROWS.forEach((row, rIdx) => {
+                    const rowTargets = state.mato.targets.filter(t => t.alive && !t.hit && t.rowIdx === rIdx);
+                    if (rowTargets.length < 2) {
+                        spawnMatoTarget(rIdx);
+                    }
+                });
+
+            }, state.mato.beatInterval);
+        }
+
+        function attemptShootMato(tx, ty) {
+            playCorkShotSound();
+
+            // コルク弾発射エフェクト
+            state.mato.corks.push({
+                startX: matoCanvas.width / 2,
+                startY: matoCanvas.height,
+                x: matoCanvas.width / 2,
+                y: matoCanvas.height,
+                targetX: tx,
+                targetY: ty,
+                progress: 0
+            });
+
+            // リズム判定（直近の拍とのズレ計算）
+            const now = performance.now();
+            const timeSinceBeat = (now - state.mato.lastBeatTime) % state.mato.beatInterval;
+            const diffFromNearestBeat = Math.min(timeSinceBeat, state.mato.beatInterval - timeSinceBeat);
+
+            const isPerfect = diffFromNearestBeat < 130;
+            const isGood = diffFromNearestBeat < 240;
+
+            // 的との当たり判定（手前の的から順に）
+            let hitTarget = null;
+            for (let i = state.mato.targets.length - 1; i >= 0; i--) {
+                const target = state.mato.targets[i];
+                if (!target.alive || target.hit) continue;
+
+                const halfW = target.type.w / 2 + 10;
+                const halfH = target.type.h / 2 + 10;
+
+                if (tx >= target.x - halfW && tx <= target.x + halfW &&
+                    ty >= target.y - halfH && ty <= target.y + halfH) {
+                    hitTarget = target;
+                    break;
+                }
+            }
+
+            if (hitTarget) {
+                // 命中！
+                hitTarget.hit = true;
+                hitTarget.fallVy = -6 - Math.random() * 4; // 上に跳ね上がってから落下
+                hitTarget.fallRotSpeed = (Math.random() - 0.5) * 0.4;
+                state.mato.hitCount++;
+                state.mato.combo++;
+
+                const comboBonus = 1 + Math.min(state.mato.combo * 0.1, 2.0);
+                const rhythmBonus = isPerfect ? 1.5 : (isGood ? 1.1 : 0.8);
+                const rushBonus = state.mato.rushTime > 0 ? 1.5 : 1.0;
+                const earned = Math.round(hitTarget.type.score * rhythmBonus * comboBonus * rushBonus);
+                state.mato.score += earned;
+
+                playMatoHitSound(hitTarget.type.isBomb, hitTarget.type.isGold);
+
+                // 提灯ボムなら周囲の的を巻き込み爆発！
+                if (hitTarget.type.isBomb) {
+                    triggerBombExplosion(hitTarget.x, hitTarget.y);
+                }
+
+                // 5コンボごとに「お祭りラッシュ」発動
+                if (state.mato.combo > 0 && state.mato.combo % 5 === 0) {
+                    triggerMatoRush();
+                }
+
+                const label = isPerfect ? `CRITICAL!! +${earned}` : (isGood ? `PERFECT! +${earned}` : `HIT! +${earned}`);
+                const labelColor = isPerfect ? '#FFD700' : (isGood ? '#2ECC71' : '#FFFFFF');
+                spawnMatoText(hitTarget.x, hitTarget.y - 10, label, labelColor);
+
+                // 星・火花パーティクル
+                for (let p = 0; p < 12; p++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 5;
+                    state.mato.particles.push({
+                        x: hitTarget.x,
+                        y: hitTarget.y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed - 1,
+                        r: 2.5 + Math.random() * 3,
+                        color: hitTarget.type.color,
+                        alpha: 1
+                    });
+                }
+
+                state.mato.screenShake = hitTarget.type.isBomb ? 14 : 5;
+
+            } else {
+                // 空振り
+                state.mato.combo = 0;
+                spawnMatoText(tx, ty - 10, 'MISS...', '#BDC3C7');
+            }
+
+            updateMatoUI();
+        }
+
+        function triggerBombExplosion(bx, by) {
+            state.mato.targets.forEach(t => {
+                if (t.alive && !t.hit) {
+                    const dist = Math.hypot(t.x - bx, t.y - by);
+                    if (dist < 90) {
+                        t.hit = true;
+                        t.fallVy = -7;
+                        t.fallRotSpeed = (Math.random() - 0.5) * 0.5;
+                        state.mato.score += t.type.score;
+                        state.mato.hitCount++;
+                        spawnMatoText(t.x, t.y, `誘爆! +${t.type.score}`, '#FF7675');
+                    }
+                }
+            });
+        }
+
+        function triggerMatoRush() {
+            state.mato.rushTime = 6;
+            playBellSound(1300);
+            setTimeout(() => playBellSound(1600), 150);
+
+            document.getElementById('matoRushBadge').classList.remove('hidden');
+            spawnMatoText(matoCanvas.width / 2, 70, '🏮 お祭りラッシュ発動!! 🏮', '#FFD700');
+
+            // 黄金の的を大量投入
+            for (let r = 0; r < SHELF_ROWS.length; r++) {
+                spawnMatoTarget(r, true);
+            }
+        }
+
+        function spawnMatoText(x, y, text, color) {
+            state.mato.particles.push({
+                x, y,
+                text,
+                color,
+                alpha: 1,
+                vy: -1.4,
+                isText: true
+            });
+        }
+
+        function updateMatoUI() {
+            document.getElementById('matoTimer').textContent = state.mato.timeLeft;
+            document.getElementById('matoScore').textContent = `${state.mato.score}点`;
+            document.getElementById('matoHitCount').textContent = `${state.mato.hitCount}個`;
+            document.getElementById('matoCombo').textContent = state.mato.combo;
+        }
+
+        function endMatoGame(timeUp = true) {
+            state.mato.active = false;
+            clearInterval(state.mato.timerId);
+            clearInterval(state.mato.beatTimerId);
+
+            playFanfareSound();
+
+            const earnedTickets = Math.max(1, Math.floor(state.mato.score / 650));
+            state.tickets += earnedTickets;
+            document.getElementById('ticketCount').textContent = state.tickets;
+
+            const overlay = document.getElementById('matoStartOverlay');
+            overlay.classList.remove('hidden');
+            overlay.innerHTML = `
+                <div class="text-4xl mb-1">🎉</div>
+                <h3 class="text-xl font-bold text-amber-300">射的終了！</h3>
+                <div class="text-xs my-2 text-stone-200">
+                    倒した的: <b class="text-amber-300 text-base">${state.mato.hitCount}個</b><br>
+                    スコア: <b class="text-white text-lg">${state.mato.score}点</b>
+                </div>
+                <div class="bg-red-900/80 px-4 py-2 rounded-xl border border-amber-400 mb-4 text-xs text-amber-100">
+                    🎫 福引き券を <span class="text-amber-300 font-bold text-sm">${earnedTickets}枚</span> 獲得！
+                </div>
+                <button onclick="startMatoGame()" class="bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold py-2.5 px-6 rounded-full border border-amber-300 shadow active:scale-95 transition">
+                    もう一度挑戦する！
+                </button>
+            `;
+        }
+
+        function animateMato() {
+            if (!state.mato.active) {
+                drawMatoScene();
+                return;
+            }
+
+            updateMatoPhysics();
+            drawMatoScene();
+            state.mato.animationFrameId = requestAnimationFrame(animateMato);
+        }
+
+        function updateMatoPhysics() {
+            const w = matoCanvas.width;
+            const h = matoCanvas.height;
+
+            if (state.mato.screenShake > 0) {
+                state.mato.screenShake *= 0.85;
+                if (state.mato.screenShake < 0.2) state.mato.screenShake = 0;
+            }
+
+            // 的の移動と落下
+            for (let i = state.mato.targets.length - 1; i >= 0; i--) {
+                const target = state.mato.targets[i];
+
+                if (target.hit) {
+                    target.y += target.fallVy;
+                    target.fallVy += 0.5; // 重力
+                    target.fallRot += target.fallRotSpeed;
+                    target.alpha -= 0.025;
+
+                    if (target.y > h + 50 || target.alpha <= 0) {
+                        state.mato.targets.splice(i, 1);
+                    }
+                    continue;
+                }
+
+                // 水平移動
+                target.x += target.vx;
+                target.bouncePhase += 0.08;
+                // リズムに乗った上下ボビング
+                target.y = target.baseY + Math.sin(target.bouncePhase) * 4;
+
+                // 端まで行ったら反転
+                if (target.x > w + 40 && target.vx > 0) {
+                    target.x = -30;
+                } else if (target.x < -40 && target.vx < 0) {
+                    target.x = w + 30;
+                }
+            }
+
+            // コルク弾アニメーション
+            for (let i = state.mato.corks.length - 1; i >= 0; i--) {
+                const c = state.mato.corks[i];
+                c.progress += 0.18;
+                c.x = c.startX + (c.targetX - c.startX) * c.progress;
+                c.y = c.startY + (c.targetY - c.startY) * c.progress;
+                if (c.progress >= 1.0) {
+                    state.mato.corks.splice(i, 1);
+                }
+            }
+
+            // パーティクル更新
+            for (let i = state.mato.particles.length - 1; i >= 0; i--) {
+                const p = state.mato.particles[i];
+                if (p.isText) {
+                    p.y += p.vy;
+                    p.alpha -= 0.025;
+                } else {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.15;
+                    p.alpha -= 0.03;
+                }
+                if (p.alpha <= 0) state.mato.particles.splice(i, 1);
+            }
+        }
+
+        function drawMatoScene() {
+            const ctx = matoCtx;
+            const w = matoCanvas.width;
+            const h = matoCanvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            ctx.save();
+            if (state.mato.screenShake > 0) {
+                const sx = (Math.random() - 0.5) * state.mato.screenShake;
+                const sy = (Math.random() - 0.5) * state.mato.screenShake;
+                ctx.translate(sx, sy);
+            }
+
+            // 1. 屋台の背景幕（紅白幕と木目壁）
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+            bgGrad.addColorStop(0, '#3E2723');
+            bgGrad.addColorStop(1, '#1A0E0A');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // 上部の紅白幕（だんだら幕）
+            const stripeW = 20;
+            for (let x = 0; x < w; x += stripeW) {
+                ctx.fillStyle = Math.floor(x / stripeW) % 2 === 0 ? '#C0392B' : '#ECF0F1';
+                ctx.fillRect(x, 0, stripeW, 28);
+                // 垂れ幕のフチ
+                ctx.beginPath();
+                ctx.arc(x + stripeW / 2, 28, stripeW / 2, 0, Math.PI);
+                ctx.fill();
+            }
+
+            // 2. 射的棚の描画（3段の木の棚）
+            SHELF_ROWS.forEach(row => {
+                // 棚板
+                ctx.fillStyle = '#8D6E63';
+                ctx.fillRect(0, row.y + 22, w, 10);
+                ctx.fillStyle = '#5D4037';
+                ctx.fillRect(0, row.y + 32, w, 6);
+            });
+
+            // リズム進行の計算
+            const now = performance.now();
+            const timeSinceBeat = (now - state.mato.lastBeatTime) % state.mato.beatInterval;
+            const beatProgress = timeSinceBeat / state.mato.beatInterval; // 0.0 -> 1.0
+
+            // 3. 的（ターゲット）の描画
+            state.mato.targets.forEach(target => {
+                ctx.save();
+                ctx.translate(target.x, target.y);
+                if (target.hit) {
+                    ctx.rotate(target.fallRot);
+                    ctx.globalAlpha = Math.max(0, target.alpha);
+                }
+
+                // リズム収縮サークル（ビートに同期）
+                if (state.mato.active && !target.hit) {
+                    const ringR = 24 + (1 - beatProgress) * 16;
+                    ctx.strokeStyle = beatProgress > 0.8 || beatProgress < 0.2 ? '#F1C40F' : 'rgba(255, 255, 255, 0.4)';
+                    ctx.lineWidth = target.type.isGold ? 2.5 : 1.5;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, ringR, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // 的の台座（コルク倒れ用木製スタンド）
+                ctx.fillStyle = '#D7CCC8';
+                ctx.fillRect(-target.type.w / 2, target.type.h / 2 - 4, target.type.w, 6);
+
+                // 的本体のアイコン
+                ctx.font = `${target.type.w}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(target.type.icon, 0, 0);
+
+                // 得点タグ
+                if (!target.hit) {
+                    ctx.fillStyle = target.type.isGold ? '#FFD700' : 'rgba(0,0,0,0.6)';
+                    ctx.beginPath();
+                    ctx.roundRect(-16, -target.type.h / 2 - 8, 32, 12, 4);
+                    ctx.fill();
+                    ctx.fillStyle = target.type.isGold ? '#000000' : '#FFFFFF';
+                    ctx.font = 'bold 9px sans-serif';
+                    ctx.fillText(`${target.type.score}`, 0, -target.type.h / 2 - 2);
+                }
+
+                ctx.restore();
+            });
+
+            // 4. コルク弾の描画
+            state.mato.corks.forEach(c => {
+                ctx.fillStyle = '#D35400';
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 6 * (1 - c.progress * 0.4), 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            });
+
+            // 5. 照準（クロスヘア）の描画
+            const sight = state.mato.sightPos;
+            ctx.strokeStyle = '#E74C3C';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(sight.x, sight.y, 16, 0, Math.PI * 2);
+            ctx.moveTo(sight.x - 24, sight.y); ctx.lineTo(sight.x + 24, sight.y);
+            ctx.moveTo(sight.x, sight.y - 24); ctx.lineTo(sight.x, sight.y + 24);
+            ctx.stroke();
+
+            // 6. パーティクル・浮遊スコア
+            state.mato.particles.forEach(p => {
+                ctx.save();
+                if (p.isText) {
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = p.color;
+                    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                    ctx.shadowBlur = 4;
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillText(p.text, p.x, p.y);
+                } else {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            });
+
+            ctx.restore();
+        }
+
+        /* ==========================================
+           4. ゲーム2: お地蔵様デコレーション
+           ========================================== */
+        const jizoCanvas = document.getElementById('jizoDecorateCanvas');
+        const jizoCtx = jizoCanvas.getContext('2d');
+
+        // デコレーションのパーツ定義
+        const decoItems = {
+            bib: [
+                { id: 'red', name: '赤い前掛け', color: '#C0392B' },
+                { id: 'gold', name: '金色前掛け', color: '#F39C12' },
+                { id: 'pink', name: '桃色前掛け', color: '#FF7675' },
+                { id: 'blue', name: '青色前掛け', color: '#0984E3' }
+            ],
+            cap: [
+                { id: 'none', name: 'なし', icon: '❌' },
+                { id: 'red_hat', name: '赤頭巾', icon: '🧢' },
+                { id: 'flower', name: '花飾り', icon: '🌸' },
+                { id: 'hachimaki', name: '鉢巻', icon: '🎗️' }
+            ],
+            offering: [
+                { id: 'dango', name: '三色団子', icon: '🍡' },
+                { id: 'watermelon', name: 'スイカ', icon: '🍉' },
+                { id: 'sweets', name: '駄菓子袋', icon: '🛍️' },
+                { id: 'tea', name: 'お茶', icon: '🍵' }
+            ],
+            bg: [
+                { id: 'temple', name: 'お寺の境内', color1: '#FFF3E0', color2: '#FFE0B2' },
+                { id: 'festival', name: '地蔵盆まつり', color1: '#FFEBEE', color2: '#FFCDD2' },
+                { id: 'nature', name: '新緑の庭', color1: '#E8F5E9', color2: '#C8E6C9' }
+            ]
+        };
+
+        let currentDecoCategory = 'bib';
+
+        function switchDecoCategory(cat) {
+            currentDecoCategory = cat;
+            document.querySelectorAll('.deco-cat-btn').forEach(btn => {
+                btn.classList.remove('text-red-700', 'border-b-2', 'border-red-600');
+                btn.classList.add('text-stone-500');
+            });
+            const activeBtn = document.getElementById(`cat-${cat}`);
+            activeBtn.classList.remove('text-stone-500');
+            activeBtn.classList.add('text-red-700', 'border-b-2', 'border-red-600');
+
+            renderDecoItemList();
+        }
+
+        function renderDecoItemList() {
+            const container = document.getElementById('decoItemList');
+            container.innerHTML = '';
+
+            const items = decoItems[currentDecoCategory];
+            items.forEach(item => {
+                const btn = document.createElement('button');
+                const isSelected = state.jizoDeco[currentDecoCategory] === item.id;
+                
+                btn.className = `flex-shrink-0 px-3 py-2 rounded-lg text-xs font-bold border transition flex items-center gap-1.5 ${
+                    isSelected ? 'bg-red-600 text-white border-red-700 shadow-md' : 'bg-amber-50 text-stone-700 border-amber-200'
+                }`;
+
+                if (item.color) {
+                    btn.innerHTML = `<span class="w-3 h-3 rounded-full inline-block border border-stone-300" style="background:${item.color}"></span> ${item.name}`;
+                } else if (item.icon) {
+                    btn.innerHTML = `<span>${item.icon}</span> ${item.name}`;
+                } else {
+                    btn.textContent = item.name;
+                }
+
+                btn.onclick = () => {
+                    state.jizoDeco[currentDecoCategory] = item.id;
+                    playBellSound(700);
+                    renderDecoItemList();
+                    drawJizoDecorate();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function drawJizoDecorate() {
+            const ctx = jizoCtx;
+            const w = jizoCanvas.width;
+            const h = jizoCanvas.height;
+            const cx = w / 2;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. 背景描画
+            const bgConfig = decoItems.bg.find(b => b.id === state.jizoDeco.bg) || decoItems.bg[0];
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+            bgGrad.addColorStop(0, bgConfig.color1);
+            bgGrad.addColorStop(1, bgConfig.color2);
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // 地蔵堂・提灯飾り
+            ctx.fillStyle = '#795548';
+            ctx.fillRect(0, h - 25, w, 25); // 台座
+
+            // 提灯（左右）
+            ctx.fillStyle = '#E74C3C';
+            ctx.beginPath();
+            ctx.ellipse(35, 45, 14, 20, 0, 0, Math.PI * 2);
+            ctx.ellipse(w - 35, 45, 14, 20, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#FFF';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('奉', 30, 48);
+            ctx.fillText('納', w - 40, 48);
+
+            // 2. お地蔵様本体（石像）
+            // 蓮華座
+            ctx.fillStyle = '#9E9E9E';
+            ctx.beginPath();
+            ctx.ellipse(cx, h - 40, 70, 18, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 身体
+            ctx.fillStyle = '#BDBDBD';
+            ctx.beginPath();
+            ctx.moveTo(cx - 45, h - 45);
+            ctx.quadraticCurveTo(cx, h - 140, cx + 45, h - 45);
+            ctx.fill();
+
+            // 頭部
+            ctx.beginPath();
+            ctx.arc(cx, h - 135, 42, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 耳
+            ctx.beginPath();
+            ctx.arc(cx - 42, h - 135, 8, 0, Math.PI * 2);
+            ctx.arc(cx + 42, h - 135, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 顔の表情（温かい笑顔）
+            ctx.strokeStyle = '#424242';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            // 目
+            ctx.arc(cx - 15, h - 142, 9, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx + 15, h - 142, 9, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+            // ほほ笑み口
+            ctx.beginPath();
+            ctx.arc(cx, h - 128, 12, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+
+            // 3. 前掛け（Bib）
+            const bibConfig = decoItems.bib.find(b => b.id === state.jizoDeco.bib) || decoItems.bib[0];
+            ctx.fillStyle = bibConfig.color;
+            ctx.beginPath();
+            ctx.arc(cx, h - 90, 36, 0, Math.PI);
+            ctx.fill();
+            // 首紐
+            ctx.strokeStyle = bibConfig.color;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(cx, h - 105, 38, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+
+            // 4. 頭飾り（Cap）
+            if (state.jizoDeco.cap === 'red_hat') {
+                ctx.fillStyle = '#C0392B';
+                ctx.beginPath();
+                ctx.arc(cx, h - 155, 43, Math.PI, 0);
+                ctx.fill();
+            } else if (state.jizoDeco.cap === 'flower') {
+                ctx.font = '28px sans-serif';
+                ctx.fillText('🌸', cx + 18, h - 160);
+            } else if (state.jizoDeco.cap === 'hachimaki') {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(cx - 43, h - 165, 86, 12);
+                ctx.fillStyle = '#E74C3C';
+                ctx.beginPath();
+                ctx.arc(cx, h - 159, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 5. お供え物（Offering）
+            const off = state.jizoDeco.offering;
+            ctx.font = '32px sans-serif';
+            if (off === 'dango') ctx.fillText('🍡', cx - 16, h - 25);
+            if (off === 'watermelon') ctx.fillText('🍉', cx - 16, h - 25);
+            if (off === 'sweets') ctx.fillText('🛍️', cx - 16, h - 25);
+            if (off === 'tea') ctx.fillText('🍵', cx - 16, h - 25);
+        }
+
+        const omikujiPhrases = [
+            '「いつも笑顔で元気いっぱいに過ごせますように」',
+            '「お友達となかよく楽しく遊べる大吉の日！」',
+            '「美味しいものを食べて元気がみなぎります」',
+            '「早寝早起きで良いことが舞い込んできます」',
+            '「地蔵菩薩様があなたの安全を見守っています」'
+        ];
+
+        function prayJizo() {
+            playBellSound(523.25);
+            setTimeout(() => playBellSound(1046.50), 200);
+
+            const randomPhrase = omikujiPhrases[Math.floor(Math.random() * omikujiPhrases.length)];
+            document.getElementById('omikujiText').textContent = randomPhrase;
+            document.getElementById('omikujiBubble').classList.remove('hidden');
+        }
+
+        function closeOmikuji() {
+            document.getElementById('omikujiBubble').classList.add('hidden');
+        }
+
+        /* ==========================================
+           5. ゲーム3: ガラガラ福引き（ガラポン）
+           ========================================== */
+        const garaponCanvas = document.getElementById('garaponCanvas');
+        const garaponCtx = garaponCanvas.getContext('2d');
+        let garaponAngle = 0;
+        let isSpinning = false;
+
+        function drawGarapon(angle = 0) {
+            const ctx = garaponCtx;
+            const w = garaponCanvas.width;
+            const h = garaponCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2 - 10;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // 土台
+            ctx.fillStyle = '#8D6E63';
+            ctx.fillRect(cx - 60, cy + 50, 120, 20);
+            ctx.fillRect(cx - 10, cy, 20, 50);
+
+            // 八角形ガラポン本体
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+
+            ctx.fillStyle = '#D7CCC8';
+            ctx.strokeStyle = '#5D4037';
+            ctx.lineWidth = 4;
+
+            ctx.beginPath();
+            const sides = 8;
+            const r = 55;
+            for (let i = 0; i < sides; i++) {
+                const a = (i / sides) * Math.PI * 2;
+                const x = Math.cos(a) * r;
+                const y = Math.sin(a) * r;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 中心軸
+            ctx.fillStyle = '#3E2723';
+            ctx.beginPath();
+            ctx.arc(0, 0, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 回し手すり
+            ctx.strokeStyle = '#3E2723';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(35, 0);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(35, 0, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // 出口トレー
+            ctx.fillStyle = '#A1887F';
+            ctx.beginPath();
+            ctx.moveTo(cx + 40, cy + 45);
+            ctx.lineTo(cx + 80, cy + 45);
+            ctx.lineTo(cx + 70, cy + 60);
+            ctx.lineTo(cx + 30, cy + 60);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function spinGarapon() {
+            if (isSpinning) return;
+            if (state.tickets < 1) {
+                const modal = document.getElementById('rewardModal');
+                document.getElementById('modalHeader').textContent = '🎫 チケット不足';
+                document.getElementById('modalBall').textContent = '📿';
+                document.getElementById('modalTitle').textContent = '福引き券が足りません';
+                document.getElementById('modalDesc').textContent = '「数珠まわし」や「金魚すくい」で遊んで福引き券を獲得しましょう！';
+                document.getElementById('modalItemIcon').textContent = '🐟';
+                modal.classList.remove('hidden');
+                return;
+            }
+
+            state.tickets--;
+            document.getElementById('ticketCount').textContent = state.tickets;
+            isSpinning = true;
+            document.getElementById('spinGaraponBtn').disabled = true;
+
+            let spins = 0;
+            const maxSpins = 25;
+            const timer = setInterval(() => {
+                garaponAngle += 0.3;
+                spins++;
+                drawGarapon(garaponAngle);
+                playGaraponSound();
+
+                if (spins >= maxSpins) {
+                    clearInterval(timer);
+                    isSpinning = false;
+                    document.getElementById('spinGaraponBtn').disabled = false;
+                    drawGarapon(garaponAngle);
+                    determineGaraponReward();
+                }
+            }, 60);
+        }
+
+        // 景品・お菓子データ定義 (全12種)
+        const sweetsList = [
+            { id: 1, rank: '金賞', ball: '🟡', title: '特大花火＆豪華駄菓子パック', desc: '地蔵盆の夜に遊べるビッグ花火セット！', icon: '🎆' },
+            { id: 2, rank: '銀賞', ball: '⚪', title: '地蔵盆お楽しみ袋', desc: 'たくさんのお菓子がぎっしり詰まった人気袋！', icon: '🛍️' },
+            { id: 3, rank: '赤賞', ball: '🔴', title: 'うまい棒 10本パック', desc: 'サクサク香ばしい超定番駄菓子！', icon: '🥢' },
+            { id: 4, rank: '赤賞', ball: '🔴', title: 'ひえひえラムネジュース', desc: 'シュワッと爽やかな地蔵盆のお下がり！', icon: '🥤' },
+            { id: 5, rank: '緑賞', ball: '🟢', title: '三色ドロップキャンディ', desc: 'カラフルで甘い可愛らしい飴玉。', icon: '🍬' },
+            { id: 6, rank: '緑賞', ball: '🟢', title: 'カラフルラムネ', desc: '口の中でしゅわっと溶ける爽やかお菓子。', icon: '🟡' },
+            { id: 7, rank: '白賞', ball: '⚪', title: 'フルーツゼリーセット', desc: '冷やして食べるととっても美味しいゼリー。', icon: '🍮' },
+            { id: 8, rank: '白賞', ball: '⚪', title: 'ポン菓子（米菓子）', desc: '昔ながらのやさしい甘さのサクサクお菓子。', icon: '🍿' },
+            { id: 9, rank: '白賞', ball: '⚪', title: '水風船＆ポイ', desc: '縁日気分を味わえる楽しいおもちゃ！', icon: '🎈' },
+            { id: 10, rank: '白賞', ball: '⚪', title: 'スーパーボール', desc: '良く跳ねるきれいなガラス玉風ボール。', icon: '⚽' },
+            { id: 11, rank: '白賞', ball: '⚪', title: 'お地蔵様シール', desc: '貼るとご利益がありそうな限定シール！', icon: '🏷️' },
+            { id: 12, rank: '白賞', ball: '⚪', title: 'ポケットティッシュ＆おみくじ', desc: '地蔵盆のお下がりおみくじ。', icon: '📜' }
+        ];
+
+        function determineGaraponReward() {
+            playFanfareSound();
+
+            // 確率に基づき抽選
+            const rand = Math.random() * 100;
+            let reward;
+
+            if (rand < 5) reward = sweetsList[0];        // 5%: 金賞
+            else if (rand < 20) reward = sweetsList[1];   // 15%: 銀賞
+            else if (rand < 45) reward = sweetsList[Math.floor(Math.random() * 2) + 2]; // 25%: 赤賞
+            else if (rand < 75) reward = sweetsList[Math.floor(Math.random() * 2) + 4]; // 30%: 緑賞
+            else reward = sweetsList[Math.floor(Math.random() * 6) + 6];                // 25%: 白賞
+
+            // 図鑑に追加
+            state.collection.add(reward.id);
+
+            // モーダル表示
+            document.getElementById('modalHeader').textContent = `🎉 ${reward.rank}`;
+            document.getElementById('modalBall').textContent = reward.ball;
+            document.getElementById('modalTitle').textContent = reward.title;
+            document.getElementById('modalDesc').textContent = reward.desc;
+            document.getElementById('modalItemIcon').textContent = reward.icon;
+
+            document.getElementById('rewardModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('rewardModal').classList.add('hidden');
+        }
+
+        /* ==========================================
+           6. ゲーム4: お菓子コレクション図鑑
+           ========================================== */
+        function renderZukan() {
+            const grid = document.getElementById('zukanGrid');
+            grid.innerHTML = '';
+
+            document.getElementById('collectedRatio').textContent = `${state.collection.size}/${sweetsList.length}`;
+
+            sweetsList.forEach(sweets => {
+                const isCollected = state.collection.has(sweets.id);
+                const card = document.createElement('div');
+
+                card.className = `p-2.5 rounded-xl border text-center flex flex-col items-center justify-between transition ${
+                    isCollected 
+                        ? 'bg-white border-amber-300 shadow-sm' 
+                        : 'bg-stone-200/60 border-stone-300 opacity-60 grayscale'
+                }`;
+
+                card.innerHTML = `
+                    <div class="text-xs font-bold text-amber-800 self-start">${isCollected ? sweets.rank : '???'}</div>
+                    <div class="text-3xl my-1">${isCollected ? sweets.icon : '❓'}</div>
+                    <div class="text-xs font-bold text-stone-800 line-clamp-1">${isCollected ? sweets.title : '未獲得'}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* ==========================================
+           7. 初期化処理
+           ========================================== */
+        window.addEventListener('load', () => {
+            drawJuzu();
+            initKingyoCanvas();
+            initMatoCanvas();
+            drawJizoDecorate();
+            drawGarapon(0);
+            renderDecoItemList();
+        });
+    </script>
+</body>
+</html>
