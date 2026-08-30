@@ -95,13 +95,13 @@
     <!-- メインビュー領域 -->
     <main class="max-w-md mx-auto w-full flex-1 flex flex-col p-4 relative">
 
-        <!-- ===== タブ1: トップ / 数珠まわしゲーム ===== -->
+        <!-- ===== タブ1: トップ / みんなの輪まわしゲーム ===== -->
         <section id="tab-juzu" class="tab-content flex-1 flex flex-col justify-between">
             <div class="text-center my-2">
                 <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
-                    📿 みんなで数珠まわし
+                    🤝 みんなで輪まわし
                 </h2>
-                <p class="text-xs text-stone-600 mt-1">タイミングよくタップして大数珠を回そう！</p>
+                <p class="text-xs text-stone-600 mt-1">タイミングよくタップして、つながりの輪を回そう！</p>
             </div>
 
             <!-- ゲームスコア・タイマー表示 -->
@@ -120,16 +120,16 @@
                 </div>
             </div>
 
-            <!-- キャンバス表示（数珠回しアニメーション） -->
+            <!-- キャンバス表示（輪まわしアニメーション） -->
             <div class="relative flex-1 flex items-center justify-center my-2 min-h-[260px]">
                 <canvas id="juzuCanvas" width="320" height="320" class="w-full max-w-[320px] h-auto touch-none cursor-pointer"></canvas>
                 
                 <!-- スタート前オーバーレイ -->
                 <div id="juzuStartOverlay" class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4 text-white text-center">
-                    <div class="text-4xl mb-2">📿</div>
-                    <h3 class="text-lg font-bold text-amber-300 mb-1">大数珠回しのお祈り</h3>
+                    <div class="text-4xl mb-2">🤝</div>
+                    <h3 class="text-lg font-bold text-amber-300 mb-1">つながりの輪チャレンジ</h3>
                     <p class="text-xs text-stone-200 mb-4 max-w-[240px]">
-                        みんなで大きな数珠を回して無病息災を願います。<br>「なむなむ」の合図に合わせて画面を連打！
+                        みんなで声とタイミングを合わせて、大きな輪を回します。<br>「せーの！」の合図に合わせて画面を連打！
                     </p>
                     <button onclick="startJuzuGame()" class="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold py-3 px-8 rounded-full shadow-lg border-2 border-amber-300 text-lg active:scale-95 transition">
                         ゲームスタート！
@@ -140,8 +140,8 @@
             <!-- 操作・タップ領域 -->
             <div class="mt-2">
                 <button id="juzuTapBtn" onclick="onJuzuTap()" disabled class="w-full py-5 bg-gradient-to-b from-red-600 to-red-800 text-amber-100 font-bold text-xl rounded-2xl shadow-lg border-b-4 border-red-950 active:translate-y-1 active:border-b-0 transition flex flex-col items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span>📿 タップして数珠を回す！</span>
-                    <span id="juzuHint" class="text-xs text-amber-200/80 font-normal mt-0.5">南無阿弥陀仏...</span>
+                    <span>⭕ タップして輪を回す！</span>
+                    <span id="juzuHint" class="text-xs text-amber-200/80 font-normal mt-0.5">せーの、わっしょい！</span>
                 </button>
             </div>
         </section>
@@ -280,8 +280,8 @@
                         ビートと重なる瞬間に撃つと高得点＆吹き飛び爽快！
                     </p>
                     <div class="grid grid-cols-2 gap-1 text-[11px] bg-red-950/60 p-2 rounded-lg border border-amber-500/50 mb-3 text-amber-200 text-left">
-                        <span>👺 だるま/お面: 150点</span>
-                        <span>🐱 まねき猫: 250点</span>
+                        <span>🍉 スイカ/お面: 150点</span>
+                        <span>🎈 ヨーヨー: 250点</span>
                         <span>🏮 提灯ボム: 周囲誘爆!</span>
                         <span>✨ 黄金の的: 500点</span>
                     </div>
@@ -297,22 +297,22 @@
             </div>
         </section>
 
-        <!-- ===== タブ3: お地蔵様デコレーション ===== -->
+        <!-- ===== タブ3: 夏祭りやぐらデコレーション ===== -->
         <section id="tab-decorate" class="tab-content hidden flex-1 flex flex-col">
             <div class="text-center my-1">
                 <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
-                    🌸 お地蔵様を飾ろう
+                    🎐 夏祭りやぐらを飾ろう
                 </h2>
-                <p class="text-xs text-stone-600">前掛けやお供え物を選んで、お参りしましょう</p>
+                <p class="text-xs text-stone-600">幕や提灯、屋台アイテムを選んで会場を完成させよう</p>
             </div>
 
-            <!-- お地蔵様キャンバス -->
+            <!-- 夏祭りやぐらキャンバス -->
             <div class="relative flex-1 flex items-center justify-center my-2 bg-gradient-to-b from-amber-50 to-orange-100 rounded-2xl border-2 border-amber-200 shadow-inner p-2 min-h-[250px]">
                 <canvas id="jizoDecorateCanvas" width="300" height="300" class="w-full max-w-[280px] h-auto"></canvas>
                 
-                <!-- お参り吹き出し -->
+                <!-- 応援メッセージ吹き出し -->
                 <div id="omikujiBubble" class="hidden absolute top-4 inset-x-6 bg-white/95 border-2 border-red-500 rounded-xl p-3 shadow-xl animate-pop text-center">
-                    <div class="text-xs font-bold text-red-600">🙏 お地蔵様のお言葉</div>
+                    <div class="text-xs font-bold text-red-600">✨ みんなへの応援メッセージ</div>
                     <div id="omikujiText" class="text-sm font-semibold text-stone-800 my-1"></div>
                     <button onclick="closeOmikuji()" class="text-xs bg-red-100 text-red-700 px-3 py-1 rounded-full mt-1 font-bold">閉じる</button>
                 </div>
@@ -322,9 +322,9 @@
             <div class="bg-white rounded-xl p-3 border border-amber-200 shadow-sm">
                 <!-- カテゴリタブ -->
                 <div class="flex border-b border-amber-200 mb-2 text-xs font-bold">
-                    <button onclick="switchDecoCategory('bib')" id="cat-bib" class="deco-cat-btn flex-1 py-1.5 text-center text-red-700 border-b-2 border-red-600">前掛け</button>
-                    <button onclick="switchDecoCategory('cap')" id="cat-cap" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">頭飾り</button>
-                    <button onclick="switchDecoCategory('offering')" id="cat-offering" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">お供え物</button>
+                    <button onclick="switchDecoCategory('bib')" id="cat-bib" class="deco-cat-btn flex-1 py-1.5 text-center text-red-700 border-b-2 border-red-600">幕の色</button>
+                    <button onclick="switchDecoCategory('cap')" id="cat-cap" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">飾り</button>
+                    <button onclick="switchDecoCategory('offering')" id="cat-offering" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">屋台</button>
                     <button onclick="switchDecoCategory('bg')" id="cat-bg" class="deco-cat-btn flex-1 py-1.5 text-center text-stone-500">背景</button>
                 </div>
 
@@ -333,9 +333,9 @@
                     <!-- JSで動的生成 -->
                 </div>
 
-                <!-- お参りボタン -->
-                <button onclick="prayJizo()" class="w-full mt-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow border-b-2 border-amber-700 active:translate-y-0.5 flex items-center justify-center gap-2">
-                    <span>🙏 お手を合わせてお参りする</span>
+                <!-- 飾りつけ完成ボタン -->
+                <button onclick="showFestivalMessage()" class="w-full mt-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow border-b-2 border-amber-700 active:translate-y-0.5 flex items-center justify-center gap-2">
+                    <span>✨ 飾りつけを完成させる</span>
                 </button>
             </div>
         </section>
@@ -344,7 +344,7 @@
         <section id="tab-fukubiki" class="tab-content hidden flex-1 flex flex-col justify-between">
             <div class="text-center my-1">
                 <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
-                    🎰 地蔵盆のガラガラ福引き
+                    🎰 夏祭りのガラガラ福引き
                 </h2>
                 <p class="text-xs text-stone-600">福引き券を使ってお菓子や景品を当てよう！</p>
             </div>
@@ -367,10 +367,10 @@
                 </div>
                 <div class="grid grid-cols-2 gap-1 text-[11px]">
                     <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>金賞: 特大花火＆駄菓子セット</div>
-                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>銀賞: 地蔵盆お楽しみ袋</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>銀賞: 夏祭りお楽しみ袋</div>
                     <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>赤賞: うまい棒＆ジュース</div>
                     <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>緑賞: 飴＆ラムネセット</div>
-                    <div class="flex items-center gap-1 col-span-2"><span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-400"></span>白賞: ポケットティッシュ＆おみくじ</div>
+                    <div class="flex items-center gap-1 col-span-2"><span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-400"></span>白賞: ポケットティッシュ＆思い出カード</div>
                 </div>
             </div>
         </section>
@@ -381,7 +381,7 @@
                 <h2 class="text-xl font-bold text-red-800 flex items-center justify-center gap-2">
                     🍬 お菓子コレクション
                 </h2>
-                <p class="text-xs text-stone-600">地蔵盆でもらったお下がりお菓子 (<span id="collectedRatio">0/12</span>)</p>
+                <p class="text-xs text-stone-600">夏祭りで集めたお菓子と景品 (<span id="collectedRatio">0/12</span>)</p>
             </div>
 
             <!-- お菓子グリッド表示 -->
@@ -398,7 +398,7 @@
             <div id="modalHeader" class="text-xs font-bold text-amber-800 bg-amber-200/80 rounded-full py-1 px-3 inline-block mb-2">🎉 福引き結果</div>
             <div id="modalBall" class="text-5xl my-2">⚪</div>
             <h3 id="modalTitle" class="text-lg font-bold text-red-700">うまい棒セット！</h3>
-            <p id="modalDesc" class="text-xs text-stone-600 my-2">地蔵盆の定番駄菓子。サクサク美味しくて大人気！</p>
+            <p id="modalDesc" class="text-xs text-stone-600 my-2">夏祭りの定番駄菓子。サクサク美味しくて大人気！</p>
             <div id="modalItemIcon" class="text-4xl my-2">🔴</div>
             <button onclick="closeModal()" class="w-full mt-3 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow active:scale-95 transition">
                 受け取る！
@@ -410,8 +410,8 @@
     <nav class="bg-stone-900 text-stone-300 border-t-2 border-amber-500 sticky bottom-0 z-40">
         <div class="max-w-md mx-auto flex justify-around items-center py-1.5 text-center text-xs">
             <button onclick="switchTab('juzu')" id="nav-juzu" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-amber-400 font-bold px-1">
-                <span class="text-base">📿</span>
-                <span class="text-[10px]">数珠回し</span>
+                <span class="text-base">🤝</span>
+                <span class="text-[10px]">輪まわし</span>
             </button>
             <button onclick="switchTab('kingyo')" id="nav-kingyo" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
                 <span class="text-base">🐟</span>
@@ -422,8 +422,8 @@
                 <span class="text-[10px]">的当て</span>
             </button>
             <button onclick="switchTab('decorate')" id="nav-decorate" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
-                <span class="text-base">🌸</span>
-                <span class="text-[10px]">お地蔵様</span>
+                <span class="text-base">🎐</span>
+                <span class="text-[10px]">飾りつけ</span>
             </button>
             <button onclick="switchTab('fukubiki')" id="nav-fukubiki" class="nav-btn flex-1 flex flex-col items-center gap-0.5 text-stone-400 px-1">
                 <span class="text-base">🎰</span>
@@ -444,7 +444,7 @@
         const state = {
             tickets: 3, // 初期所持福引き券
             soundEnabled: true,
-            // 数珠ゲーム状態
+            // 輪まわしゲーム状態
             juzu: {
                 active: false,
                 angle: 0,
@@ -499,7 +499,7 @@
                 screenShake: 0,
                 animationFrameId: null
             },
-            // お地蔵様デコ状態
+            // 夏祭りやぐらデコ状態
             jizoDeco: {
                 bib: 'red',      // red, gold, pink, blue
                 cap: 'none',     // none, red_hat, flower, hachimaki
@@ -646,8 +646,8 @@
             }
         }
 
-        // 効果音：木魚（ポクポク）
-        function playMokugyoSound() {
+        // 効果音：祭りの拍子木（カンカン）
+        function playClapperSound() {
             if (!state.soundEnabled) return;
             const ctx = getAudioContext();
             if (!ctx) return;
@@ -860,7 +860,7 @@
         }
 
         /* ==========================================
-           3. ゲーム1: みんなで数珠まわし
+           3. ゲーム1: みんなで輪まわし
            ========================================== */
         const juzuCanvas = document.getElementById('juzuCanvas');
         const juzuCtx = juzuCanvas.getContext('2d');
@@ -884,41 +884,32 @@
             ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
             ctx.fill();
 
-            // 中央のお地蔵様グラフィック
+            // 中央の「つながりの輪」グラフィック
             ctx.save();
             ctx.translate(centerX, centerY);
-            
-            // お顔
-            ctx.fillStyle = '#E5C09B';
+            const centerGrad = ctx.createRadialGradient(-12, -15, 3, 0, 0, 58);
+            centerGrad.addColorStop(0, '#FFF7C2');
+            centerGrad.addColorStop(0.65, '#F9C74F');
+            centerGrad.addColorStop(1, '#F3722C');
+            ctx.fillStyle = centerGrad;
+            ctx.shadowColor = 'rgba(245,158,11,.55)';
+            ctx.shadowBlur = 18;
             ctx.beginPath();
-            ctx.arc(0, -10, 32, 0, Math.PI * 2);
+            ctx.arc(0, 0, 54, 0, Math.PI * 2);
             ctx.fill();
-
-            // 赤い前掛け
-            ctx.fillStyle = '#C0392B';
-            ctx.beginPath();
-            ctx.arc(0, 15, 28, 0, Math.PI);
-            ctx.fill();
-
-            // 笑顔
-            ctx.strokeStyle = '#5D4037';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.arc(-10, -14, 6, 0.1 * Math.PI, 0.9 * Math.PI);
-            ctx.arc(10, -14, 6, 0.1 * Math.PI, 0.9 * Math.PI);
-            ctx.stroke();
-
-            // びんちょう（赤いポチ）
-            ctx.fillStyle = '#E74C3C';
-            ctx.beginPath();
-            ctx.arc(-16, -8, 3, 0, Math.PI * 2);
-            ctx.arc(16, -8, 3, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#7C2D12';
+            ctx.font = 'bold 34px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('輪', 0, 10);
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('TOGETHER', 0, 32);
 
             ctx.restore();
 
-            // 数珠の描画（円状に玉を配置）
+            // つながりの輪（円状にカラーノードを配置）
             const beadCount = 24;
+            const nodeColors = ['#EF4444', '#F59E0B', '#EAB308', '#22C55E', '#06B6D4', '#6366F1', '#A855F7', '#EC4899'];
             ctx.save();
             ctx.translate(centerX, centerY);
             ctx.rotate(state.juzu.angle);
@@ -928,40 +919,26 @@
                 const bx = Math.cos(angle) * radius;
                 const by = Math.sin(angle) * radius;
 
-                // 親玉（親珠）は大きく、親房付き
-                const isMasterBead = (i === 0);
-                const beadRadius = isMasterBead ? 14 : 9;
+                const isAccent = (i % 6 === 0);
+                const beadRadius = isAccent ? 13 : 9;
 
-                // 数珠玉の影
+                // ノードの影
                 ctx.fillStyle = 'rgba(0,0,0,0.15)';
                 ctx.beginPath();
                 ctx.arc(bx + 2, by + 2, beadRadius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // 数珠玉グラデーション
+                // カラフルなノード
                 const beadGrad = ctx.createRadialGradient(bx - 3, by - 3, 1, bx, by, beadRadius);
-                if (isMasterBead) {
-                    beadGrad.addColorStop(0, '#F39C12');
-                    beadGrad.addColorStop(1, '#D35400');
-                } else {
-                    beadGrad.addColorStop(0, '#A0522D');
-                    beadGrad.addColorStop(1, '#5C2C16');
-                }
+                beadGrad.addColorStop(0, '#FFFFFF');
+                beadGrad.addColorStop(0.28, nodeColors[i % nodeColors.length]);
+                beadGrad.addColorStop(1, '#7C2D12');
 
                 ctx.fillStyle = beadGrad;
                 ctx.beginPath();
                 ctx.arc(bx, by, beadRadius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // 親房（ふさ）
-                if (isMasterBead) {
-                    ctx.strokeStyle = '#C0392B';
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(bx, by);
-                    ctx.lineTo(bx * 1.3, by * 1.3);
-                    ctx.stroke();
-                }
             }
             ctx.restore();
         }
@@ -995,7 +972,7 @@
         function onJuzuTap() {
             if (!state.juzu.active) return;
 
-            playMokugyoSound();
+            playClapperSound();
 
             // 回転を進める
             const step = (Math.PI * 2) / 24; // 1玉分進む
@@ -1036,7 +1013,7 @@
             overlay.innerHTML = `
                 <div class="text-4xl mb-1">🎉</div>
                 <h3 class="text-xl font-bold text-amber-300">タイムアップ！</h3>
-                <p class="text-sm my-2">数珠回し結果: <span class="text-amber-200 font-bold text-lg">${state.juzu.laps.toFixed(1)}周</span></p>
+                <p class="text-sm my-2">輪まわし結果: <span class="text-amber-200 font-bold text-lg">${state.juzu.laps.toFixed(1)}周</span></p>
                 <div class="bg-red-900/80 px-4 py-2 rounded-xl border border-amber-400 mb-4 text-xs text-amber-100">
                     🎫 福引き券を <span class="text-amber-300 font-bold text-sm">${earnedTickets}枚</span> 獲得！
                 </div>
@@ -1846,11 +1823,11 @@
 
         // 的の種類定義
         const MATO_TYPES = [
-            { id: 'daruma', name: '赤だるま', icon: '👺', score: 150, color: '#C0392B', w: 36, h: 42, isBomb: false, isGold: false },
-            { id: 'kitsune', name: '狐のお面', icon: '🦊', score: 180, color: '#E67E22', w: 34, h: 38, isBomb: false, isGold: false },
-            { id: 'neko', name: '招き猫', icon: '🐱', score: 250, color: '#F39C12', w: 38, h: 44, isBomb: false, isGold: false },
+            { id: 'daruma', name: '大きなスイカ', icon: '🍉', score: 150, color: '#C0392B', w: 36, h: 42, isBomb: false, isGold: false },
+            { id: 'kitsune', name: 'ヒーローお面', icon: '🎭', score: 180, color: '#E67E22', w: 34, h: 38, isBomb: false, isGold: false },
+            { id: 'neko', name: '水ヨーヨー', icon: '🎈', score: 250, color: '#F39C12', w: 38, h: 44, isBomb: false, isGold: false },
             { id: 'chochin', name: '提灯ボム', icon: '🏮', score: 300, color: '#E74C3C', w: 32, h: 42, isBomb: true, isGold: false },
-            { id: 'gold_jizo', name: '黄金の宝仏', icon: '✨', score: 500, color: '#F1C40F', w: 40, h: 46, isBomb: false, isGold: true }
+            { id: 'gold_jizo', name: '黄金のまと', icon: '⭐', score: 500, color: '#F1C40F', w: 40, h: 46, isBomb: false, isGold: true }
         ];
 
         // 的当て屋台の棚のY座標
@@ -1893,8 +1870,8 @@
                 type = MATO_TYPES[4]; // 黄金
             } else {
                 const r = Math.random();
-                if (r < 0.40) type = MATO_TYPES[0];      // だるま
-                else if (r < 0.70) type = MATO_TYPES[1]; // 狐
+                if (r < 0.40) type = MATO_TYPES[0];      // スイカ
+                else if (r < 0.70) type = MATO_TYPES[1]; // お面
                 else if (r < 0.88) type = MATO_TYPES[2]; // 猫
                 else if (r < 0.96) type = MATO_TYPES[3]; // 提灯ボム
                 else type = MATO_TYPES[4];               // 黄金
@@ -2411,7 +2388,7 @@
         }
 
         /* ==========================================
-           4. ゲーム2: お地蔵様デコレーション
+           4. ゲーム2: 夏祭りやぐらデコレーション
            ========================================== */
         const jizoCanvas = document.getElementById('jizoDecorateCanvas');
         const jizoCtx = jizoCanvas.getContext('2d');
@@ -2419,27 +2396,27 @@
         // デコレーションのパーツ定義
         const decoItems = {
             bib: [
-                { id: 'red', name: '赤い前掛け', color: '#C0392B' },
-                { id: 'gold', name: '金色前掛け', color: '#F39C12' },
-                { id: 'pink', name: '桃色前掛け', color: '#FF7675' },
-                { id: 'blue', name: '青色前掛け', color: '#0984E3' }
+                { id: 'red', name: '赤い幕', color: '#C0392B' },
+                { id: 'gold', name: '金色の幕', color: '#F39C12' },
+                { id: 'pink', name: '桃色の幕', color: '#FF7675' },
+                { id: 'blue', name: '青色の幕', color: '#0984E3' }
             ],
             cap: [
-                { id: 'none', name: 'なし', icon: '❌' },
-                { id: 'red_hat', name: '赤頭巾', icon: '🧢' },
+                { id: 'none', name: '飾りなし', icon: '➖' },
+                { id: 'red_hat', name: '提灯', icon: '🏮' },
                 { id: 'flower', name: '花飾り', icon: '🌸' },
-                { id: 'hachimaki', name: '鉢巻', icon: '🎗️' }
+                { id: 'hachimaki', name: '祭りはちまき', icon: '🎗️' }
             ],
             offering: [
-                { id: 'dango', name: '三色団子', icon: '🍡' },
-                { id: 'watermelon', name: 'スイカ', icon: '🍉' },
-                { id: 'sweets', name: '駄菓子袋', icon: '🛍️' },
-                { id: 'tea', name: 'お茶', icon: '🍵' }
+                { id: 'dango', name: '団子屋台', icon: '🍡' },
+                { id: 'watermelon', name: 'スイカ屋台', icon: '🍉' },
+                { id: 'sweets', name: '駄菓子屋台', icon: '🛍️' },
+                { id: 'tea', name: 'お茶コーナー', icon: '🍵' }
             ],
             bg: [
-                { id: 'temple', name: 'お寺の境内', color1: '#FFF3E0', color2: '#FFE0B2' },
-                { id: 'festival', name: '夏祭り', color1: '#FFEBEE', color2: '#FFCDD2' },
-                { id: 'nature', name: '新緑の庭', color1: '#E8F5E9', color2: '#C8E6C9' }
+                { id: 'temple', name: '夏祭り広場', color1: '#FFF3E0', color2: '#FFE0B2' },
+                { id: 'festival', name: '提灯通り', color1: '#FFEBEE', color2: '#FFCDD2' },
+                { id: 'nature', name: '緑の広場', color1: '#E8F5E9', color2: '#C8E6C9' }
             ]
         };
 
@@ -2505,9 +2482,20 @@
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, w, h);
 
-            // 地蔵堂・提灯飾り
+            // 2. 夏祭りやぐらと提灯
             ctx.fillStyle = '#795548';
-            ctx.fillRect(0, h - 25, w, 25); // 台座
+            ctx.fillRect(0, h - 25, w, 25);
+            ctx.fillStyle = '#6D4C41';
+            ctx.fillRect(cx - 66, h - 205, 12, 150);
+            ctx.fillRect(cx + 54, h - 205, 12, 150);
+            ctx.fillRect(cx - 82, h - 208, 164, 14);
+            ctx.fillStyle = '#8D3B2D';
+            ctx.beginPath();
+            ctx.moveTo(cx - 96, h - 208);
+            ctx.lineTo(cx, h - 252);
+            ctx.lineTo(cx + 96, h - 208);
+            ctx.closePath();
+            ctx.fill();
 
             // 提灯（左右）
             ctx.fillStyle = '#E74C3C';
@@ -2517,102 +2505,72 @@
             ctx.fill();
             ctx.fillStyle = '#FFF';
             ctx.font = 'bold 10px sans-serif';
-            ctx.fillText('奉', 30, 48);
-            ctx.fillText('納', w - 40, 48);
+            ctx.textAlign = 'center';
+            ctx.fillText('夏', 35, 48);
+            ctx.fillText('祭', w - 35, 48);
 
-            // 2. お地蔵様本体（石像）
-            // 蓮華座
-            ctx.fillStyle = '#9E9E9E';
-            ctx.beginPath();
-            ctx.ellipse(cx, h - 40, 70, 18, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 身体
-            ctx.fillStyle = '#BDBDBD';
-            ctx.beginPath();
-            ctx.moveTo(cx - 45, h - 45);
-            ctx.quadraticCurveTo(cx, h - 140, cx + 45, h - 45);
-            ctx.fill();
-
-            // 頭部
-            ctx.beginPath();
-            ctx.arc(cx, h - 135, 42, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 耳
-            ctx.beginPath();
-            ctx.arc(cx - 42, h - 135, 8, 0, Math.PI * 2);
-            ctx.arc(cx + 42, h - 135, 8, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 顔の表情（温かい笑顔）
-            ctx.strokeStyle = '#424242';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            // 目
-            ctx.arc(cx - 15, h - 142, 9, 0.1 * Math.PI, 0.9 * Math.PI);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(cx + 15, h - 142, 9, 0.1 * Math.PI, 0.9 * Math.PI);
-            ctx.stroke();
-            // ほほ笑み口
-            ctx.beginPath();
-            ctx.arc(cx, h - 128, 12, 0.2 * Math.PI, 0.8 * Math.PI);
-            ctx.stroke();
-
-            // 3. 前掛け（Bib）
+            // 3. やぐら正面の幕
             const bibConfig = decoItems.bib.find(b => b.id === state.jizoDeco.bib) || decoItems.bib[0];
             ctx.fillStyle = bibConfig.color;
+            ctx.fillRect(cx - 54, h - 105, 108, 48);
+            ctx.fillStyle = 'rgba(255,255,255,.82)';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillText('夏 祭 り', cx, h - 75);
+
+            // 中央の太鼓
+            ctx.fillStyle = '#F5E6C8';
+            ctx.strokeStyle = '#7C2D12';
+            ctx.lineWidth = 5;
             ctx.beginPath();
-            ctx.arc(cx, h - 90, 36, 0, Math.PI);
+            ctx.arc(cx, h - 150, 34, 0, Math.PI * 2);
             ctx.fill();
-            // 首紐
-            ctx.strokeStyle = bibConfig.color;
-            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.strokeStyle = '#DC2626';
+            ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.arc(cx, h - 105, 38, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.moveTo(cx - 23, h - 173);
+            ctx.lineTo(cx + 23, h - 127);
+            ctx.moveTo(cx + 23, h - 173);
+            ctx.lineTo(cx - 23, h - 127);
             ctx.stroke();
 
-            // 4. 頭飾り（Cap）
+            // 4. やぐら上部の飾り
             if (state.jizoDeco.cap === 'red_hat') {
-                ctx.fillStyle = '#C0392B';
-                ctx.beginPath();
-                ctx.arc(cx, h - 155, 43, Math.PI, 0);
-                ctx.fill();
+                ctx.font = '32px sans-serif';
+                ctx.fillText('🏮', cx, h - 212);
             } else if (state.jizoDeco.cap === 'flower') {
                 ctx.font = '28px sans-serif';
-                ctx.fillText('🌸', cx + 18, h - 160);
+                ctx.fillText('🌸', cx, h - 212);
             } else if (state.jizoDeco.cap === 'hachimaki') {
                 ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(cx - 43, h - 165, 86, 12);
+                ctx.fillRect(cx - 48, h - 225, 96, 18);
                 ctx.fillStyle = '#E74C3C';
-                ctx.beginPath();
-                ctx.arc(cx, h - 159, 4, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillText('わっしょい', cx, h - 212);
             }
 
-            // 5. お供え物（Offering）
+            // 5. 屋台アイテム
             const off = state.jizoDeco.offering;
             ctx.font = '32px sans-serif';
-            if (off === 'dango') ctx.fillText('🍡', cx - 16, h - 25);
-            if (off === 'watermelon') ctx.fillText('🍉', cx - 16, h - 25);
-            if (off === 'sweets') ctx.fillText('🛍️', cx - 16, h - 25);
-            if (off === 'tea') ctx.fillText('🍵', cx - 16, h - 25);
+            if (off === 'dango') ctx.fillText('🍡', cx, h - 27);
+            if (off === 'watermelon') ctx.fillText('🍉', cx, h - 27);
+            if (off === 'sweets') ctx.fillText('🛍️', cx, h - 27);
+            if (off === 'tea') ctx.fillText('🍵', cx, h - 27);
         }
 
-        const omikujiPhrases = [
-            '「いつも笑顔で元気いっぱいに過ごせますように」',
-            '「お友達となかよく楽しく遊べる大吉の日！」',
-            '「美味しいものを食べて元気がみなぎります」',
-            '「早寝早起きで良いことが舞い込んできます」',
-            '「地蔵菩薩様があなたの安全を見守っています」'
+        const cheerPhrases = [
+            '「みんなの笑顔で、会場がもっと明るくなりました！」',
+            '「友だちと力を合わせると、楽しさが何倍にもなるね！」',
+            '「すてきな飾りつけ！夏の思い出がまた一つ増えました」',
+            '「準備も片づけも、みんなで取り組むと夏祭りは大成功！」',
+            '「子どもも大人も、一緒に楽しめる広場になりました！」'
         ];
 
-        function prayJizo() {
+        function showFestivalMessage() {
             playBellSound(523.25);
             setTimeout(() => playBellSound(1046.50), 200);
 
-            const randomPhrase = omikujiPhrases[Math.floor(Math.random() * omikujiPhrases.length)];
+            const randomPhrase = cheerPhrases[Math.floor(Math.random() * cheerPhrases.length)];
             document.getElementById('omikujiText').textContent = randomPhrase;
             document.getElementById('omikujiBubble').classList.remove('hidden');
         }
@@ -2701,9 +2659,9 @@
             if (state.tickets < 1) {
                 const modal = document.getElementById('rewardModal');
                 document.getElementById('modalHeader').textContent = '🎫 チケット不足';
-                document.getElementById('modalBall').textContent = '📿';
+                document.getElementById('modalBall').textContent = '⭕';
                 document.getElementById('modalTitle').textContent = '福引き券が足りません';
-                document.getElementById('modalDesc').textContent = '「数珠まわし」や「金魚すくい」で遊んで福引き券を獲得しましょう！';
+                document.getElementById('modalDesc').textContent = '「輪まわし」や「金魚すくい」で遊んで福引き券を獲得しましょう！';
                 document.getElementById('modalItemIcon').textContent = '🐟';
                 modal.classList.remove('hidden');
                 return;
@@ -2734,18 +2692,18 @@
 
         // 景品・お菓子データ定義 (全12種)
         const sweetsList = [
-            { id: 1, rank: '金賞', ball: '🟡', title: '特大花火＆豪華駄菓子パック', desc: '地蔵盆の夜に遊べるビッグ花火セット！', icon: '🎆' },
-            { id: 2, rank: '銀賞', ball: '⚪', title: '地蔵盆お楽しみ袋', desc: 'たくさんのお菓子がぎっしり詰まった人気袋！', icon: '🛍️' },
+            { id: 1, rank: '金賞', ball: '🟡', title: '特大花火＆豪華駄菓子パック', desc: '夏祭りの夜に楽しめるビッグ花火セット！', icon: '🎆' },
+            { id: 2, rank: '銀賞', ball: '⚪', title: '夏祭りお楽しみ袋', desc: 'たくさんのお菓子がぎっしり詰まった人気袋！', icon: '🛍️' },
             { id: 3, rank: '赤賞', ball: '🔴', title: 'うまい棒 10本パック', desc: 'サクサク香ばしい超定番駄菓子！', icon: '🥢' },
-            { id: 4, rank: '赤賞', ball: '🔴', title: 'ひえひえラムネジュース', desc: 'シュワッと爽やかな地蔵盆のお下がり！', icon: '🥤' },
+            { id: 4, rank: '赤賞', ball: '🔴', title: 'ひえひえラムネジュース', desc: 'シュワッと爽やかな夏祭りのひんやりジュース！', icon: '🥤' },
             { id: 5, rank: '緑賞', ball: '🟢', title: '三色ドロップキャンディ', desc: 'カラフルで甘い可愛らしい飴玉。', icon: '🍬' },
             { id: 6, rank: '緑賞', ball: '🟢', title: 'カラフルラムネ', desc: '口の中でしゅわっと溶ける爽やかお菓子。', icon: '🟡' },
             { id: 7, rank: '白賞', ball: '⚪', title: 'フルーツゼリーセット', desc: '冷やして食べるととっても美味しいゼリー。', icon: '🍮' },
             { id: 8, rank: '白賞', ball: '⚪', title: 'ポン菓子（米菓子）', desc: '昔ながらのやさしい甘さのサクサクお菓子。', icon: '🍿' },
             { id: 9, rank: '白賞', ball: '⚪', title: '水風船＆ポイ', desc: '縁日気分を味わえる楽しいおもちゃ！', icon: '🎈' },
             { id: 10, rank: '白賞', ball: '⚪', title: 'スーパーボール', desc: '良く跳ねるきれいなガラス玉風ボール。', icon: '⚽' },
-            { id: 11, rank: '白賞', ball: '⚪', title: 'お地蔵様シール', desc: '貼るとご利益がありそうな限定シール！', icon: '🏷️' },
-            { id: 12, rank: '白賞', ball: '⚪', title: 'ポケットティッシュ＆おみくじ', desc: '地蔵盆のお下がりおみくじ。', icon: '📜' }
+            { id: 11, rank: '白賞', ball: '⚪', title: 'きらきら花火シール', desc: '夜空を彩る花火を描いた夏祭り限定シール！', icon: '🏷️' },
+            { id: 12, rank: '白賞', ball: '⚪', title: 'ポケットティッシュ＆思い出カード', desc: '夏祭りの楽しかったことを書き残せるカード。', icon: '📝' }
         ];
 
         function determineGaraponReward() {
