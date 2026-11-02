@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ブロック崩し</title>
+
+<style>
+body{
+    margin:0;
+    background:#111;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+canvas{
+    background:black;
+    border:2px solid white;
+}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+
+<body>
+
+<canvas id="game" width="800" height="600"></canvas>
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let score = 0;
+let selectedLevel = null;
+let gameStarted = false;
+let gameState = "menu";
+
+const paddle = {
+    x:350,
+    y:560,
+    width:100,
+    height:15
+};
+
+const ball = {
+    x:400,
+    y:500,
+    r:10,
+    dx:0,
+    dy:0
+};
+
+let blocks = [];
+
+/* レベルボタン */
+
+const levelButtons = [];
+
+for(let i=0;i<10;i++){
+
+    levelButtons.push({
+        level:i+1,
+        x:120 + (i % 5) * 130,
+        y:180 + Math.floor(i / 5) * 100,
+        w:100,
+        h:50
+    });
+
+}
+
+/* レベル生成 */
+
+function createLevel(level){
+
+    blocks = [];
+
+    const cols = Math.min(level + 4,10);
+    const rows = Math.min(level + 2,10);
+
+    for(let row=0;row<rows;row++){
+
+        for(let col=0;col<cols;col++){
+
+            blocks.push({
+                x:20 + col * 75,
+                y:100 + row * 28,
+                width:70,
+                height:20,
+                alive:true
+            });
+
+        }
+    }
+
+}
+
+/* マウス移動 */
+
+canvas.addEventListener("mousemove",(e)=>{
+
+    const rect = canvas.getBoundingClientRect();
+
+    paddle.x =
+        (e.clientX - rect.left) * (canvas.width / rect.width) -
+        paddle.width / 2;
+
+    if(paddle.x < 0){
+        paddle.x = 0;
+    }
+
+    if(paddle.x > canvas.width - paddle.width){
+        paddle.x = canvas.width - paddle.width;
+    }
+
+});
+
+/* クリック */
+
+canvas.addEventListener("click",(e)=>{
+
+    if(
+        gameState === "gameover" ||
+        gameState === "clear"
+    ){
+        location.reload();
+        return;
+    }
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    if(selectedLevel === null){
+
+        for(let btn of levelButtons){
+
+            if(
+                mx > btn.x &&
+                mx < btn.x + btn.w &&
+                my > btn.y &&
+                my < btn.y + btn.h
+            ){
+
+                selectedLevel = btn.level;
+
+                createLevel(selectedLevel);
+
+                return;
+            }
+
+        }
+
+    }
+
+    if(
+        selectedLevel !== null &&
+        !gameStarted
+    ){
+
+        const speed =
+            4 + selectedLevel * 0.4;
+
+        gameStarted = true;
+        gameState = "playing";
+
+        ball.dx = speed;
+        ball.dy = -speed;
+
+    }
+
+});
+
+/* 更新 */
+
+function update(){
+
+    if(selectedLevel === null){
+        return;
+    }
+
+    if(!gameStarted){
+
+        ball.x =
+            paddle.x +
+            paddle.width / 2;
+
+        ball.y =
+            paddle.y - 15;
+
+        return;
+    }
+
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    if(
+        ball.x < ball.r ||
+        ball.x > canvas.width - ball.r
+    ){
+        ball.dx *= -1;
+    }
+
+    if(ball.y < ball.r){
+        ball.dy *= -1;
+    }
+
+    if(
+        ball.y + ball.r > paddle.y &&
+        ball.y - ball.r < paddle.y + paddle.height &&
+        ball.x > paddle.x &&
+        ball.x < paddle.x + paddle.width &&
+        ball.dy > 0
+    ){
+
+        ball.dy *= -1;
+
+        let hit =
+            (ball.x -
+            (paddle.x + paddle.width/2))
+            /(paddle.width/2);
+
+        ball.dx = hit * 8;
+    }
+
+    for(let block of blocks){
+
+        if(!block.alive) continue;
+
+        if(
+            ball.x > block.x &&
+            ball.x < block.x + block.width &&
+            ball.y + ball.r > block.y &&
+            ball.y - ball.r < block.y + block.height
+        ){
+
+            block.alive = false;
+
+            score += 10;
+
+            ball.dy *= -1;
+
+            break;
+        }
+    }
+
+    if(ball.y > canvas.height){
+
+        gameStarted = false;
+        gameState = "gameover";
+
+        return;
+    }
+
+    const remain =
+        blocks.filter(
+            b => b.alive
+        ).length;
+
+    if(remain === 0){
+
+        gameStarted = false;
+        gameState = "clear";
+
+        return;
+    }
+
+}
+
+/* 描画 */
+
+function draw(){
+
+    /* GAME OVER */
+
+    if(gameState === "gameover"){
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle = "red";
+        ctx.textAlign = "center";
+        ctx.font = "70px Arial";
+
+        ctx.fillText(
+            "GAME OVER",
+            canvas.width/2,
+            220
+        );
+
+        ctx.fillStyle = "white";
+        ctx.font = "32px Arial";
+
+        ctx.fillText(
+            "Score : " + score,
+            canvas.width/2,
+            300
+        );
+
+        ctx.fillText(
+            "クリックで再挑戦",
+            canvas.width/2,
+            400
+        );
+
+        return;
+    }
+
+    /* CLEAR */
+
+    if(gameState === "clear"){
+
+        ctx.fillStyle = "#001122";
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        for(let i=0;i<150;i++){
+
+            ctx.fillStyle =
+                `hsl(${i*10},100%,60%)`;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                Math.random()*canvas.width,
+                Math.random()*canvas.height,
+                3 + Math.random()*5,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+        }
+
+        ctx.fillStyle = "gold";
+        ctx.textAlign = "center";
+        ctx.font = "70px Arial";
+
+        ctx.fillText(
+            "CLEAR!",
+            canvas.width/2,
+            200
+        );
+
+        ctx.fillStyle = "white";
+        ctx.font = "40px Arial";
+
+        ctx.fillText(
+            "おめでとう！",
+            canvas.width/2,
+            280
+        );
+
+        ctx.fillText(
+            "Score : " + score,
+            canvas.width/2,
+            340
+        );
+
+        ctx.fillText(
+            "クリックでタイトルへ",
+            canvas.width/2,
+            430
+        );
+
+        return;
+    }
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    /* タイトル画面 */
+
+    if(selectedLevel === null){
+
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+
+        ctx.font = "40px Arial";
+
+        ctx.fillText(
+            "ブロック崩し",
+            400,
+            100
+        );
+
+        ctx.font = "24px Arial";
+
+        ctx.fillText(
+            "レベルを選択してください",
+            400,
+            150
+        );
+
+        for(let btn of levelButtons){
+
+            ctx.fillStyle = "#0066ff";
+
+            ctx.fillRect(
+                btn.x,
+                btn.y,
+                btn.w,
+                btn.h
+            );
+
+            ctx.fillStyle = "white";
+
+            ctx.fillText(
+                "Level " + btn.level,
+                btn.x + btn.w/2,
+                btn.y + 33
+            );
+        }
+
+        return;
+    }
+
+    /* ヘッダー */
+
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0,0,canvas.width,70);
+
+    ctx.strokeStyle = "#555";
+    ctx.beginPath();
+    ctx.moveTo(0,70);
+    ctx.lineTo(canvas.width,70);
+    ctx.stroke();
+
+    ctx.fillStyle = "white";
+    ctx.font = "24px Arial";
+
+    ctx.fillText(
+        "Score: " + score,
+        20,
+        45
+    );
+
+    ctx.fillText(
+        "Level: " + selectedLevel,
+        220,
+        45
+    );
+
+    /* ブロック */
+
+    for(let block of blocks){
+
+        if(!block.alive) continue;
+
+        ctx.fillStyle =
+            `hsl(${block.y*2},80%,60%)`;
+
+        ctx.fillRect(
+            block.x,
+            block.y,
+            block.width,
+            block.height
+        );
+    }
+
+    /* パドル */
+
+    ctx.fillStyle = "white";
+
+    ctx.fillRect(
+        paddle.x,
+        paddle.y,
+        paddle.width,
+        paddle.height
+    );
+
+    /* ボール */
+
+    ctx.beginPath();
+
+    ctx.arc(
+        ball.x,
+        ball.y,
+        ball.r,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fillStyle = "yellow";
+    ctx.fill();
+
+    if(!gameStarted){
+
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.font = "30px Arial";
+
+        ctx.fillText(
+            "クリックでスタート",
+            canvas.width/2,
+            canvas.height/2
+        );
+
+        ctx.textAlign = "left";
+    }
+
+}
+
+function gameLoop(){
+
+    update();
+    draw();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+gameLoop();
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/* Shared, non-invasive finishing touches. Each student's original design remains intact. */
+:focus-visible{outline:3px solid #ff70c3!important;outline-offset:3px}
+button{touch-action:manipulation;transition:filter .15s ease,transform .15s ease}
+button:hover{filter:brightness(1.06)}
+button:active{transform:scale(.98)}
+html{scrollbar-color:#7883a4 transparent}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}

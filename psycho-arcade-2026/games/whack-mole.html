@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>もぐらたたきDX 完全版</title>
+
+<style>
+
+body{
+    font-family:sans-serif;
+    text-align:center;
+    background:linear-gradient(#87ceeb,#dff6ff);
+    cursor:none;
+}
+
+h1{
+    margin:20px;
+}
+
+.info{
+    font-size:24px;
+    margin:8px;
+    font-weight:bold;
+}
+
+#game{
+    width:650px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.hole{
+    width:180px;
+    height:180px;
+    background:#5d4037;
+    border-radius:50%;
+    position:relative;
+    overflow:hidden;
+}
+
+.mole{
+    width:110px;
+    height:110px;
+    position:absolute;
+    left:35px;
+    bottom:-140px;
+    border-radius:50%;
+    transition:.3s;
+    cursor:pointer;
+}
+
+.normal{
+    background:#8d6e63;
+}
+
+.normal::before{
+    content:"🐹";
+    position:absolute;
+    left:15px;
+    top:10px;
+    font-size:70px;
+}
+
+.bomb{
+    background:#444;
+}
+
+.bomb::before{
+    content:"💣";
+    position:absolute;
+    left:18px;
+    top:15px;
+    font-size:65px;
+}
+
+.up{
+    bottom:20px;
+}
+
+button{
+    font-size:20px;
+    padding:12px 25px;
+    margin-top:20px;
+    cursor:pointer;
+}
+
+#combo{
+    color:red;
+}
+
+#result{
+    margin-top:20px;
+    font-size:30px;
+    font-weight:bold;
+    color:green;
+}
+
+#hammer{
+    position:fixed;
+    font-size:60px;
+    pointer-events:none;
+    z-index:9999;
+    transform:translate(-10px,-10px);
+}
+
+.swing{
+    animation:swing .15s;
+}
+
+@keyframes swing{
+
+0%{
+transform:translate(-10px,-10px) rotate(0deg);
+}
+
+50%{
+transform:translate(-10px,-10px) rotate(-40deg);
+}
+
+100%{
+transform:translate(-10px,-10px) rotate(0deg);
+}
+
+}
+
+.confetti{
+position:fixed;
+font-size:32px;
+pointer-events:none;
+animation:fall 3s linear forwards;
+z-index:9998;
+}
+
+@keyframes fall{
+
+from{
+top:-50px;
+}
+
+to{
+top:100vh;
+}
+
+}
+
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<div id="hammer">🔨</div>
+
+<h1>🔨 もぐらたたきDX</h1>
+
+<div class="info">
+⭐ スコア:
+<span id="score">0</span>
+</div>
+
+<div class="info">
+❤️ ライフ:
+<span id="life">3</span>
+</div>
+
+<div class="info">
+🔥 コンボ:
+<span id="combo">0</span>
+</div>
+
+<div class="info">
+⏱ 残り時間:
+<span id="time">60</span>
+</div>
+
+<div class="info">
+🏆 ハイスコア:
+<span id="highscore">0</span>
+</div>
+
+<div id="game"></div>
+
+<button onclick="startGame()">
+ゲームスタート
+</button>
+
+<div id="result"></div>
+
+<script>
+
+// ====================
+// 効果音
+// ====================
+
+function playSound(type){
+
+    const ctx =
+    new (window.AudioContext || window.webkitAudioContext)();
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if(type==="hit"){
+        osc.frequency.value=700;
+    }
+
+    if(type==="bomb"){
+        osc.frequency.value=180;
+    }
+
+    if(type==="combo"){
+        osc.frequency.value=1200;
+    }
+
+    osc.type="square";
+
+    gain.gain.setValueAtTime(
+        0.08,
+        ctx.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        ctx.currentTime+0.15
+    );
+
+    osc.start();
+    osc.stop(ctx.currentTime+0.15);
+
+}
+
+// ====================
+// ハンマー
+// ====================
+
+const hammer =
+document.getElementById("hammer");
+
+document.addEventListener("mousemove",(e)=>{
+
+    hammer.style.left =
+    e.clientX + "px";
+
+    hammer.style.top =
+    e.clientY + "px";
+
+});
+
+document.addEventListener("mousedown",()=>{
+
+    hammer.classList.add("swing");
+
+    setTimeout(()=>{
+
+        hammer.classList.remove("swing");
+
+    },150);
+
+});
+
+// ====================
+// 紙吹雪
+// ====================
+
+function confetti(){
+
+    for(let i=0;i<40;i++){
+
+        const c=document.createElement("div");
+
+        c.className="confetti";
+
+        c.textContent=
+        ["🎉","✨","🎊","⭐"]
+        [Math.floor(Math.random()*4)];
+
+        c.style.left=
+        Math.random()*100+"vw";
+
+        c.style.animationDuration=
+        (2+Math.random()*2)+"s";
+
+        document.body.appendChild(c);
+
+        setTimeout(()=>{
+            c.remove();
+        },4000);
+
+    }
+
+}
+
+// ====================
+// ゲーム変数
+// ====================
+
+const game=document.getElementById("game");
+
+let score=0;
+let combo=0;
+let lives=3;
+let time=60;
+
+let current=null;
+
+let timer;
+let moleTimer;
+let speedTimer;
+
+let appearInterval=1500;
+
+let highscore=
+localStorage.getItem("moleHighScore") || 0;
+
+document.getElementById("highscore")
+.textContent=highscore;
+
+// ====================
+// 穴生成
+// ====================
+
+for(let i=0;i<9;i++){
+
+    const hole=document.createElement("div");
+    hole.className="hole";
+
+    const mole=document.createElement("div");
+    mole.className="mole";
+
+    mole.addEventListener("click",()=>{
+
+        if(mole!==current) return;
+
+        if(mole.classList.contains("bomb")){
+
+            playSound("bomb");
+
+            lives--;
+            combo=0;
+
+            score=Math.max(0,score-5);
+
+            if(lives<=0){
+                endGame();
+            }
+
+        }else{
+
+            playSound("hit");
+
+            score++;
+            combo++;
+
+            if(combo===5){
+
+                score+=5;
+
+                playSound("combo");
+
+            }
+
+            if(combo===10){
+
+                score+=10;
+
+                playSound("combo");
+
+            }
+
+        }
+
+        update();
+
+        mole.classList.remove("up");
+
+        current=null;
+
+    });
+
+    hole.appendChild(mole);
+    game.appendChild(hole);
+
+}
+
+// ====================
+// 更新
+// ====================
+
+function update(){
+
+    document.getElementById("score")
+    .textContent=score;
+
+    document.getElementById("combo")
+    .textContent=combo;
+
+    document.getElementById("life")
+    .textContent=lives;
+
+}
+
+// ====================
+// モグラ出現
+// ====================
+
+function showCharacter(){
+
+    const moles=
+    document.querySelectorAll(".mole");
+
+    moles.forEach(m=>{
+
+        m.classList.remove("up");
+        m.classList.remove("normal");
+        m.classList.remove("bomb");
+
+    });
+
+    const random=
+    Math.floor(Math.random()*moles.length);
+
+    current=moles[random];
+
+    if(Math.random()<0.25){
+
+        current.classList.add("bomb");
+
+    }else{
+
+        current.classList.add("normal");
+
+    }
+
+    current.classList.add("up");
+
+    setTimeout(()=>{
+
+        if(current){
+
+            current.classList.remove("up");
+            current=null;
+
+        }
+
+    },1000);
+
+}
+
+// ====================
+// スタート
+// ====================
+
+function startGame(){
+
+    clearInterval(timer);
+    clearInterval(moleTimer);
+    clearInterval(speedTimer);
+
+    score=0;
+    combo=0;
+    lives=3;
+    time=60;
+
+    appearInterval=1500;
+
+    update();
+
+    document.getElementById("result")
+    .textContent="";
+
+    document.getElementById("time")
+    .textContent=time;
+
+    moleTimer=setInterval(
+        showCharacter,
+        appearInterval
+    );
+
+    timer=setInterval(()=>{
+
+        time--;
+
+        document.getElementById("time")
+        .textContent=time;
+
+        if(time<=0){
+
+            endGame();
+
+        }
+
+    },1000);
+
+    speedTimer=setInterval(()=>{
+
+        if(appearInterval>800){
+
+            appearInterval-=100;
+
+            clearInterval(moleTimer);
+
+            moleTimer=setInterval(
+                showCharacter,
+                appearInterval
+            );
+
+        }
+
+    },10000);
+
+}
+
+// ====================
+// 終了
+// ====================
+
+function endGame(){
+
+    clearInterval(timer);
+    clearInterval(moleTimer);
+    clearInterval(speedTimer);
+
+    document
+    .querySelectorAll(".mole")
+    .forEach(m=>m.classList.remove("up"));
+
+    if(score>highscore){
+
+        highscore=score;
+
+        localStorage.setItem(
+            "moleHighScore",
+            score
+        );
+
+    }
+
+    confetti();
+
+    setTimeout(()=>{
+
+        document.body.innerHTML=`
+
+        <div style="
+        margin-top:100px;
+        text-align:center;
+        font-family:sans-serif;
+        ">
+
+            <h1 style="
+            font-size:80px;
+            color:gold;
+            text-shadow:3px 3px 10px black;
+            ">
+            🏆 GAME OVER
+            </h1>
+
+            <h2 style="
+            font-size:40px;
+            ">
+            最終スコア
+            </h2>
+
+            <div style="
+            font-size:90px;
+            color:#e53935;
+            font-weight:bold;
+            ">
+            ${score}
+            </div>
+
+            <br>
+
+            <div style="
+            font-size:35px;
+            ">
+            🏆 ハイスコア ${Math.max(score,highscore)}
+            </div>
+
+            <br><br>
+
+            <button
+            onclick="location.reload()"
+            style="
+            font-size:30px;
+            padding:15px 30px;
+            ">
+            🔄 もう一度遊ぶ
+            </button>
+
+        </div>
+
+        `;
+
+    },1000);
+
+}
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

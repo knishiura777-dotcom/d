@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>麻辣湯ゲーム</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    background:#fff8f0;
+    text-align:center;
+    margin:0;
+    padding:10px;
+}
+
+.panel{
+    max-width:900px;
+    margin:8px auto;
+    background:#fff;
+    border-radius:10px;
+    padding:10px;
+    box-shadow:0 0 5px rgba(0,0,0,0.1);
+}
+
+#gameArea,
+#resultArea{
+    display:none;
+}
+
+.info{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.top{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.ingredients{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+
+.card{
+    border:2px solid #ccc;
+    border-radius:10px;
+    padding:10px;
+    cursor:pointer;
+    background:#fafafa;
+    user-select:none;
+}
+
+.card:hover{
+    background:#f0f0f0;
+}
+
+.selected{
+    background:#ffeaa7;
+    border-color:#f39c12;
+}
+
+.icon{
+    font-size:42px;
+}
+
+button{
+    padding:8px 20px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#message{
+    min-height:30px;
+    margin-top:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<h1>🍜 麻辣湯ゲーム</h1>
+
+<div class="panel">
+遊び方：注文された具材を選びます。順番は自由です。<br>
+注文にない具材を押すと失敗です。
+</div>
+
+<div id="startArea" class="panel">
+
+<h3>辛さ選択</h3>
+
+<label>
+<input type="radio" name="difficulty" value="easy" checked>
+🌶 甘口
+</label>
+
+<label>
+<input type="radio" name="difficulty" value="normal">
+🌶🌶 中辛
+</label>
+
+<label>
+<input type="radio" name="difficulty" value="hard">
+🌶🌶🌶 激辛
+</label>
+
+<br><br>
+
+<button id="startBtn">ゲームスタート</button>
+
+</div>
+
+<div id="gameArea">
+
+<div class="panel info">
+残り時間：
+<span id="time">30</span>秒　
+得点：
+<span id="score">0</span>点　
+コンボ：
+<span id="combo">0</span>
+</div>
+
+<div class="top">
+
+<div class="panel">
+<h3>注文</h3>
+<div id="order"></div>
+</div>
+
+<div class="panel">
+<h3>⭐ ゴールデン具材</h3>
+<div id="golden"></div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<div id="ingredientArea" class="ingredients"></div>
+
+<div id="message"></div>
+
+</div>
+
+</div>
+
+<div id="resultArea" class="panel">
+
+<h2>ゲーム終了！</h2>
+
+<p id="finalScore"></p>
+<p id="finalCombo"></p>
+<p id="rank"></p>
+
+<h3>辛さ選択</h3>
+
+<label>
+<input type="radio" name="difficultyResult" value="easy">
+🌶 甘口
+</label>
+
+<label>
+<input type="radio" name="difficultyResult" value="normal">
+🌶🌶 中辛
+</label>
+
+<label>
+<input type="radio" name="difficultyResult" value="hard">
+🌶🌶🌶 激辛
+</label>
+
+<br><br>
+
+<button id="retryBtn">もう一度遊ぶ</button>
+
+</div>
+
+<script>
+
+// --------------------
+// 具材データ
+// --------------------
+const ingredients = [
+{name:"春雨",icon:"🍜"},
+{name:"チンゲンサイ",icon:"🥬"},
+{name:"きくらげ",icon:"🍄"},
+{name:"豆腐",icon:"⬜"},
+{name:"うずらの卵",icon:"🥚"},
+{name:"エビ団子",icon:"🦐"},
+{name:"ソーセージ",icon:"🌭"},
+{name:"白菜",icon:"🥗"}
+];
+
+// --------------------
+// ゲーム変数
+// --------------------
+let score = 0;
+let combo = 0;
+let maxCombo = 0;
+let timeLeft = 30;
+let timer = null;
+
+let difficulty = "easy";
+let goldenBonus = 5;
+let goldenIngredient = "";
+
+let currentOrder = [];
+let selectedItems = new Set();
+
+// --------------------
+// 要素取得
+// --------------------
+const ingredientArea = document.getElementById("ingredientArea");
+const orderArea = document.getElementById("order");
+const messageArea = document.getElementById("message");
+
+// --------------------
+// カード生成
+// --------------------
+function createCards(){
+
+    ingredientArea.innerHTML = "";
+
+    ingredients.forEach(item=>{
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML =
+        `<div class="icon">${item.icon}</div>
+         <div>${item.name}</div>`;
+
+        card.addEventListener("click",()=>{
+            selectIngredient(card,item.name);
+        });
+
+        ingredientArea.appendChild(card);
+    });
+}
+
+// --------------------
+// ゴールデン具材設定
+// --------------------
+function setGolden(){
+
+    const index =
+    Math.floor(Math.random()*ingredients.length);
+
+    goldenIngredient =
+    ingredients[index].name;
+
+    document.getElementById("golden").textContent =
+    goldenIngredient;
+}
+
+// --------------------
+// 激辛シャッフル
+// --------------------
+function shuffleCards(){
+
+    const cards =
+    Array.from(ingredientArea.children);
+
+    cards.sort(()=>Math.random()-0.5);
+
+    ingredientArea.innerHTML = "";
+
+    cards.forEach(card=>{
+        ingredientArea.appendChild(card);
+    });
+}
+
+// --------------------
+// 注文生成
+// --------------------
+function generateOrder(){
+
+    selectedItems.clear();
+
+    document
+    .querySelectorAll(".card")
+    .forEach(card=>{
+        card.classList.remove("selected");
+    });
+
+    let count = 2;
+
+    if(difficulty==="normal"){
+        count = Math.floor(Math.random()*2)+2;
+    }
+
+    if(difficulty==="hard"){
+        count = Math.floor(Math.random()*2)+3;
+    }
+
+    const shuffled =
+    [...ingredients]
+    .sort(()=>Math.random()-0.5);
+
+    currentOrder =
+    shuffled.slice(0,count)
+    .map(item=>item.name);
+
+    orderArea.innerHTML = "";
+
+    currentOrder.forEach(item=>{
+
+        const div =
+        document.createElement("div");
+
+        div.textContent = "・" + item;
+
+        orderArea.appendChild(div);
+    });
+
+    if(difficulty==="hard"){
+        shuffleCards();
+    }
+}
+
+// --------------------
+// 成功処理
+// --------------------
+function success(){
+
+    combo++;
+
+    if(combo > maxCombo){
+        maxCombo = combo;
+    }
+
+    let addScore =
+    currentOrder.length +
+    Math.max(0,combo-1);
+
+    if(currentOrder.includes(goldenIngredient)){
+        addScore += goldenBonus;
+    }
+
+    score += addScore;
+
+    document.getElementById("score").textContent =
+    score;
+
+    document.getElementById("combo").textContent =
+    combo;
+
+    messageArea.style.color = "green";
+    messageArea.textContent =
+    "成功！ +" + addScore + "点";
+
+    generateOrder();
+}
+
+// --------------------
+// 選択処理
+// --------------------
+function selectIngredient(card,name){
+
+    if(timeLeft<=0) return;
+
+    if(selectedItems.has(name)) return;
+
+    selectedItems.add(name);
+
+    card.classList.add("selected");
+
+    if(!currentOrder.includes(name)){
+
+        combo = 0;
+
+        document.getElementById("combo").textContent =
+        combo;
+
+        messageArea.style.color = "red";
+        messageArea.textContent = "失敗！";
+
+        generateOrder();
+
+        return;
+    }
+
+    const allCorrect =
+    currentOrder.every(item =>
+        selectedItems.has(item)
+    );
+
+    if(allCorrect){
+        success();
+    }
+}
+
+// --------------------
+// 難易度取得
+// --------------------
+function getDifficulty(){
+
+    const startVisible =
+    document.getElementById("startArea")
+    .style.display !== "none";
+
+    if(startVisible){
+
+        return document.querySelector(
+        'input[name="difficulty"\]:checked'
+        ).value;
+
+    }else{
+
+        return document.querySelector(
+        'input[name="difficultyResult"\]:checked'
+        ).value;
+
+    }
+}
+
+// --------------------
+// ゲーム開始
+// --------------------
+function startGame(){
+
+    difficulty = getDifficulty();
+
+    if(difficulty==="easy"){
+        timeLeft = 40;
+        goldenBonus = 5;
+    }
+    else if(difficulty==="normal"){
+        timeLeft = 30;
+        goldenBonus = 3;
+    }
+    else{
+        timeLeft = 30;
+        goldenBonus = 2;
+    }
+
+    score = 0;
+    combo = 0;
+    maxCombo = 0;
+
+    document.getElementById("score").textContent = 0;
+    document.getElementById("combo").textContent = 0;
+    document.getElementById("time").textContent = timeLeft;
+
+    messageArea.textContent = "";
+
+    document.getElementById("startArea").style.display = "none";
+    document.getElementById("resultArea").style.display = "none";
+    document.getElementById("gameArea").style.display = "block";
+
+    createCards();
+    setGolden();
+    generateOrder();
+
+    clearInterval(timer);
+
+    timer = setInterval(()=>{
+
+        timeLeft--;
+
+        document.getElementById("time").textContent =
+        timeLeft;
+
+        if(timeLeft <= 0){
+            endGame();
+        }
+
+    },1000);
+}
+
+// --------------------
+// 終了処理
+// --------------------
+function endGame(){
+
+    clearInterval(timer);
+
+    document.getElementById("gameArea").style.display = "none";
+    document.getElementById("resultArea").style.display = "block";
+
+    document.getElementById("finalScore").textContent =
+    "最終得点：" + score + "点";
+
+    document.getElementById("finalCombo").textContent =
+    "最高コンボ：" + maxCombo;
+
+    let rank = "";
+
+    if(score >= 45){
+        rank = "麻辣湯マスター！";
+    }
+    else if(score >= 30){
+        rank = "なかなか上手！";
+    }
+    else{
+        rank = "もう一度挑戦！";
+    }
+
+    document.getElementById("rank").textContent =
+    rank;
+
+    const radio =
+    document.querySelector(
+    `input[name="difficultyResult"][value="${difficulty}"]`
+    );
+
+    if(radio){
+        radio.checked = true;
+    }
+}
+
+// --------------------
+// ボタン設定
+// --------------------
+document
+.getElementById("startBtn")
+.addEventListener("click",startGame)
+document
+.getElementById("retryBtn")
+.addEventListener("click",startGame);
+
+</script>
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

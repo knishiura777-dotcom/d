@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>早押しゲーム</title>
+
+<style>
+body{
+    text-align:center;
+    font-family:sans-serif;
+    background:#f0f8ff;
+}
+
+#game{
+    display:none;
+}
+
+#instruction{
+    font-size:80px;
+    margin:20px;
+}
+
+.arrow{
+    width:150px;
+    height:150px;
+    font-size:60px;
+    margin:10px;
+    cursor:pointer;
+}
+
+#startBtn,
+#retryBtn{
+    font-size:30px;
+    padding:15px 30px;
+}
+
+#message{
+    font-size:40px;
+    margin-top:20px;
+    color:red;
+}
+
+#rules{
+    width:600px;
+    margin:20px auto;
+    padding:15px;
+    border:2px solid black;
+    border-radius:10px;
+    background:white;
+    font-size:20px;
+}
+
+#ranking{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:220px;
+    padding:15px;
+    border:2px solid black;
+    border-radius:10px;
+    background:white;
+}
+
+#ranking h3{
+    margin-top:0;
+}
+
+.rank1{
+    color:gold;
+    font-weight:bold;
+}
+
+.rank2{
+    color:silver;
+    font-weight:bold;
+}
+
+.rank3{
+    color:#cd7f32;
+    font-weight:bold;
+}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+
+<body>
+
+<div id="ranking">
+    <h3>🏆 ランキング</h3>
+    <div id="rankingList"></div>
+</div>
+
+<h1>早押しゲーム</h1>
+
+<div id="rules">
+    <h2>ルール説明</h2>
+    <p>・制限時間は10秒です。</p>
+    <p>・表示された矢印と同じ矢印を押してください。</p>
+    <p>・正解すると1点獲得できます。</p>
+    <p>・間違えた矢印を押すとゲームオーバーです。</p>
+    <p>・10秒間生き残ればゲームクリアです。</p>
+</div>
+
+<button id="startBtn">スタート</button>
+
+<div id="game">
+
+    <p id="score">スコア: 0</p>
+    <p id="timer">残り時間: 10秒</p>
+
+    <div id="instruction"></div>
+
+    <div>
+        <button class="arrow" onclick="check('↑')">↑</button>
+    </div>
+
+    <div>
+        <button class="arrow" onclick="check('←')">←</button>
+        <button class="arrow" onclick="check('↓')">↓</button>
+        <button class="arrow" onclick="check('→')">→</button>
+    </div>
+
+</div>
+
+<p id="message"></p>
+
+<button
+id="retryBtn"
+onclick="startGame()"
+style="display:none;">
+もう一度遊ぶ
+</button>
+
+<script>
+
+const arrows = ["↑","↓","←","→"];
+
+let score = 0;
+let timeLeft = 10;
+let currentArrow = "";
+let timer;
+let gameOver = true;
+
+let rankings =
+JSON.parse(localStorage.getItem("rankings")) || [];
+
+const startBtn = document.getElementById("startBtn");
+const game = document.getElementById("game");
+const instruction = document.getElementById("instruction");
+const scoreText = document.getElementById("score");
+const timerText = document.getElementById("timer");
+const message = document.getElementById("message");
+const retryBtn = document.getElementById("retryBtn");
+const rules = document.getElementById("rules");
+
+function updateRanking(){
+
+    let html = "";
+
+    html += '<p class="rank1">🥇 1位 ' + (rankings[0] || 0) + '点</p>';
+    html += '<p class="rank2">🥈 2位 ' + (rankings[1] || 0) + '点</p>';
+    html += '<p class="rank3">🥉 3位 ' + (rankings[2] || 0) + '点</p>';
+
+    document.getElementById("rankingList").innerHTML = html;
+}
+
+function saveScore(){
+
+    rankings.push(score);
+
+    rankings.sort(function(a,b){
+        return b - a;
+    });
+
+    rankings = rankings.slice(0,3);
+
+    localStorage.setItem(
+        "rankings",
+        JSON.stringify(rankings)
+    );
+
+    updateRanking();
+}
+
+function newArrow() {
+
+    currentArrow =
+    arrows[Math.floor(Math.random() * arrows.length)];
+
+    instruction.textContent = currentArrow;
+}
+
+function startGame() {
+
+    clearInterval(timer);
+
+    score = 0;
+    timeLeft = 10;
+    gameOver = false;
+
+    scoreText.textContent = "スコア: 0";
+    timerText.textContent = "残り時間: 10秒";
+    message.textContent = "";
+
+    startBtn.style.display = "none";
+    retryBtn.style.display = "none";
+    rules.style.display = "none";
+
+    game.style.display = "block";
+
+    document.body.style.background = "#ffffff";
+
+    newArrow();
+
+    timer = setInterval(() => {
+
+        timeLeft--;
+
+        timerText.textContent =
+        "残り時間: " + timeLeft + "秒";
+
+        if(timeLeft <= 0){
+
+            clearInterval(timer);
+
+            gameOver = true;
+
+            saveScore();
+
+            document.body.style.background = "#ddffdd";
+
+            message.textContent =
+            "ゲームクリア！ 最終スコア: " + score;
+
+            retryBtn.style.display = "inline-block";
+        }
+
+    },1000);
+}
+
+function check(choice){
+
+    if(gameOver){
+        return;
+    }
+
+    if(choice === currentArrow){
+
+        score++;
+
+        scoreText.textContent =
+        "スコア: " + score;
+
+        instruction.style.color = "green";
+
+        setTimeout(function(){
+            instruction.style.color = "black";
+        },100);
+
+        newArrow();
+
+    }else{
+
+        clearInterval(timer);
+
+        gameOver = true;
+
+        saveScore();
+
+        document.body.style.background = "#ffdddd";
+
+        message.textContent =
+        "ゲームオーバー！ 最終スコア: " + score;
+
+        retryBtn.style.display = "inline-block";
+    }
+}
+
+updateRanking();
+
+startBtn.addEventListener("click", startGame);
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

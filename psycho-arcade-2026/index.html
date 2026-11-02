@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d1d">
+  <meta name="description" content="心理学基礎実験の授業で学生が制作した16種類のWebゲーム。遊びを通して、注意・記憶・判断・空間認知を体験しよう。">
+  <title>PSYCHO ARCADE 2026 | 学生がつくった心理学ゲームセンター</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="arcade.css">
+  <script defer src="arcade.js"></script>
+</head>
+<body>
+  <a href="#games" class="skip-link">ゲーム一覧へスキップ</a>
+  <div class="bg-matrix" aria-hidden="true"></div>
+  <div class="bg-blob blob-1" aria-hidden="true"></div>
+  <div class="bg-blob blob-2" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="PSYCHO ARCADE ホーム">
+        <span class="brand-mark" aria-hidden="true"><span class="joystick-head"></span><span class="joystick-stick"></span><span class="joystick-base"></span><span class="button-dot"></span></span>
+        <span class="brand-type"><strong>PSYCHO<span>ARCADE</span></strong><small>STUDENT GAME LAB / 2026</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="メインメニュー">
+        <a href="#games">ゲーム一覧</a>
+        <a href="#science">心理学の視点</a>
+        <a href="#guide">展示ガイド</a>
+      </nav>
+      <button id="surpriseBtn" class="random-button" type="button"><span aria-hidden="true">✦</span> おまかせPLAY <span class="random-arrow" aria-hidden="true">↗</span></button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell" aria-labelledby="heroTitle">
+      <div class="hero-content">
+        <div class="eyebrow"><span class="live-dot" aria-hidden="true"></span> MIYAGI GAKUIN WOMEN'S UNIVERSITY <span class="eyebrow-separator">/</span> 2026</div>
+        <p class="hero-kicker">心理学基礎実験 × 学生クリエイター</p>
+        <h1 id="heroTitle">こころが動く。<br><span class="gradient-title">ゲームがはじまる。</span></h1>
+        <p class="hero-lead">見つける、選ぶ、考える、反応する。<br>学生がつくった16のゲームで、心理学の世界を体験しよう。</p>
+        <div class="hero-actions">
+          <a class="primary-cta" href="#games">ゲームを選ぶ <span aria-hidden="true">↗</span></a>
+          <button class="secondary-cta" id="heroStart" type="button"><span aria-hidden="true">▶</span> 10秒ゲームから始める</button>
+        </div>
+        <div class="hero-caption"><span class="tiny-star" aria-hidden="true">✳</span> 予約不要で遊べるブラウザゲーム <span class="caption-divider">/</span> 全16作品</div>
+      </div>
+      <div class="hero-cabinet" aria-hidden="true">
+        <div class="cabinet-aura"></div>
+        <div class="cabinet-spark spark-1">✦</div><div class="cabinet-spark spark-2">✳</div>
+        <div class="cabinet-top"><span>● <span>PLAYER ONE</span></span><span>HI-SCORE 2026</span></div>
+        <div class="cabinet-frame">
+          <div class="cabinet-bezel"><span>INSERT CURIOSITY</span><span class="bezel-dots">● ● ●</span></div>
+          <div class="cabinet-screen">
+            <div class="screen-lines"></div>
+            <div class="game-preview preview-a"><span>🎮</span><small>LEVEL UP</small></div>
+            <div class="game-preview preview-b"><span>🧠</span><small>THINK</small></div>
+            <div class="game-preview preview-c"><span>⚡</span><small>REACT</small></div>
+            <div class="game-preview preview-d"><span>🚀</span><small>EXPLORE</small></div>
+          </div>
+          <div class="cabinet-control"><div class="control-joystick"><span></span></div><div class="control-label">READY?<span>LET'S PLAY!</span></div><div class="control-buttons"><b></b><b></b></div></div>
+        </div>
+        <div class="cabinet-bottom"><span>PSYCHO <strong>ARCADE</strong></span><span>© STUDENT CREATIONS</span></div>
+      </div>
+    </section>
+
+    <div class="strip" aria-label="遊びのキーワード"><div class="strip-track"><span>ATTENTION</span><i>✦</i><span>DISCOVERY</span><i>✦</i><span>MEMORY</span><i>✦</i><span>DECISION</span><i>✦</i><span>PLAYFUL LEARNING</span><i>✦</i><span>ATTENTION</span><i>✦</i><span>DISCOVERY</span><i>✦</i><span>MEMORY</span><i>✦</i></div></div>
+
+    <section class="directory shell" id="games" aria-labelledby="gamesTitle">
+      <div class="section-head">
+        <div><div class="section-eyebrow"><span class="section-line"></span> SELECT YOUR GAME <span class="divider-dot">●</span> 01</div><h2 id="gamesTitle">ゲームを選ぼう<span class="section-punct">.</span></h2><p>気になるゲームを選んで、さっそくチャレンジ！</p></div>
+        <div class="progress-counter"><span class="progress-icon">★</span><span class="progress-value" id="discoveredCount">0 / 16</span><span class="progress-label">体験したゲーム</span></div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-scroll" role="group" aria-label="ゲームの種類">
+          <button type="button" data-filter="all" class="filter-pill active" aria-pressed="true">ALL <span>すべて</span></button>
+          <button type="button" data-filter="attention" class="filter-pill" aria-pressed="false">⚡ <span>反応・注意</span></button>
+          <button type="button" data-filter="thinking" class="filter-pill" aria-pressed="false">◇ <span>考える・選ぶ</span></button>
+          <button type="button" data-filter="discovery" class="filter-pill" aria-pressed="false">◎ <span>見つける</span></button>
+          <button type="button" data-filter="action" class="filter-pill" aria-pressed="false">✦ <span>アクション</span></button>
+          <button type="button" data-filter="favorites" class="filter-pill" aria-pressed="false">☆ <span>お気に入り</span></button>
+        </div>
+        <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">ゲームを検索</span><input id="searchGames" type="search" placeholder="ゲームを探す" autocomplete="off"></label>
+      </div>
+      <div class="directory-status"><span><span class="status-led" aria-hidden="true"></span> ALL SYSTEMS READY</span><span id="matchCount" aria-live="polite">16 / 16 GAMES</span></div>
+      <div id="gameGrid" class="game-grid"></div>
+      <div id="noResults" class="empty-results" hidden><span>👾</span><h3>ゲームが見つかりませんでした</h3><p>別のキーワードやジャンルで探してみよう。</p><button id="clearSearch" type="button">すべてのゲームを見る</button></div>
+      <div class="under-cards"><span>INSERT CURIOSITY · PRESS START · HAVE FUN</span><span>あなたのプレイ回数 <strong id="playCount">00</strong></span></div>
+    </section>
+
+    <section class="science shell" id="science" aria-labelledby="scienceTitle">
+      <div class="science-intro"><div class="section-eyebrow"><span class="section-line"></span> WHAT'S BEHIND THE GAME <span class="divider-dot">●</span> 02</div><h2 id="scienceTitle">遊びの中に、<br><span>心理学がある。</span></h2><p>何気ないゲームの中にも、人の「見る・考える・動く」の仕組みを考えるヒントがあります。</p><p class="science-note">※ これらは心理学への興味を広げるための体験です。得点や速さで能力・性格を診断するものではありません。</p></div>
+      <div class="science-cards"><div class="science-card"><div class="science-number">01 / NOTICE</div><div class="science-emoji">👀</div><h3>見つける・気づく</h3><p>たくさんの情報から大切なものを見つける。「注意」と「視覚探索」を体験。</p><span class="science-pill">注意・知覚</span></div><div class="science-card"><div class="science-number">02 / THINK</div><div class="science-emoji">🧠</div><h3>覚える・選ぶ</h3><p>必要な情報を覚え、次の一手を決める。「記憶」と「判断」を体験。</p><span class="science-pill">記憶・意思決定</span></div><div class="science-card"><div class="science-number">03 / MOVE</div><div class="science-emoji">🎯</div><h3>予測して動く</h3><p>動くものを追い、タイミングを合わせる。「知覚」と「行動」のつながりを体験。</p><span class="science-pill">予測・協応</span></div></div>
+    </section>
+
+    <section id="guide" class="guide shell" aria-labelledby="guideTitle"><div class="guide-panel"><div class="guide-copy"><div class="section-eyebrow">OPEN CAMPUS / CLASSROOM GUIDE</div><h2 id="guideTitle">はじめての方も、<br>その場ですぐプレイ。</h2><p>ゲームを選ぶ → 遊ぶ → 「心理学の視点」を読む。<br>展示にも授業の導入にも、そのまま使えます。</p><div class="guide-tags"><span>01 ゲームを選ぶ</span><span>02 操作して遊ぶ</span><span>03 学びにつなげる</span></div></div><div class="guide-note"><div class="note-heading"><span>●</span> PLAY TIPS</div><p>一部のゲームはマウスやキーボード操作に対応しています。オープンキャンパスではPC・大画面での体験をおすすめします。</p><p>プレイ履歴とお気に入りは、この端末のブラウザ内だけに保存されます。外部への送信はありません。</p><a href="#games">ゲーム一覧へ戻る <span aria-hidden="true">↗</span></a></div></div></section>
+  </main>
+
+  <footer class="footer"><div class="shell footer-inner"><div><strong>PSYCHO<span>ARCADE</span> <sup>2026</sup></strong><p>心理学基礎実験 · 学生制作ゲーム作品展示</p></div><div class="footer-right"><span>CREATE · PLAY · DISCOVER</span><p>オリジナル作品の権利は各制作者に帰属します。</p></div></div></footer>
+
+  <div id="player" class="player-overlay" role="dialog" aria-modal="true" aria-labelledby="currentTitle" hidden>
+    <div class="player-layout">
+      <div class="player-toolbar"><button id="closePlayer" type="button" class="back-button"><span aria-hidden="true">←</span> ゲーム一覧へ</button><div class="now-playing"><span class="onair-dot"></span><span>NOW PLAYING</span><span class="toolbar-sep">/</span><strong id="currentTitle">GAME</strong></div><div class="toolbar-actions"><button type="button" id="restartGame" title="ゲームを最初からやり直す">↻ <span>やり直す</span></button><button type="button" id="fullscreenGame" title="全画面表示">⛶ <span>全画面</span></button></div></div>
+      <div class="player-main"><div class="player-left"><div class="arcade-machine"><div class="machine-top"><span><span class="tiny-light"></span> PSYCHO ARCADE</span><span id="currentNumber">NO. 01</span></div><div id="gameFrameWrap" class="game-frame"><iframe id="gameFrame" title="ゲーム画面" src="about:blank" allowfullscreen></iframe><div id="frameLoading" class="frame-loading"><div class="loading-icon">👾</div><p>LOADING GAME...</p><div class="loading-bar"><i></i></div></div></div><div class="machine-bottom"><span><i></i><i></i><i></i></span><span class="machine-bottom-text">PLAY · EXPLORE · DISCOVER</span><span id="scaleLabel">VIEW 100%</span></div></div><div class="player-under"><span>◎ GAME READY</span><span>操作が難しい場合は、ゲーム画面をクリックしてから操作してください。</span></div><div id="keyboardControls" class="mobile-keyboard" hidden aria-label="画面上の操作ボタン"><span>タッチ操作</span><button data-key="ArrowLeft" type="button" aria-label="左に移動">←</button><button data-key="ArrowDown" type="button" aria-label="下">↓</button><button data-key="ArrowRight" type="button" aria-label="右に移動">→</button><button data-key="ArrowUp" type="button" aria-label="上・回転・ジャンプ">↑</button><button data-key="Space" type="button" aria-label="ジャンプ">JUMP</button></div></div>
+      <aside class="game-details"><div class="detail-header"><span class="detail-label">MISSION BRIEF</span><span id="currentIcon" aria-hidden="true">🎮</span></div><p id="currentOriginal" class="detail-subtitle">学生制作作品</p><div class="detail-meta"><div><span>ジャンル</span><strong id="currentCategory">反応・注意</strong></div><div><span>プレイ時間</span><strong id="currentDuration">30秒</strong></div><div><span>操作</span><strong id="currentControls">クリック</strong></div></div><h3><span class="detail-index">01</span> あそび方</h3><ol id="currentSteps" class="rule-list"></ol><h3><span class="detail-index">02</span> 心理学の視点</h3><p id="currentScience" class="psychology-description"></p><p class="psychology-notice">※ 体験のヒントであり、能力の測定や診断ではありません。</p><p id="mobileWarn" class="device-notice" hidden>⌨ このゲームはPCのマウス・キーボード操作がおすすめです。</p><button type="button" id="playerFav" class="detail-fav" aria-pressed="false">☆ お気に入りに追加</button><div class="game-next"><button type="button" id="prevGame"><span>←</span> 前のゲーム</button><button type="button" id="nextGame">次のゲーム <span>→</span></button></div><button type="button" id="backGames" class="detail-back">ほかのゲームを選ぶ ↗</button></aside></div>
+      <div class="player-tip"><span>PSYCHO ARCADE 2026</span><span>ESCで一覧に戻る・画面上部の「やり直す」でリセット</span></div>
+    </div>
+  </div>
+</body>
+</html>

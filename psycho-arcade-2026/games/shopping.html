@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お買い物チャレンジ</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    background:#f5f5f5;
+    text-align:center;
+    margin:0;
+}
+
+header{
+    background:#4CAF50;
+    color:white;
+    padding:15px;
+}
+
+.stage-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+    max-width:900px;
+    margin:20px auto;
+}
+
+.stage-card{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+
+.locked{
+    opacity:.4;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:#4CAF50;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+}
+
+button:hover{
+    background:#43a047;
+}
+
+#gameScreen{
+    display:none;
+    max-width:1200px;
+    margin:auto;
+    padding:10px;
+}
+
+#infoBar{
+    display:flex;
+    justify-content:space-around;
+    background:white;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+#shoppingList{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+}
+
+.need{
+    background:white;
+    padding:5px 10px;
+    border-radius:20px;
+    border:1px solid #ccc;
+}
+
+#shop{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:8px;
+}
+
+.card{
+    background:white;
+    padding:10px;
+    border-radius:10px;
+    cursor:pointer;
+    animation:fadeIn .3s;
+    transition:.2s;
+}
+
+.card:hover{
+    transform:scale(1.05);
+}
+
+.selected{
+    background:#eaffea;
+    border:3px solid #4CAF50;
+    animation:pop .3s;
+}
+
+.emoji{
+    font-size:40px;
+}
+
+#result{
+    display:none;
+    margin-top:20px;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+.danger{
+    color:red;
+    animation:blink .5s infinite;
+}
+
+@keyframes blink{
+50%{opacity:.3;}
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(15px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@keyframes pop{
+50%{
+transform:scale(1.15);
+}
+}
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<header>
+<h1>🛒 お買い物チャレンジ</h1>
+</header>
+
+<div id="stageMenu">
+
+<h2>ステージ選択</h2>
+
+<div id="stageContainer" class="stage-grid"></div>
+
+</div>
+
+<div id="gameScreen">
+
+<div id="infoBar">
+
+<div>
+ステージ<br>
+<span id="stageNum"></span>
+</div>
+
+<div>
+予算<br>
+<span id="budget"></span>円
+</div>
+
+<div>
+⏰<br>
+<span id="timer">60</span>秒
+</div>
+
+</div>
+
+<div id="shoppingList"></div>
+
+<div id="shop"></div>
+
+<br>
+
+<button onclick="finishGame()">
+🛒 購入する
+</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+const stages = [
+
+{
+budget:700,
+time:60,
+required:["牛乳","パン","卵"]
+},
+
+{
+budget:1000,
+time:60,
+required:["牛乳","パン","卵"]
+},
+
+{
+budget:1200,
+time:60,
+required:["牛乳","パン","卵","りんご"]
+},
+
+{
+budget:1500,
+time:60,
+required:["牛乳","パン","卵","りんご","ジュース"]
+},
+
+{
+budget:1800,
+time:60,
+required:["牛乳","パン","卵","ジュース","サラダ"]
+}
+
+];
+
+const items = [
+
+
+{name:"牛乳",price:250,emoji:"🥛"},
+{name:"パン",price:200,emoji:"🍞"},
+{name:"卵",price:150,emoji:"🥚"},
+{name:"りんご",price:100,emoji:"🍎"},
+{name:"バナナ",price:120,emoji:"🍌"},
+{name:"ジュース",price:180,emoji:"🧃"},
+{name:"お菓子",price:300,emoji:"🍫"},
+{name:"アイス",price:220,emoji:"🍨"},
+{name:"サラダ",price:170,emoji:"🥗"},
+{name:"ポテト",price:180,emoji:"🍟"},
+{name:"ハンバーガー",price:350,emoji:"🍔"},
+{name:"ヨーグルト",price:130,emoji:"🥣"},
+{name:"ケーキ",price:380,emoji:"🍰"},
+{name:"ラーメン",price:400,emoji:"🍜"},
+{name:"おにぎり",price:160,emoji:"🍙"},
+
+{name:"カレー",price:450,emoji:"🍛"},
+{name:"ピザ",price:500,emoji:"🍕"},
+{name:"寿司",price:600,emoji:"🍣"},
+{name:"からあげ",price:280,emoji:"🍗"},
+{name:"プリン",price:190,emoji:"🍮"},
+{name:"ドーナツ",price:170,emoji:"🍩"},
+{name:"ぶどう",price:240,emoji:"🍇"},
+{name:"みかん",price:140,emoji:"🍊"},
+{name:"いちご",price:260,emoji:"🍓"},
+{name:"サンドイッチ",price:280,emoji:"🥪"}
+
+
+];
+
+let currentStage = 0;
+let unlockedStage = 1;
+let cart = [];
+let timer;
+let timeLeft = 60;
+
+function createStageMenu(){
+
+let html = "";
+
+for(let i=0;i<5;i++){
+
+if(i < unlockedStage){
+
+html += `
+<div class="stage-card">
+<h3>ステージ ${i+1}</h3>
+<p>予算 ${stages[i].budget}円</p>
+<p>制限時間 60秒</p>
+<button onclick="startStage(${i})">
+プレイ
+</button>
+</div>
+`;
+
+}else{
+
+html += `
+<div class="stage-card locked">
+<h3>🔒 ステージ ${i+1}</h3>
+<p>Sランクで解放</p>
+</div>
+`;
+
+}
+
+}
+
+document.getElementById("stageContainer").innerHTML = html;
+
+}
+
+function startStage(stage){
+
+currentStage = stage;
+
+document.getElementById("stageMenu").style.display = "none";
+document.getElementById("gameScreen").style.display = "block";
+
+loadStage();
+
+}
+
+function loadStage(){
+
+clearInterval(timer);
+
+cart = [];
+
+document.getElementById("result").style.display = "none";
+
+const stage = stages[currentStage];
+
+document.getElementById("stageNum").textContent =
+currentStage + 1;
+
+document.getElementById("budget").textContent =
+stage.budget;
+
+document.getElementById("shoppingList").innerHTML =
+stage.required.map(item =>
+`<div class="need">✅ ${item}</div>`
+).join("");
+
+createShop();
+
+timeLeft = 60;
+
+document.getElementById("timer").classList.remove("danger");
+
+document.getElementById("timer").textContent =
+timeLeft;
+
+timer = setInterval(()=>{
+
+timeLeft--;
+
+document.getElementById("timer").textContent =
+timeLeft;
+
+if(timeLeft <= 5){
+
+document.getElementById("timer")
+.classList.add("danger");
+
+}
+
+if(timeLeft <= 0){
+
+timeLeft = 0;
+
+finishGame(true);
+
+}
+
+},1000);
+
+}
+
+function createShop(){
+
+const shop = document.getElementById("shop");
+
+shop.innerHTML = "";
+
+items.forEach(item=>{
+
+const card = document.createElement("div");
+
+card.className = "card";
+
+card.innerHTML = `
+<div class="emoji">${item.emoji}</div>
+<b>${item.name}</b><br>
+${item.price}円
+`;
+
+card.onclick = ()=>{
+
+if(cart.includes(item.name)) return;
+
+cart.push(item.name);
+
+card.classList.add("selected");
+
+};
+
+shop.appendChild(card);
+
+});
+
+}
+
+function finishGame(timeup=false){
+
+clearInterval(timer);
+
+const stage = stages[currentStage];
+
+let total = 0;
+
+cart.forEach(name=>{
+
+const item =
+items.find(i=>i.name===name);
+
+total += item.price;
+
+});
+
+let score = 0;
+
+if(stage.required.every(
+item=>cart.includes(item)
+)){
+score += 300;
+}
+
+if(total <= stage.budget){
+score += 200;
+}
+
+if(total === stage.budget){
+score += 300;
+}
+
+const extra =
+cart.filter(item =>
+!stage.required.includes(item)
+).length;
+
+score -= extra * 50;
+
+if(total > stage.budget){
+score -= 100;
+}
+
+score += timeLeft * 2;
+
+if(score < 0){
+score = 0;
+}
+
+let rank = "D";
+let message = "再挑戦！";
+
+if(score >= 800){
+
+rank = "S";
+message = "🏆 PERFECT!";
+
+}else if(score >= 650){
+
+rank = "A";
+message = "🌟 Excellent!";
+
+}else if(score >= 500){
+
+rank = "B";
+message = "😊 Good!";
+
+}else if(score >= 300){
+
+rank = "C";
+message = "🙂 Clear!";
+
+}
+
+let html = `
+
+${timeup ? "<h2>⏰ 時間切れ！</h2>" : ""}
+
+<h2>結果発表</h2>
+
+<p>選んだ商品：
+${cart.length ? cart.join("、") : "なし"}
+</p>
+
+<p>合計金額：${total}円</p>
+
+<p>残り時間：${timeLeft}秒</p>
+
+<p>スコア：${score}点</p>
+
+<h2>${rank}ランク</h2>
+
+<p>${message}</p>
+
+`;
+
+if(rank === "S"){
+
+if(currentStage < 4){
+
+if(unlockedStage === currentStage + 1){
+unlockedStage++;
+}
+
+html += `
+<button onclick="nextStage()">
+⏭️ 次のステージへ
+</button>
+`;
+
+}else{
+
+html += `
+<h1>👑</h1>
+<h2>全ステージクリア！</h2>
+<h3>買い物マスター認定！</h3>
+
+<button onclick="backToMenu()">
+🏠 ステージ選択
+</button>
+`;
+
+}
+
+}else{
+
+html += `
+<button onclick="backToMenu()">
+🏠 ステージ選択
+</button>
+`;
+
+}
+
+document.getElementById("result").innerHTML = html;
+document.getElementById("result").style.display = "block";
+
+}
+
+function nextStage(){
+
+currentStage++;
+loadStage();
+
+}
+
+function backToMenu(){
+
+document.getElementById("gameScreen").style.display = "none";
+document.getElementById("stageMenu").style.display = "block";
+
+createStageMenu();
+
+}
+
+createStageMenu();
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

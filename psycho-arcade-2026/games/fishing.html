@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Fishing Adventure DX</title>
+
+<style>
+
+body{
+
+    margin:0;
+    overflow:hidden;
+    font-family:sans-serif;
+
+    background:
+    linear-gradient(
+        to bottom,
+        #b8f0ff 0%,
+        #82ddff 20%,
+        #42c4ff 35%,
+        #009dff 60%,
+        #0070d6 100%
+    );
+
+}
+/* 雲 */
+
+.cloud{
+
+    position:fixed;
+
+    color:white;
+
+    font-size:60px;
+
+    opacity:.9;
+
+}
+
+.cloud1{
+
+    top:25px;
+
+    left:80px;
+}
+
+.cloud2{
+
+    top:90px;
+
+    right:90px;
+}
+
+/* 島 */
+
+.island{
+
+    position:fixed;
+
+    top:18%;
+
+    right:15%;
+
+    font-size:90px;
+}
+
+/* 海面 */
+.seaLine{
+
+    position:fixed;
+
+    top:25%;
+
+    left:0;
+    right:0;
+
+    height:8px;
+
+    background:white;
+
+    box-shadow:
+    0 0 20px white;
+}
+
+/* ステータス */
+
+#top{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+    right:0;
+
+    display:flex;
+
+    justify-content:space-around;
+
+    padding:10px;
+
+    background:rgba(0,0,0,.25);
+
+    color:white;
+
+    font-size:24px;
+
+    font-weight:bold;
+}
+
+#message{
+
+    position:fixed;
+
+    top:65px;
+
+    left:0;
+    right:0;
+
+    text-align:center;
+
+    color:gold;
+
+    font-size:38px;
+
+    font-weight:bold;
+}
+
+#hook{
+
+    position:absolute;
+
+    font-size:70px;
+
+    cursor:grab;
+
+    user-select:none;
+}
+
+.item{
+
+    position:absolute;
+
+    font-size:65px;
+
+    text-shadow:
+
+    -2px -2px 0 #000,
+
+     2px -2px 0 #000,
+
+    -2px  2px 0 #000,
+
+     2px  2px 0 #000,
+
+     0 0 10px white;
+}
+.float{
+
+    position:absolute;
+
+    pointer-events:none;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    animation:rise 1s forwards;
+}
+
+@keyframes rise{
+
+    to{
+
+        transform:
+        translateY(-60px);
+
+        opacity:0;
+    }
+}
+
+/* オーバーレイ */
+
+#overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    background:
+    rgba(0,0,0,.78);
+
+    color:white;
+
+    text-align:center;
+
+    z-index:999;
+}
+
+#overlay h1{
+
+    font-size:50px;
+}
+
+#overlay p{
+
+    font-size:28px;
+}
+
+button{
+
+    font-size:24px;
+
+    padding:
+    12px 28px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+
+<body>
+
+<div class="cloud cloud1">
+☁️
+</div>
+
+<div class="cloud cloud2">
+☁️
+</div>
+
+<div class="island">
+🏝️
+</div>
+
+<div class="seaLine"></div>
+
+<div id="top">
+
+    <div id="score">
+    🎣 0
+    </div>
+
+    <div id="stage">
+    🌊 Lv1
+    </div>
+
+    <div id="timer">
+    ⏰ 30
+    </div>
+
+</div>
+
+<div id="message"></div>
+
+<div id="hook">
+🎣
+</div>
+
+<div id="overlay">
+
+    <h1>
+    🎣 Fishing Adventure DX
+    </h1>
+
+    <p>
+    4ステージを
+    クリアしよう！
+    </p>
+
+    <button
+    onclick="startGame()">
+    START
+    </button>
+
+</div>
+
+<script>
+
+const hook =
+document.getElementById("hook");
+
+const scoreEl =
+document.getElementById("score");
+
+const stageEl =
+document.getElementById("stage");
+
+const timerEl =
+document.getElementById("timer");
+
+const messageEl =
+document.getElementById("message");
+
+const overlay =
+document.getElementById("overlay");
+
+let totalScore = 0;
+
+let stage = 1;
+
+let stageScore = 0;
+
+let time = 30;
+
+let spawnLoop = null;
+
+let timerLoop = null;
+
+const targets = {
+
+    1:150,
+
+    2:300,
+
+    3:500,
+
+    4:800
+
+};
+
+hook.style.left =
+"200px";
+
+hook.style.top =
+"220px";
+
+let dragging = false;
+
+hook.onmousedown =
+()=>dragging=true;
+
+document.onmouseup =
+()=>dragging=false;
+
+document.onmousemove=(e)=>{
+
+    if(dragging){
+
+        hook.style.left =
+        (e.clientX-30)+"px";
+
+        hook.style.top =
+        (e.clientY-30)+"px";
+    }
+};
+
+function popup(
+    x,
+    y,
+    text,
+    color
+){
+
+    const p =
+    document.createElement(
+        "div"
+    );
+
+    p.className =
+    "float";
+
+    p.textContent =
+    text;
+
+    p.style.left =
+    x+"px";
+
+    p.style.top =
+    y+"px";
+
+    p.style.color =
+    color;
+
+    document.body
+    .appendChild(p);
+
+    setTimeout(
+        ()=>p.remove(),
+        1000
+    );
+}
+
+function banner(text){
+
+    messageEl.textContent =
+    text;
+
+    setTimeout(()=>{
+
+        if(
+            messageEl.textContent
+            === text
+        ){
+
+            messageEl.textContent =
+            "";
+        }
+
+    },1200);
+}
+/* =========================
+   ステージごとの魚設定
+========================= */
+
+function getStageItems(){
+
+    if(stage === 1){
+
+        return [
+            ["🐟",10,"fish"],
+            ["🐠",20,"fish"],
+            ["🐡",30,"fish"]
+        ];
+    }
+
+    if(stage === 2){
+
+        return [
+            ["🐟",10,"fish"],
+            ["🐠",20,"fish"],
+            ["🐡",30,"fish"],
+            ["🦈",50,"fish"],
+            ["🌈",100,"rare"],
+            ["🧴",-10,"trash"]
+        ];
+    }
+
+    if(stage === 3){
+
+        return [
+            ["🐟",10,"fish"],
+            ["🐠",20,"fish"],
+            ["🐡",30,"fish"],
+            ["🦈",50,"fish"],
+            ["🌈",100,"rare"],
+            ["💎",300,"jackpot"],
+            ["📦",200,"treasure"],
+            ["🧴",-10,"trash"],
+            ["👢",-20,"trash"]
+        ];
+    }
+
+    return [
+
+        ["🐟",10,"fish"],
+        ["🐠",20,"fish"],
+        ["🐡",30,"fish"],
+        ["🦈",50,"fish"],
+
+        ["🌈",100,"rare"],
+        ["🌈",100,"rare"],
+
+        ["💎",300,"jackpot"],
+        ["💎",300,"jackpot"],
+
+        ["📦",200,"treasure"],
+
+        ["🧴",-10,"trash"],
+        ["🧴",-10,"trash"],
+
+        ["👢",-20,"trash"]
+    ];
+}
+
+/* =========================
+   ステージごとの速度
+========================= */
+
+function getSpeed(point){
+
+    if(stage === 1){
+
+        return 3;
+    }
+
+    if(stage === 2){
+
+        return point < 0
+            ? 6
+            : 5;
+    }
+
+    if(stage === 3){
+
+        return point < 0
+            ? 9
+            : 8;
+    }
+
+    return point < 0
+        ? 14
+        : 12;
+}
+
+/* =========================
+   アイテム生成
+========================= */
+
+function spawnItem(){
+
+    const items =
+    getStageItems();
+
+    const data =
+    items[
+        Math.floor(
+            Math.random()
+            *
+            items.length
+        )
+    ];
+
+    const item =
+    document.createElement(
+        "div"
+    );
+
+    item.className =
+    "item";
+
+    item.textContent =
+    data[0];
+
+    item.dataset.point =
+    data[1];
+
+    item.dataset.type =
+    data[2];
+if(
+    data[2] === "rare"
+){
+
+    item.style.filter =
+    "drop-shadow(0 0 15px yellow)";
+}
+
+if(
+    data[2] === "jackpot"
+){
+
+    item.style.filter =
+    "drop-shadow(0 0 20px cyan)";
+}
+
+    item.style.left =
+    "-80px";
+
+    item.style.top =
+
+    (
+        180
+        +
+        Math.random()
+        *
+        (
+            window.innerHeight
+            -
+            260
+        )
+    )
+    +
+    "px";
+
+    document.body
+    .appendChild(item);
+
+    const move =
+    setInterval(()=>{
+
+        const point =
+        Number(
+            item.dataset.point
+        );
+
+        const speed =
+        getSpeed(point);
+
+        item.style.left =
+
+        (
+            parseFloat(
+                item.style.left
+            )
+            +
+            speed
+        )
+        +
+        "px";
+
+        const a =
+        item.getBoundingClientRect();
+
+        const b =
+        hook.getBoundingClientRect();
+
+        if(
+
+            a.left
+            <
+            b.right
+
+            &&
+
+            a.right
+            >
+            b.left
+
+            &&
+
+            a.top
+            <
+            b.bottom
+
+            &&
+
+            a.bottom
+            >
+            b.top
+
+        ){
+
+            hitItem(
+                item,
+                a
+            );
+
+            clearInterval(
+                move
+            );
+        }
+
+        if(
+
+            parseFloat(
+                item.style.left
+            )
+
+            >
+
+            window.innerWidth
+            +
+            120
+
+        ){
+
+            item.remove();
+
+            clearInterval(
+                move
+            );
+        }
+
+    },20);
+}
+/* =========================
+   得点処理
+========================= */
+
+function hitItem(
+    item,
+    rect
+){
+
+    const point =
+    Number(
+        item.dataset.point
+    );
+
+    const type =
+    item.dataset.type;
+
+    if(type === "trash"){
+
+        stageScore = Math.max(
+            0,
+            stageScore + point
+        );
+
+        popup(
+            rect.left,
+            rect.top,
+            point,
+            "red"
+        );
+
+    }else{
+
+        stageScore += point;
+
+        totalScore += point;
+
+        popup(
+            rect.left,
+            rect.top,
+            "+" + point,
+            "yellow"
+        );
+
+        if(type === "rare"){
+
+            banner(
+                "🌈 RARE!"
+            );
+        }
+
+        if(type === "treasure"){
+
+            banner(
+                "📦 TREASURE!"
+            );
+        }
+
+        if(type === "jackpot"){
+
+            banner(
+                "💎 JACKPOT!"
+            );
+        }
+    }
+
+    scoreEl.textContent =
+
+    "🎣 " +
+
+    stageScore +
+
+    " / " +
+
+    targets[stage];
+
+    item.remove();
+
+}
+
+/* =========================
+   ステージ開始
+========================= */
+
+function startStage(){
+
+    stageScore = 0;
+
+    time = 30;
+
+    scoreEl.textContent =
+
+    "🎣 0 / " +
+
+    targets[stage];
+
+    stageEl.textContent =
+
+    "🌊 Lv" + stage;
+
+    timerEl.textContent =
+
+    "⏰ 30";
+
+    spawnLoop =
+    setInterval(()=>{
+
+        spawnItem();
+
+    },700);
+
+    timerLoop =
+    setInterval(()=>{
+
+        time--;
+
+        timerEl.textContent =
+        "⏰ " + time;
+
+        if(time <= 0){
+
+            clearInterval(
+                spawnLoop
+            );
+
+            clearInterval(
+                timerLoop
+            );
+
+            checkStageResult();
+        }
+
+    },1000);
+}
+
+/* =========================
+   ステージ判定
+========================= */
+
+function checkStageResult(){
+
+    const target =
+    targets[stage];
+
+    if(
+        stageScore >= target
+    ){
+
+        showClear();
+
+    }else{
+
+        showGameOver();
+    }
+}
+/* =========================
+   LEVEL CLEAR
+========================= */
+
+function showClear(){
+
+    if(stage === 4){
+
+        showAllClear();
+
+        return;
+    }
+
+    overlay.style.display =
+    "flex";
+
+    overlay.innerHTML =
+
+    `
+    <h1>
+    ✅ LEVEL ${stage} CLEAR!
+    </h1>
+
+    <p>
+
+    SCORE :
+    ${stageScore}
+
+    <br><br>
+
+    TARGET :
+    ${targets[stage]}
+
+    </p>
+
+    <button onclick="nextLevel()">
+    NEXT LEVEL
+    </button>
+    `;
+}
+
+/* =========================
+   NEXT LEVEL
+========================= */
+
+function nextLevel(){
+
+    stage++;
+
+    overlay.innerHTML =
+
+    `
+    <h1>
+    🌊 LEVEL ${stage}
+    </h1>
+
+    <p>
+
+    TARGET :
+
+    ${targets[stage]}
+
+    <br><br>
+
+    30秒以内に
+    クリアしよう！
+
+    </p>
+
+    <button onclick="
+        overlay.style.display='none';
+        startStage();
+    ">
+    START
+    </button>
+    `;
+}
+
+/* =========================
+   GAME OVER
+========================= */
+
+function showGameOver(){
+
+    overlay.style.display =
+    "flex";
+
+    overlay.innerHTML =
+
+    `
+    <h1>
+    💀 GAME OVER
+    </h1>
+
+    <p>
+
+    SCORE :
+    ${stageScore}
+
+    <br><br>
+
+    TARGET :
+    ${targets[stage]}
+
+    </p>
+
+    <button onclick="location.reload()">
+    RETRY
+    </button>
+    `;
+}
+
+/* =========================
+   ALL CLEAR
+========================= */
+
+function showAllClear(){
+
+    overlay.style.display =
+    "flex";
+
+    overlay.innerHTML =
+
+    `
+    <h1>
+    🏆 ALL CLEAR !
+    </h1>
+
+    <p>
+
+    MASTER ANGLER
+
+    <br><br>
+
+    TOTAL SCORE
+
+    <br>
+
+    ${totalScore}
+
+    </p>
+
+    <button onclick="location.reload()">
+    PLAY AGAIN
+    </button>
+    `;
+}
+
+/* =========================
+   GAME START
+========================= */
+
+function startGame(){
+
+    overlay.style.display =
+    "none";
+
+    startStage();
+}
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>
+`

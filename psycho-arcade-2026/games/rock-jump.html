@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>岩ジャンプゲーム</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:linear-gradient(#87CEEB,#DDF5FF);
+}
+
+canvas{
+    display:block;
+}
+
+#score{
+    position:absolute;
+    top:10px;
+    left:10px;
+    color:white;
+    font-size:24px;
+    font-family:sans-serif;
+    font-weight:bold;
+    text-shadow:2px 2px 4px rgba(0,0,0,.5);
+}
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<div id="score"></div>
+<canvas id="game"></canvas>
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const scoreText = document.getElementById("score");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let score = 0;
+let best = Number(localStorage.getItem("rockBest")) || 0;
+
+let gameStarted = false;
+let gameOver = false;
+
+const gravity = 0.7;
+const speed = 4;
+
+function getLevel(){
+
+    if(score < 50){
+        return 0;
+    }
+
+    return Math.min(
+        5,
+        Math.floor((score - 50) / 20) + 1
+    );
+}
+
+const player = {
+    x:150,
+    y:350,
+    r:20,
+    vy:0,
+    jumps:0
+};
+
+let rocks = [];
+
+// 最初から岩をたくさん生成
+rocks.push({
+    x:0,
+    y:500,
+    w:250,
+    h:30
+});
+
+for(let i=1;i<15;i++){
+
+    rocks.push({
+        x:i * 300,
+        y:300 + Math.random() * 200,
+        w:180,
+        h:30
+    });
+
+}
+
+function updateScore(){
+
+    scoreText.innerHTML =
+        `Score: ${score}<br>Best: ${best}`;
+}
+
+updateScore();
+
+document.addEventListener("click",()=>{
+
+    if(!gameStarted){
+        gameStarted = true;
+        return;
+    }
+
+    if(gameOver){
+        location.reload();
+        return;
+    }
+
+    if(player.jumps < 2){
+
+        player.vy =
+            player.jumps === 0
+            ? -15
+            : -13;
+
+        player.jumps++;
+    }
+
+});
+
+function update(){
+
+    if(!gameStarted) return;
+    if(gameOver) return;
+
+    player.vy += gravity;
+    player.y += player.vy;
+
+    rocks.forEach(rock=>{
+
+        rock.x -= speed;
+
+        if(
+            player.vy >= 0 &&
+            player.x + player.r > rock.x &&
+            player.x - player.r < rock.x + rock.w &&
+            player.y + player.r >= rock.y &&
+            player.y + player.r <= rock.y + 20
+        ){
+            player.y = rock.y - player.r;
+            player.vy = 0;
+            player.jumps = 0;
+        }
+    });
+
+    if(rocks[0].x + rocks[0].w < 0){
+
+        rocks.shift();
+
+        score++;
+
+        if(score > best){
+            best = score;
+            localStorage.setItem(
+                "rockBest",
+                best
+            );
+        }
+
+        const level = getLevel();
+
+        rocks.push({
+
+            x:
+                rocks[rocks.length - 1].x +
+                220 +
+                Math.random() *
+                (80 + level * 40),
+
+            y:
+                280 +
+                Math.random() * 240,
+
+            w:
+                Math.max(
+                    50,
+                    180 -
+                    level * 20 +
+                    Math.random() * 30
+                ),
+
+            h:30
+        });
+
+        updateScore();
+    }
+
+    if(player.y > canvas.height){
+        gameOver = true;
+    }
+}
+
+function drawRock(rock){
+
+    ctx.fillStyle = "#666";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        rock.x,
+        rock.y + rock.h
+    );
+
+    ctx.lineTo(
+        rock.x + 15,
+        rock.y
+    );
+
+    ctx.lineTo(
+        rock.x + rock.w - 15,
+        rock.y
+    );
+
+    ctx.lineTo(
+        rock.x + rock.w,
+        rock.y + rock.h
+    );
+
+    ctx.closePath();
+    ctx.fill();
+}
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    rocks.forEach(drawRock);
+
+    ctx.fillStyle = "#ffcc00";
+
+    ctx.beginPath();
+    ctx.arc(
+        player.x,
+        player.y,
+        player.r,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
+
+    if(!gameStarted){
+
+        ctx.fillStyle =
+            "rgba(0,0,0,.5)";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+
+        ctx.font = "60px sans-serif";
+        ctx.fillText(
+            "岩ジャンプゲーム",
+            canvas.width/2,
+            canvas.height/2 - 40
+        );
+
+        ctx.font = "30px sans-serif";
+        ctx.fillText(
+            "クリックしてスタート",
+            canvas.width/2,
+            canvas.height/2 + 30
+        );
+
+        return;
+    }
+
+    if(gameOver){
+
+        ctx.fillStyle =
+            "rgba(0,0,0,.7)";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+
+        ctx.font = "60px sans-serif";
+        ctx.fillText(
+            "GAME OVER",
+            canvas.width/2,
+            canvas.height/2 - 60
+        );
+
+        ctx.font = "30px sans-serif";
+
+        ctx.fillText(
+            "Score : " + score,
+            canvas.width/2,
+            canvas.height/2 + 10
+        );
+
+        ctx.fillText(
+            "Best : " + best,
+            canvas.width/2,
+            canvas.height/2 + 60
+        );
+
+        ctx.fillText(
+            "クリックで再スタート",
+            canvas.width/2,
+            canvas.height/2 + 120
+        );
+    }
+}
+
+function loop(){
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
+
+window.addEventListener("resize",()=>{
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+});
+
+</script>
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

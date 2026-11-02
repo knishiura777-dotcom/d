@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>フルーツキャッチゲーム</title>
+
+<style>
+
+body{
+    margin:0;
+    overflow:hidden;
+    background:linear-gradient(
+        45deg,
+        #ff9a9e,
+        #fad0c4,
+        #fbc2eb,
+        #a18cd1,
+        #84fab0,
+        #8fd3f4,
+        #f6d365
+    );
+    background-size:400% 400%;
+    animation:rainbow 8s ease infinite;
+    font-family:sans-serif;
+}
+
+@keyframes rainbow{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+#score{
+    position:absolute;
+    top:10px;
+    left:10px;
+    font-size:30px;
+    font-weight:bold;
+    color:white;
+    text-shadow:2px 2px 4px black;
+}
+
+#timer{
+    position:absolute;
+    top:50px;
+    left:10px;
+    font-size:30px;
+    font-weight:bold;
+    color:white;
+    text-shadow:2px 2px 4px black;
+}
+
+#start{
+    position:absolute;
+    top:100px;
+    left:10px;
+    font-size:24px;
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+#basket{
+    position:absolute;
+    bottom:20px;
+    left:300px;
+    font-size:70px;
+    user-select:none;
+}
+
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+
+<body>
+
+<div id="score">スコア:0</div>
+<div id="timer">残り:60秒</div>
+<button id="start">スタート</button>
+
+<div id="basket">🧺</div>
+
+<script>
+
+var score=0;
+var timeLeft=60;
+var speed=8;
+
+var gameLoop;
+var timerLoop;
+
+var basket=document.getElementById("basket");
+var scoreText=document.getElementById("score");
+var timerText=document.getElementById("timer");
+
+document.addEventListener("mousemove",function(e){
+    basket.style.left=(e.clientX-35)+"px";
+});
+
+function sparkle(x,y){
+
+    for(var i=0;i<10;i++){
+
+        var star=document.createElement("div");
+
+        star.innerHTML="🌟";
+        star.style.position="absolute";
+        star.style.left=x+"px";
+        star.style.top=y+"px";
+        star.style.fontSize="50px";
+        star.style.pointerEvents="none";
+
+        document.body.appendChild(star);
+
+        var dx=(Math.random()-0.5)*150;
+        var dy=(Math.random()-0.5)*150;
+
+        star.animate(
+        [
+            {transform:"translate(0px,0px)",opacity:1},
+            {transform:"translate("+dx+"px,"+dy+"px)",opacity:0}
+        ],
+        {
+            duration:700,
+            easing:"ease-out"
+        });
+
+        setTimeout(function(s){
+            s.remove();
+        },700,star);
+    }
+}
+
+function showMessage(text,color){
+
+    var msg=document.createElement("div");
+
+    msg.innerHTML=text;
+
+    msg.style.position="absolute";
+    msg.style.left="50%";
+    msg.style.top="250px";
+    msg.style.transform="translateX(-50%)";
+    msg.style.fontSize="50px";
+    msg.style.fontWeight="bold";
+    msg.style.color=color;
+    msg.style.textShadow="2px 2px white";
+
+    document.body.appendChild(msg);
+
+    setTimeout(function(){
+        msg.remove();
+    },800);
+}
+
+function getPoint(f){
+
+    if(f=="🍎") return 1;
+    if(f=="🍊") return 2;
+    if(f=="🍌") return 3;
+    if(f=="🍇") return 5;
+    if(f=="🍓") return 50;
+    if(f=="🪱") return -10;
+
+    return 0;
+}
+
+function createItem(){
+
+    var item=document.createElement("div");
+
+    item.style.position="absolute";
+    item.style.fontSize="50px";
+
+    var r=Math.random();
+
+    if(r<0.25){
+        item.innerHTML="💣";
+    }
+    else if(r<0.35){
+        item.innerHTML="🪱";
+    }
+    else if(r<0.60){
+        item.innerHTML="🍎";
+    }
+    else if(r<0.80){
+        item.innerHTML="🍊";
+    }
+    else if(r<0.93){
+        item.innerHTML="🍌";
+    }
+    else if(r<0.99){
+        item.innerHTML="🍇";
+    }
+    else{
+        item.innerHTML="🍓";
+    }
+
+    var x=Math.random()*(window.innerWidth-60);
+    var y=-60;
+
+    item.style.left=x+"px";
+    item.style.top=y+"px";
+
+    document.body.appendChild(item);
+
+    var fall=setInterval(function(){
+
+        y+=speed;
+        item.style.top=y+"px";
+
+        var basketX=basket.offsetLeft;
+
+        if(
+            y>window.innerHeight-140 &&
+            x>basketX-30 &&
+            x<basketX+90
+        ){
+
+            if(item.innerHTML=="💣"){
+
+                clearInterval(gameLoop);
+                clearInterval(timerLoop);
+
+                document.body.innerHTML=
+                "<div style='text-align:center;padding-top:120px;'>" +
+                "<h1 style='font-size:80px;color:red;'>💣 GAME OVER</h1>" +
+                "<h2 style='font-size:50px;'>スコア "+score+"</h2>" +
+                "<button style='font-size:30px;' onclick='location.reload()'>もう一度遊ぶ</button>" +
+                "</div>";
+
+            }else{
+
+                var point=getPoint(item.innerHTML);
+
+                score+=point;
+
+                scoreText.innerHTML="スコア:"+score;
+
+                sparkle(x,y);
+
+                if(item.innerHTML=="🍓"){
+                    showMessage("🌈 BONUS +50 🌈","red");
+                }
+
+                if(item.innerHTML=="🪱"){
+                    showMessage("🪱 -10","purple");
+                }
+
+                basket.style.transform="scale(1.2)";
+
+                setTimeout(function(){
+                    basket.style.transform="scale(1)";
+                },100);
+            }
+
+            clearInterval(fall);
+            item.remove();
+        }
+
+        if(y>window.innerHeight){
+
+            clearInterval(fall);
+            item.remove();
+        }
+
+    },20);
+}
+
+document.getElementById("start").onclick=function(){
+
+    score=0;
+    timeLeft=60;
+    speed=8;
+
+    scoreText.innerHTML="スコア:0";
+    timerText.innerHTML="残り:60秒";
+
+    clearInterval(gameLoop);
+    clearInterval(timerLoop);
+
+    gameLoop=setInterval(createItem,700);
+
+    timerLoop=setInterval(function(){
+
+        timeLeft--;
+
+        timerText.innerHTML="残り:"+timeLeft+"秒";
+
+        if(timeLeft>0 && timeLeft%10===0){
+            speed+=2;
+        }
+
+        if(timeLeft<=0){
+
+            clearInterval(gameLoop);
+            clearInterval(timerLoop);
+
+            document.body.innerHTML=
+            "<div style='text-align:center;background:gold;height:100vh;padding-top:80px;'>" +
+            "<h1 style='font-size:80px;'>🎉 GAME CLEAR 🎉</h1>" +
+            "<h2 style='font-size:50px;'>FINAL SCORE</h2>" +
+            "<div style='font-size:150px;font-weight:bold;color:blue;'>" +
+            score +
+            "</div>" +
+            "<button style='font-size:30px;' onclick='location.reload()'>もう一度遊ぶ</button>" +
+            "</div>";
+        }
+
+    },1000);
+};
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

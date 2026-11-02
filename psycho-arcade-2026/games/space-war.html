@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宇宙大戦争</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:#000;
+    font-family:sans-serif;
+    cursor:crosshair;
+}
+
+#game{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+    background:#000;
+}
+
+/* 星空 */
+.star{
+    position:absolute;
+    background:white;
+    border-radius:50%;
+    box-shadow:0 0 6px white;
+}
+
+/* タイトル */
+#titleScreen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:black;
+    z-index:1000;
+}
+
+.titleWrap{
+    text-align:center;
+}
+
+#gameTitle{
+    font-size:90px;
+    color:#00ffff;
+    text-shadow:
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 50px #00ffff;
+    animation:titleZoom 3s ease-out;
+}
+
+@keyframes titleZoom{
+    from{
+        transform:scale(0.1);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+#subTitle{
+    color:white;
+    letter-spacing:10px;
+}
+
+#story{
+    color:#ccc;
+    line-height:2;
+}
+
+.difficultyBtn{
+    padding:12px 24px;
+    margin:8px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+/* HUD */
+#hud{
+    position:absolute;
+    top:10px;
+    left:10px;
+    color:white;
+    z-index:50;
+    font-size:28px;
+}
+
+/* 敵 */
+.invader{
+    position:absolute;
+    font-size:50px;
+    user-select:none;
+}
+
+/* スコープ */
+#scope{
+    position:fixed;
+    width:120px;
+    height:120px;
+    pointer-events:none;
+    z-index:500;
+}
+
+.scopeRing{
+    width:100%;
+    height:100%;
+    border:3px solid red;
+    border-radius:50%;
+}
+
+#scope::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    width:2px;
+    height:100%;
+    background:red;
+}
+
+#scope::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:100%;
+    height:2px;
+    background:red;
+}
+
+/* 爆発 */
+.explosion{
+    position:absolute;
+    font-size:22px;
+    pointer-events:none;
+}
+
+/* 得点 */
+.point{
+    position:absolute;
+    color:yellow;
+    font-weight:bold;
+    font-size:26px;
+    animation:pointUp 1s forwards;
+}
+
+@keyframes pointUp{
+    to{
+        opacity:0;
+        transform:translateY(-60px);
+    }
+}
+
+/* 終了 */
+#message{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    color:white;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    z-index:900;
+    font-size:40px;
+}
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<div id="game">
+
+<div id="titleScreen">
+<div class="titleWrap">
+
+<h1 id="gameTitle">宇宙大戦争</h1>
+
+<h2 id="subTitle">SPACE WAR</h2>
+
+<div id="story">
+西暦2086年...<br>
+地球は侵略を受けた...<br>
+最後の戦いが始まる...
+</div>
+
+<br>
+
+<button class="difficultyBtn"
+onclick="startGame('easy')">
+EASY
+</button>
+
+<button class="difficultyBtn"
+onclick="startGame('normal')">
+NORMAL
+</button>
+
+<button class="difficultyBtn"
+onclick="startGame('hard')">
+HARD
+</button>
+
+</div>
+</div>
+
+<div id="hud">
+SCORE:<span id="score">0</span><br>
+TIME:<span id="time">30</span>
+</div>
+
+<div id="scope">
+    <div class="scopeRing"></div>
+    <div id="scopeDot"></div>
+</div>
+
+<div id="message"></div>
+
+</div>
+
+<script>
+
+const game=document.getElementById("game");
+const scoreEl=document.getElementById("score");
+const timeEl=document.getElementById("time");
+const titleScreen=document.getElementById("titleScreen");
+const scope=document.getElementById("scope");
+const message=document.getElementById("message");
+
+let score=0;
+let time=30;
+let gameOver=false;
+let enemyMode="easy";
+let enemyCount=5;
+let speedMultiplier=1;
+let clearScore=300;
+let timer=null;
+let scopeSize=120;
+
+/* 星空 */
+
+for(let i=0;i<100;i++){
+
+    const star=document.createElement("div");
+
+    star.className="star";
+
+    const size=Math.random()*4;
+
+    star.style.width=size+"px";
+    star.style.height=size+"px";
+
+    star.style.left=Math.random()*window.innerWidth+"px";
+    star.style.top=Math.random()*window.innerHeight+"px";
+
+    game.appendChild(star);
+
+    function moveStar(){
+
+        let x=parseFloat(star.style.left);
+
+        x-=1+size;
+
+        if(x<-10){
+            x=window.innerWidth+10;
+            star.style.top=Math.random()*window.innerHeight+"px";
+        }
+
+        star.style.left=x+"px";
+
+        requestAnimationFrame(moveStar);
+    }
+
+    moveStar();
+}
+
+document.addEventListener("mousemove",e=>{
+
+    scope.style.left=
+    (e.clientX-scopeSize/2)+"px";
+
+    scope.style.top=
+    (e.clientY-scopeSize/2)+"px";
+});
+
+/* 敵 */
+
+const enemyTypes=[
+    {icon:"👾",points:10,type:"alien"},
+    {icon:"🤖",points:20,type:"robot"},
+    {icon:"🛸",points:50,type:"ufo"}
+];
+
+function createInvader(){
+
+    if(gameOver)return;
+
+    const enemy=
+    enemyTypes[
+    Math.floor(Math.random()*enemyTypes.length)
+    ];
+
+    const div=document.createElement("div");
+
+    div.className="invader";
+    div.textContent=enemy.icon;
+    div.dataset.points=enemy.points;
+
+    const baseY=
+    Math.random()*(window.innerHeight-200)+50;
+
+    let x=-80;
+
+    div.style.left=x+"px";
+    div.style.top=baseY+"px";
+
+    game.appendChild(div);
+
+    const speed=
+    (2+Math.random()*4)
+    *speedMultiplier;
+
+    function move(){
+
+        if(gameOver){
+            div.remove();
+            return;
+        }
+
+        x+=speed;
+
+        div.style.left=x+"px";
+
+        if(enemyMode==="normal" ||
+           enemyMode==="hard"){
+
+            if(enemy.type==="ufo"){
+                div.style.top=
+                baseY +
+                Math.sin(x/30)*(enemyMode==="hard"?80:40)
+                +"px";
+            }
+
+            if(enemy.type==="robot"){
+                div.style.top=
+                baseY +
+                Math.cos(x/30)*(enemyMode==="hard"?50:25)
+                +"px";
+
+                div.style.transform=
+                `rotate(${x*(enemyMode==="hard"?2:1)}deg)`;
+            }
+
+            if(enemy.type==="alien"){
+                div.style.top=
+                baseY +
+                Math.sin(x/15)*(enemyMode==="hard"?30:15)
+                +"px";
+
+                div.style.transform=
+                `rotate(${Math.sin(x/8)*15}deg)`;
+            }
+        }
+
+        if(x>window.innerWidth+100){
+
+            div.remove();
+            createInvader();
+            return;
+        }
+
+        requestAnimationFrame(move);
+    }
+
+    move();
+}
+
+/* 爆発 */
+
+function explosion(x,y){
+
+    for(let i=0;i<10;i++){
+
+        const e=document.createElement("div");
+
+        e.className="explosion";
+        e.textContent="💥";
+
+        e.style.left=x+"px";
+        e.style.top=y+"px";
+
+        game.appendChild(e);
+
+        const angle=Math.random()*Math.PI*2;
+        const dist=30+Math.random()*50;
+
+        e.animate([
+        {transform:"translate(0,0)",opacity:1},
+        {
+            transform:`translate(
+            ${Math.cos(angle)*dist}px,
+            ${Math.sin(angle)*dist}px)`,
+            opacity:0
+        }],{
+            duration:600
+        });
+
+        setTimeout(()=>e.remove(),600);
+    }
+}
+
+/* 射撃 */
+
+document.addEventListener("click",e=>{
+
+    if(titleScreen.style.display!=="none") return;
+    if(gameOver) return;
+
+    const hit=
+    document.elementFromPoint(
+        e.clientX,
+        e.clientY
+    );
+
+    if(hit && hit.classList.contains("invader")){
+
+        const rect=
+        hit.getBoundingClientRect();
+
+        const pts=
+        parseInt(hit.dataset.points);
+
+        score+=pts;
+
+        scoreEl.textContent=score;
+
+        explosion(
+        rect.left+rect.width/2,
+        rect.top+rect.height/2
+        );
+
+        hit.remove();
+
+        createInvader();
+    }
+});
+
+/* タイマー */
+
+function startTimer(){
+
+    timer=setInterval(()=>{
+
+        time--;
+        timeEl.textContent=time;
+
+        if(time<=0){
+
+            clearInterval(timer);
+
+            gameOver=true;
+
+            message.style.display="flex";
+
+            if(score>=clearScore){
+
+                message.innerHTML=
+                `🏆 MISSION CLEAR<br>
+                SCORE:${score}<br>
+                <button onclick="location.reload()">
+                RESTART
+                </button>`;
+            }else{
+
+                message.innerHTML=
+                `GAME OVER<br>
+                SCORE:${score}<br>
+                <button onclick="location.reload()">
+                RETRY
+                </button>`;
+            }
+        }
+
+    },1000);
+}
+
+/* 開始 */
+
+function startGame(level){
+
+    titleScreen.style.display="none";
+
+    if(level==="easy"){
+        enemyMode="easy";
+        enemyCount=5;
+        speedMultiplier=0.6;
+        clearScore=300;
+        time=40;
+        scopeSize=140;
+    }
+
+    if(level==="normal"){
+        enemyMode="normal";
+        enemyCount=6;
+        speedMultiplier=1;
+        clearScore=500;
+        time=30;
+        scopeSize=120;
+    }
+
+    if(level==="hard"){
+        enemyMode="hard";
+        enemyCount=10;
+        speedMultiplier=2;
+        clearScore=1000;
+        time=25;
+        scopeSize=80;
+
+        scope.style.width="80px";
+        scope.style.height="80px";
+    }
+
+    timeEl.textContent=time;
+
+    for(let i=0;i<enemyCount;i++){
+        createInvader();
+    }
+
+    startTimer();
+}
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

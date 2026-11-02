@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ブロック撃破ゲーム</title>
+ 
+<style>
+
+body{
+
+    margin:0;
+
+    text-align:center;
+
+    background:#dce6f2;
+
+    font-family:sans-serif;
+
+}
+ 
+h1{
+
+    margin:20px;
+
+}
+ 
+#info{
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+
+    background:white;
+
+    display:inline-block;
+
+    padding:10px 20px;
+
+    border-radius:15px;
+
+    color:#1565C0;
+
+}
+ 
+canvas{
+
+    border:3px solid black;
+
+    background:white;
+
+}
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+ 
+<h1>ブロック撃破ゲーム</h1>
+ 
+<div>
+<button onclick="changeDifficulty(15)">Easy</button>
+<button onclick="changeDifficulty(10)">Normal</button>
+<button onclick="changeDifficulty(6)">Hard</button>
+<button onclick="changeDifficulty(4)">Expert</button>
+</div>
+ 
+<br>
+ 
+<div id="info"></div>
+ 
+<canvas id="game" width="1000" height="600"></canvas>
+ 
+<script>
+ 
+const canvas = document.getElementById("game");
+
+const ctx = canvas.getContext("2d");
+ 
+let stage = 1;
+
+let maxShots = 15;
+
+let shotsLeft = 15;
+ 
+let blocks = [];
+
+let ball = null;
+ 
+let mouseX = 300;
+
+let mouseY = 300;
+ 
+const cannon = {
+
+    x:100,
+
+    y:500
+
+};
+ 
+function updateInfo(){
+
+    document.getElementById("info").innerHTML =
+
+        "ステージ：" + stage +
+
+        "　｜　残り弾数：" + shotsLeft +
+
+        "　｜　残りブロック：" + blocks.length;
+
+}
+ 
+function createStage(){
+ 
+    blocks = [];
+ 
+    let type = Math.floor(Math.random()*5);
+ 
+    if(type===0){
+ 
+        for(let r=0;r<5;r++){
+
+            for(let c=0;c<5-r;c++){
+ 
+                blocks.push({
+
+                    x:700+c*55+r*28,
+
+                    y:500-r*40,
+
+                    w:50,
+
+                    h:35
+
+                });
+
+            }
+
+        }
+ 
+    }else if(type===1){
+ 
+        for(let y=0;y<5;y++){
+
+            for(let x=0;x<5;x++){
+ 
+                blocks.push({
+
+                    x:680+x*55,
+
+                    y:250+y*40,
+
+                    w:50,
+
+                    h:35
+
+                });
+ 
+            }
+
+        }
+ 
+    }else if(type===2){
+ 
+        for(let i=0;i<12;i++){
+ 
+            blocks.push({
+
+                x:760,
+
+                y:500-i*30,
+
+                w:50,
+
+                h:25
+
+            });
+ 
+        }
+
+    }
+ 
+    else if(type===3){
+ 
+        for(let i=0;i<12;i++){
+ 
+            blocks.push({
+
+                x:700+(i%2)*80,
+
+                y:150+i*35,
+
+                w:50,
+
+                h:30
+
+            });
+ 
+        }
+
+    }
+ 
+    else{
+ 
+        for(let r=0;r<5;r++){
+ 
+            let cols = 3 + Math.floor(Math.random()*4);
+ 
+            for(let c=0;c<cols;c++){
+ 
+                blocks.push({
+
+                    x:650+c*55+Math.random()*40,
+
+                    y:500-r*40,
+
+                    w:50,
+
+                    h:35
+
+                });
+ 
+            }
+
+        }
+
+    }
+ 
+    updateInfo();
+
+}
+ 
+function changeDifficulty(num){
+ 
+    maxShots = num;
+
+    shotsLeft = num;
+
+    stage = 1;
+ 
+    ball = null;
+ 
+    createStage();
+
+}
+ 
+canvas.addEventListener("mousemove", function(e){
+ 
+    const rect = canvas.getBoundingClientRect();
+ 
+    mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+
+    mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+ 
+});
+ 
+canvas.addEventListener("click", function(e){
+ 
+    if(ball) return;
+
+    if(shotsLeft<=0) return;
+ 
+    const rect = canvas.getBoundingClientRect();
+ 
+    const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+
+    const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+ 
+    const dx = mx - cannon.x;
+
+    const dy = my - cannon.y;
+ 
+    const len = Math.sqrt(dx*dx + dy*dy);
+ 
+    ball = {
+ 
+        x:cannon.x,
+
+        y:cannon.y,
+
+        r:10,
+ 
+        vx:(dx/len)*12,
+
+        vy:(dy/len)*12
+ 
+    };
+ 
+    shotsLeft--;
+ 
+    updateInfo();
+ 
+});
+ 
+function update(){
+ 
+    if(ball){
+ 
+        ball.x += ball.vx;
+
+        ball.y += ball.vy;
+ 
+        ball.vy += 0.12;
+ 
+        for(let i=blocks.length-1;i>=0;i--){
+ 
+            const b = blocks[i];
+ 
+            if(
+
+                ball.x + ball.r > b.x &&
+
+                ball.x - ball.r < b.x + b.w &&
+
+                ball.y + ball.r > b.y &&
+
+                ball.y - ball.r < b.y + b.h
+
+            ){
+
+                blocks.splice(i,1);
+
+            }
+
+        }
+ 
+        if(
+
+            ball.x < 0 ||
+
+            ball.x > 1000 ||
+
+            ball.y > 650
+
+        ){
+
+            ball = null;
+
+        }
+
+    }
+ 
+    if(blocks.length===0){
+ 
+        alert("ステージクリア！");
+ 
+        stage++;
+
+        shotsLeft = maxShots;
+ 
+        createStage();
+
+    }
+ 
+    if(
+
+        shotsLeft===0 &&
+
+        ball===null &&
+
+        blocks.length>0
+
+    ){
+ 
+        alert("ゲームオーバー");
+ 
+        stage = 1;
+
+        shotsLeft = maxShots;
+ 
+        createStage();
+
+    }
+ 
+    updateInfo();
+
+}
+ 
+function drawCloud(x,y){
+ 
+    ctx.fillStyle="white";
+ 
+    ctx.beginPath();
+ 
+    ctx.arc(x,y,20,0,Math.PI*2);
+
+    ctx.arc(x+25,y-10,25,0,Math.PI*2);
+
+    ctx.arc(x+50,y,20,0,Math.PI*2);
+ 
+    ctx.fill();
+
+}
+ 
+function draw(){
+ 
+    ctx.clearRect(0,0,1000,600);
+ 
+    // 空
+
+       ctx.fillStyle = "#87CEEB";
+
+       ctx.fillRect(0,0,1000,600);
+ 
+    // 太陽
+
+       ctx.fillStyle = "yellow";
+ 
+       ctx.beginPath();
+
+       ctx.arc(900,80,50,0,Math.PI*2);
+
+       ctx.fill();
+ 
+       drawCloud(150,100);
+
+       drawCloud(350,150);
+
+　　　drawCloud(600,80);
+ 
+    // 地面
+
+    　ctx.fillStyle = "green";
+
+    　ctx.fillRect(0,550,1000,50);
+ 
+   // 発射台
+
+　　　ctx.fillStyle = "#1565C0";
+
+　　　ctx.beginPath();
+
+　　　ctx.arc(cannon.x,cannon.y,25,0,Math.PI*2);
+
+　　　ctx.fill();
+ 
+    // ブロック
+
+　　　let colors = [
+
+　　　"#F44336",
+
+　　　"#FF9800",
+
+　　　"#FFEB3B",
+
+　　　"#4CAF50",
+
+　　　"#2196F3",
+
+　　　"#9C27B0"
+
+　];
+ 
+　　　let index = 0;
+ 
+　　　for(let block of blocks){
+ 
+   　　　 ctx.fillStyle =
+
+   　　　 colors[index % colors.length];
+ 
+    　　　ctx.fillRect(
+
+       　　　 block.x,
+
+       　　　 block.y,
+
+       　　　 block.w,
+
+       　　　 block.h
+
+    );
+ 
+    　　　ctx.strokeStyle = "#333";
+
+   　　　 ctx.strokeRect(
+
+      　　　  block.x,
+
+       　　　 block.y,
+
+       　　　 block.w,
+
+      　　　  block.h
+
+    );
+ 
+   　　　 index++;
+
+}
+ 
+    // ボール
+
+    if(ball){
+ 
+        ctx.fillStyle = "red";
+ 
+        ctx.beginPath();
+
+        ctx.arc(
+
+            ball.x,
+
+            ball.y,
+
+            ball.r,
+
+            0,
+
+            Math.PI*2
+
+        );
+
+        ctx.fill();
+
+    }
+
+}
+ 
+function gameLoop(){
+ 
+    update();
+
+    draw();
+ 
+    requestAnimationFrame(gameLoop);
+
+}
+ 
+createStage();
+
+gameLoop();
+ 
+</script>
+ 
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>
+ 

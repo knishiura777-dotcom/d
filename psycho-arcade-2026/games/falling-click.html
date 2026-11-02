@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>落下物クリックゲーム</title>
+ 
+<style>
+body{
+margin:0;
+background:#d9e8f2;
+font-family:sans-serif;
+text-align:center;
+}
+ 
+#rules{
+background:white;
+max-width:700px;
+margin:15px auto;
+padding:15px;
+border-radius:15px;
+}
+ 
+#gameArea{
+width:100vw;
+height:65vh;
+position:relative;
+overflow:hidden;
+}
+ 
+.item{
+position:absolute;
+font-size:50px;
+cursor:pointer;
+user-select:none;
+}
+ 
+button{
+padding:10px 20px;
+margin:5px;
+font-size:16px;
+}
+ 
+#message{
+height:30px;
+font-size:22px;
+font-weight:bold;
+color:red;
+}
+ 
+.info{
+font-size:22px;
+font-weight:bold;
+margin:5px;
+}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+ 
+<div id="rules">
+<h2>🎮 ルール説明 🎮</h2>
+<p>🔵 をクリックすると +1点</p>
+<p>⭐ をクリックするとハズレ</p>
+<p>⏰ 制限時間は30秒</p>
+<p>🏆 ハイスコア更新を目指そう！</p>
+</div>
+ 
+<div class="info">
+スコア：<span id="score">0</span>
+</div>
+ 
+<div class="info">
+ハイスコア：<span id="highScore">0</span>
+</div>
+ 
+<div class="info">
+残り時間：<span id="time">30</span>秒
+</div>
+ 
+<button id="startBtn">スタート</button>
+<button onclick="location.reload()">リセット</button>
+ 
+<div id="message"></div>
+ 
+<div id="gameArea"></div>
+ 
+<script>
+ 
+const gameArea = document.getElementById("gameArea");
+const scoreText = document.getElementById("score");
+const highScoreText = document.getElementById("highScore");
+const timeText = document.getElementById("time");
+const message = document.getElementById("message");
+ 
+let score = 0;
+let time = 30;
+let playing = false;
+ 
+let spawnTimer;
+let timer;
+ 
+let highScore =
+Number(localStorage.getItem("highScore")) || 0;
+ 
+highScoreText.textContent = highScore;
+ 
+/* 横10列 */
+function getX(){
+ 
+const laneWidth = window.innerWidth / 10;
+ 
+const lane =
+Math.floor(Math.random() * 10);
+ 
+return (
+lane * laneWidth +
+laneWidth / 2 -
+20
+);
+}
+ 
+function createItem(){
+ 
+if(!playing) return;
+ 
+const item = document.createElement("div");
+ 
+const bad = Math.random() < 0.2;
+ 
+item.className = "item";
+item.textContent = bad ? "⭐" : "🔵";
+ 
+let y = -60;
+ 
+item.style.left = getX() + "px";
+item.style.top = y + "px";
+ 
+gameArea.appendChild(item);
+ 
+item.onclick = () => {
+ 
+if(bad){
+ 
+message.textContent =
+"❌ ちがうよ！";
+ 
+setTimeout(()=>{
+message.textContent = "";
+},800);
+ 
+}else{
+ 
+score++;
+ 
+scoreText.textContent = score;
+ 
+message.textContent =
+"✨ +1点！";
+ 
+setTimeout(()=>{
+message.textContent = "";
+},500);
+}
+ 
+item.remove();
+};
+ 
+const fall = setInterval(()=>{
+ 
+/* ゆっくり落下 */
+y += 2;
+ 
+item.style.top = y + "px";
+ 
+if(y > gameArea.clientHeight){
+ 
+clearInterval(fall);
+ 
+if(item.parentNode){
+item.remove();
+}
+}
+ 
+},20);
+}
+ 
+function startGame(){
+ 
+if(playing) return;
+ 
+playing = true;
+ 
+/* 出現をゆっくり */
+spawnTimer =
+setInterval(createItem,1000);
+ 
+timer = setInterval(()=>{
+ 
+time--;
+ 
+timeText.textContent = time;
+ 
+if(time <= 0){
+ 
+clearInterval(timer);
+clearInterval(spawnTimer);
+ 
+playing = false;
+ 
+if(score > highScore){
+ 
+highScore = score;
+ 
+localStorage.setItem(
+"highScore",
+highScore
+);
+}
+ 
+highScoreText.textContent =
+highScore;
+ 
+let rank;
+ 
+if(score >= 20){
+rank = "🌟 Sランク";
+}else if(score >= 15){
+rank = "😊 Aランク";
+}else if(score >= 10){
+rank = "👍 Bランク";
+}else{
+rank = "💪 Cランク";
+}
+ 
+alert(
+"🎉ゲーム終了🎉\n\n" +
+"スコア：" + score + "点\n" +
+"ハイスコア：" +
+highScore + "点\n\n" +
+rank
+);
+}
+ 
+},1000);
+}
+ 
+document
+.getElementById("startBtn")
+.addEventListener("click",startGame);
+ 
+</script>
+ 
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

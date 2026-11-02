@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>落ちものパズル</title>
+
+<style>
+body{
+    background:#222;
+    color:white;
+    text-align:center;
+    font-family:sans-serif;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:40px;
+    margin-top:20px;
+}
+
+#game{
+    border:4px solid white;
+    background:black;
+    display:block;
+}
+
+#next{
+    border:4px solid white;
+    background:black;
+    display:block;
+}
+
+.sidebar{
+    text-align:center;
+}
+#gameOverScreen{
+    display:none;
+
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.9);
+
+    color:white;
+
+    z-index:9999;
+
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+#gameOverScreen h1{
+    font-size:80px;
+    margin:20px;
+}
+
+#gameOverScreen h2{
+    font-size:50px;
+    margin:20px;
+}
+
+#gameOverScreen button{
+    font-size:36px;
+    padding:15px 40px;
+    cursor:pointer;
+}
+
+#startScreen{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+
+    background:#e5e5e5;
+    color:#111;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    z-index:10000;
+}
+
+#startScreen h1{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+#startScreen h2{
+    font-size:28px;
+    margin:5px;
+}
+
+#startScreen p{
+    font-size:20px;
+    margin:3px;
+}
+
+#startButton{
+    margin-top:20px;
+    font-size:36px;
+    padding:10px 30px;
+    cursor:pointer;
+}
+
+#status{
+    position:fixed;
+    top:10px;
+    right:10px;
+
+    background:#333;
+
+    color:white;
+
+    padding:10px 15px;
+
+    border:2px solid white;
+
+    border-radius:10px;
+
+    font-size:20px;
+
+    z-index:999;
+}
+
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<div id="startScreen">
+
+    <h1>落ちものパズル</h1>
+
+    <h2>スコア</h2>
+
+    <p>・ブロック着地で +10点</p>
+    <p>・1列消しで +100点</p>
+
+    <br>
+
+    <h2>時間制限</h2>
+
+    <p>・100秒</p>
+
+    <button id="startButton" onclick="startGame()">
+        始める
+    </button>
+
+</div>
+
+<h1>落ちものパズル</h1>
+
+<p>← → : 移動　↓ : 落下　↑ : 回転</p>
+<div id="status">
+    スコア: <span id="score">0</span><br>
+    残り時間: <span id="timer">100</span>秒
+</div>
+
+<div class="container">
+
+    <canvas id="game" width="200" height="400"></canvas>
+
+    <div class="sidebar">
+        <h3>次のブロック</h3>
+        <canvas id="next" width="120" height="120"></canvas>
+    </div>
+
+</div>
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const nextCanvas = document.getElementById("next");
+const nextCtx = nextCanvas.getContext("2d");
+
+const ROWS = 20;
+const COLS = 10;
+const SIZE = 20;
+
+canvas.width = COLS * SIZE;
+canvas.height = ROWS * SIZE;
+
+const board = Array.from(
+    {length: ROWS},
+    () => Array(COLS).fill(0)
+);
+
+const pieces = [
+    [[1,1,1,1]],
+
+    [[1,1],
+     [1,1]],
+
+    [[0,1,0],
+     [1,1,1]],
+
+    [[1,1,0],
+     [0,1,1]],
+
+    [[0,1,1],
+     [1,1,0]]
+];
+
+let score = 0;
+let timeLeft = 100;
+
+let gameInterval;
+let timerInterval;
+let gameOver = false;
+
+function randomPiece(){
+    return {
+        shape: JSON.parse(
+            JSON.stringify(
+                pieces[Math.floor(Math.random()*pieces.length)]
+            )
+        ),
+        x: 3,
+        y: 0
+    };
+}
+
+let piece = randomPiece();
+let nextPiece = randomPiece();
+
+function drawCell(x,y,color){
+
+    ctx.fillStyle = color;
+
+    ctx.fillRect(
+        x * SIZE,
+        y * SIZE,
+        SIZE,
+        SIZE
+    );
+
+    ctx.strokeStyle = "#333";
+
+    ctx.strokeRect(
+        x * SIZE,
+        y * SIZE,
+        SIZE,
+        SIZE
+    );
+}
+
+function drawNext(){
+
+    nextCtx.clearRect(
+        0,
+        0,
+        nextCanvas.width,
+        nextCanvas.height
+    );
+
+    const blockSize = 25;
+
+    nextPiece.shape.forEach((row,y)=>{
+        row.forEach((value,x)=>{
+
+            if(value){
+
+                nextCtx.fillStyle = "#4caf50";
+
+                nextCtx.fillRect(
+                    x * blockSize + 15,
+                    y * blockSize + 15,
+                    blockSize,
+                    blockSize
+                );
+
+                nextCtx.strokeStyle = "#222";
+
+                nextCtx.strokeRect(
+                    x * blockSize + 15,
+                    y * blockSize + 15,
+                    blockSize,
+                    blockSize
+                );
+            }
+        });
+    });
+}
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    for(let y=0;y<ROWS;y++){
+        for(let x=0;x<COLS;x++){
+
+            if(board[y][x]){
+
+                drawCell(
+                    x,
+                    y,
+                    "#19dbe5"
+                );
+            }
+        }
+    }
+
+    piece.shape.forEach((row,dy)=>{
+        row.forEach((value,dx)=>{
+
+            if(value){
+
+                drawCell(
+                    piece.x + dx,
+                    piece.y + dy,
+                    "#ffb000"
+                );
+            }
+        });
+    });
+
+    drawNext();
+}
+
+function collide(){
+
+    for(let y=0;y<piece.shape.length;y++){
+
+        for(let x=0;x<piece.shape[y].length;x++){
+
+            if(piece.shape[y][x]){
+
+                let nx = piece.x + x;
+                let ny = piece.y + y;
+
+                if(
+                    nx < 0 ||
+                    nx >= COLS ||
+                    ny >= ROWS ||
+                    (ny >= 0 && board[ny][nx])
+                ){
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+function merge(){
+
+    piece.shape.forEach((row,dy)=>{
+        row.forEach((value,dx)=>{
+
+            if(value){
+
+                board[
+                    piece.y + dy
+                ][
+                    piece.x + dx
+                ] = 1;
+            }
+        });
+    });
+}
+
+function clearLines(){
+
+    for(let y=ROWS-1;y>=0;y--){
+
+        if(board[y].every(v=>v)){
+
+            board.splice(y,1);
+            board.unshift(Array(COLS).fill(0));
+
+            score += 100;
+
+            document.getElementById("score").textContent = score;
+
+            y++;
+        }
+    }
+}
+
+function rotate(){
+
+    const rotated =
+        piece.shape[0].map((_,i)=>
+            piece.shape.map(row=>row[i]).reverse()
+        );
+
+    const old = piece.shape;
+
+    piece.shape = rotated;
+
+    if(collide()){
+        piece.shape = old;
+    }
+}
+
+function showGameOver(){
+
+    if(gameOver) return;
+
+    gameOver = true;
+
+    clearInterval(gameInterval);
+    clearInterval(timerInterval);
+
+    document.getElementById(
+        "finalScore"
+    ).textContent = score;
+
+    document.getElementById(
+        "gameOverScreen"
+    ).style.display = "flex";
+}
+
+function restartGame(){
+    location.reload();
+}
+
+function drop(){
+
+    if(gameOver) return;
+
+    piece.y++;
+
+    if(collide()){
+
+        piece.y--;
+
+        merge();
+
+        score += 10;
+        document.getElementById(
+            "score"
+        ).textContent = score;
+
+        clearLines();
+
+        piece = nextPiece;
+
+        piece.x = 3;
+        piece.y = 0;
+
+        nextPiece = randomPiece();
+
+        if(collide()){
+
+            showGameOver();
+            return;
+
+        }
+    }
+}
+
+document.addEventListener("keydown",e=>{
+
+    if(gameOver) return;
+
+    if(e.key==="ArrowLeft"){
+
+        piece.x--;
+
+        if(collide()){
+            piece.x++;
+        }
+    }
+
+    if(e.key==="ArrowRight"){
+
+        piece.x++;
+
+        if(collide()){
+            piece.x--;
+        }
+    }
+
+    if(e.key==="ArrowDown"){
+        drop();
+    }
+
+    if(e.key==="ArrowUp"){
+        rotate();
+    }
+
+});
+
+function startGame(){
+
+    document.getElementById(
+        "startScreen"
+    ).style.display = "none";
+
+    gameOver = false;
+
+    gameInterval = setInterval(()=>{
+
+        drop();
+        draw();
+
+    },500);
+
+    timerInterval = setInterval(()=>{
+
+        timeLeft--;
+
+        document.getElementById(
+            "timer"
+        ).textContent = timeLeft;
+
+        if(timeLeft <= 0){
+
+            showGameOver();
+
+        }
+
+    },1000);
+
+    draw();
+}
+
+console.log("script loaded");
+
+</script>
+
+<div id="gameOverScreen">
+
+    <h1>ゲームオーバー</h1>
+
+    <h2>
+        スコア:
+        <span id="finalScore">0</span>
+    </h2>
+
+    <button onclick="restartGame()">
+        もう一度
+    </button>
+
+</div>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>

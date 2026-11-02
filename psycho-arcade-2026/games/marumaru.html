@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔴まるまる進化🔵</title>
+ 
+<style>
+body{
+margin:0;
+padding:20px;
+text-align:center;
+font-family:sans-serif;
+background:#FFF8F2;
+}
+ 
+h1{
+color:#FF7043;
+margin-bottom:5px;
+}
+ 
+p{
+color:#666;
+}
+ 
+#score{
+display:inline-block;
+margin:10px;
+padding:10px 20px;
+font-size:24px;
+font-weight:bold;
+color:#FF7043;
+background:white;
+border:3px solid #FFD180;
+border-radius:20px;
+}
+ 
+canvas{
+background:white;
+border:4px solid #FFD180;
+border-radius:20px;
+}
+
+#gameArea{
+display:flex;
+justify-content:center;
+align-items:flex-start;
+gap:20px;
+}
+ 
+#nextBall{
+ 
+background:white;
+ 
+border:3px solid #FFD180;
+ 
+border-radius:20px;
+ 
+padding:15px;
+ 
+width:250px;
+ 
+color:#FF7043;
+ 
+font-weight:bold;
+}
+ 
+button{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:#FFB74D;
+color:white;
+font-size:16px;
+cursor:pointer;
+}f
+ 
+button:hover{
+background:#FFA726;
+}
+ 
+#ranking{
+display:inline-block;
+margin-top:15px;
+text-align:left;
+background:white;
+border:3px solid #B3E5FC;
+border-radius:15px;
+padding:15px;
+}
+ 
+#ranking h3{
+margin-top:0;
+text-align:center;
+}
+
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+ 
+<h1>🔴 まるまる進化 🔵</h1>
+ 
+<p>同じ色のまるを合体させてどんどん大きくしよう！</p>
+ 
+<div id="score">スコア: 0</div>
+ 
+<br>
+<div id="gameArea">
+ 
+<canvas id="game" width="400" height="500"></canvas>
+ 
+<div id="nextBall">
+つぎのまる
+<canvas id="nextPreview" width="100" height="100"></canvas>
+</div>
+ 
+</div> 
+<br>
+ 
+<button onclick="restartGame()">もう一度遊ぶ</button>
+ 
+<div id="ranking">
+<h3>🏆ランキング</h3>
+<ol id="rankList"></ol>
+</div>
+ 
+<script>
+ 
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+ 
+const scoreText = document.getElementById("score");
+
+const nextCanvas =
+document.getElementById("nextPreview");
+ 
+const nextCtx =
+nextCanvas.getContext("2d");
+
+function playMergeSound(){
+ 
+const audio =
+new AudioContext();
+ 
+const osc =
+audio.createOscillator();
+ 
+osc.type = "triangle";
+ 
+osc.frequency.value = 700;
+ 
+osc.connect(audio.destination);
+ 
+osc.start();
+ 
+osc.stop(
+audio.currentTime + 0.08
+);
+}
+ 
+function playGameOverSound(){
+ 
+const audio =
+new AudioContext();
+ 
+const osc =
+audio.createOscillator();
+ 
+osc.type = "sawtooth";
+ 
+osc.frequency.value = 220;
+ 
+osc.connect(audio.destination);
+ 
+osc.start();
+ 
+osc.frequency.linearRampToValueAtTime(
+80,
+audio.currentTime + 0.5
+);
+ 
+osc.stop(
+audio.currentTime + 0.5
+);
+}
+
+const gravity = 0.35;
+
+const gameOverLine = 120;
+let score = 0;
+let gameOver = false;
+let mouseX = canvas.width / 2;
+let fruits = [];
+ 
+let overStart = null;
+ 
+let ranking =
+JSON.parse(localStorage.getItem("marumaruRanking")) || [];
+ 
+const levels = [
+{r:15,color:"#ff4d4d"},
+{r:21,color:"#7b1fa2"},
+{r:27,color:"#e91e63"},
+{r:34,color:"#ff9800"},
+{r:42,color:"#ffd54f"},
+{r:53,color:"#cddc39"},
+{r:66,color:"#8bc34a"},
+{r:85,color:"#4caf50"}
+];
+let nextLevel = Math.floor(Math.random()*3);
+ 
+function updateRanking(){
+ 
+const list =
+document.getElementById("rankList");
+ 
+list.innerHTML = "";
+ 
+ranking.forEach((s,i)=>{
+ 
+const li =
+document.createElement("li");
+ 
+li.textContent =
+`${i+1}位 : ${s}点`;
+ 
+list.appendChild(li);
+ 
+});
+}
+ 
+canvas.addEventListener("mousemove",e=>{
+ 
+const rect =
+canvas.getBoundingClientRect();
+ 
+mouseX =
+(e.clientX - rect.left) * (canvas.width / rect.width);
+ 
+});
+ 
+canvas.addEventListener("click",()=>{
+ 
+if(gameOver) return;
+ 
+fruits.push({
+x:mouseX,
+y:20,
+vx:(Math.random()-0.5)*0.3,
+vy:0,
+level:nextLevel,
+born:Date.now()
+});
+ 
+nextLevel =
+Math.floor(Math.random()*3);
+ 
+});
+ 
+function endGame(){
+ 
+gameOver = true;
+ 
+playGameOverSound();
+ 
+ranking.push(score);
+ 
+ranking.sort((a,b)=>b-a);
+ 
+ranking = ranking.slice(0,10);
+ 
+localStorage.setItem(
+"marumaruRanking",
+JSON.stringify(ranking)
+);
+ 
+updateRanking();
+ 
+setTimeout(()=>{
+alert(
+"ゲームオーバー！\nスコア: "+score
+);
+},100);
+ 
+}
+ 
+function update(){
+ 
+if(gameOver) return;
+ 
+for(const f of fruits){
+ 
+f.vy += gravity;
+
+if(f.vy > 6){
+f.vy = 6;
+}
+ 
+f.x += f.vx;
+f.y += f.vy;
+ 
+const r =
+levels[f.level].r;
+ 
+const floor =
+canvas.height - r - 10;
+ 
+if(f.y > floor){
+ 
+f.y = floor;
+ 
+f.vy *= -0.05;
+ 
+if(Math.abs(f.vy) < 0.8){
+ 
+f.vy = 0;
+}
+}
+ 
+if(f.x < r) f.x = r;
+ 
+if(f.x > canvas.width-r)
+f.x = canvas.width-r;
+}
+ 
+for(let i=0;i<fruits.length;i++){
+ 
+for(let j=i+1;j<fruits.length;j++){
+ 
+const a = fruits[i];
+const b = fruits[j];
+ 
+const dx = b.x-a.x;
+const dy = b.y-a.y;
+ 
+const dist =
+Math.sqrt(dx*dx + dy*dy);
+ 
+const minDist =
+levels[a.level].r +
+levels[b.level].r;
+ 
+if(
+a.level === b.level &&
+dist < minDist*0.9
+){
+ 
+if(a.level < levels.length-1){
+ 
+fruits.push({
+x:(a.x+b.x)/2,
+y:(a.y+b.y)/2,
+vx:0,
+vy:0,
+level:a.level+1,
+born:Date.now()
+});
+ 
+playMergeSound();
+ 
+score += (a.level+1)*25;
+ 
+scoreText.textContent =
+"スコア: "+score;
+ 
+fruits.splice(j,1);
+fruits.splice(i,1);
+ 
+return;
+}
+}
+ 
+if(
+dist > 0 &&
+dist < minDist
+){
+ 
+const overlap =
+(minDist - dist)/2;
+ 
+const nx = dx/dist;
+const ny = dy/dist;
+ 
+a.x -= nx*overlap*0.25;
+a.y -= ny*overlap*0.75;
+ 
+b.x += nx*overlap*0.25;
+b.y += ny*overlap*0.75;
+}
+}
+}
+ 
+let over = false;
+ 
+for(const f of fruits){
+ 
+if(
+Date.now()-f.born < 1000
+) continue;
+ 
+const top =
+f.y-levels[f.level].r;
+ 
+if(top < gameOverLine){
+ 
+over = true;
+break;
+}
+}
+ 
+if(over){
+ 
+if(overStart===null){
+ 
+overStart = Date.now();
+}
+ 
+if(
+Date.now()-overStart > 3000
+){
+ 
+endGame();
+}
+ 
+}else{
+ 
+overStart = null;
+}
+ 
+// 大きいボールが壁や床からはみ出さない
+for(const f of fruits){
+ 
+const r = levels[f.level].r;
+ 
+if(f.x < r){
+f.x = r;
+}
+ 
+if(f.x > canvas.width - r){
+f.x = canvas.width - r;
+}
+ 
+const floor =
+canvas.height - r - 10;
+ 
+if(f.y > floor){
+f.y = floor;
+}
+}
+ 
+} 
+function draw(){
+ 
+ctx.clearRect(
+0,0,
+canvas.width,
+canvas.height
+);
+ 
+// ゲームオーバーライン
+ctx.strokeStyle =
+"#ff8a80";
+ 
+ctx.lineWidth = 3;
+ 
+ctx.beginPath();
+ 
+ctx.moveTo(
+0,
+gameOverLine
+);
+ 
+ctx.lineTo(
+canvas.width,
+gameOverLine
+);
+ 
+ctx.stroke();
+ 
+ctx.fillStyle =
+"#ff8a80";
+ 
+ctx.font =
+"16px sans-serif";
+ 
+ctx.fillText(
+"のりこえないでね！",
+10,
+gameOverLine-8
+);
+ 
+// 次のボール
+if(!gameOver){
+ 
+ctx.beginPath();
+ 
+ctx.arc(
+mouseX,
+20,
+levels[nextLevel].r,
+0,
+Math.PI*2
+);
+ 
+ctx.fillStyle =
+levels[nextLevel].color;
+ 
+ctx.fill();
+}
+ 
+// ボール描画
+for(const f of fruits){
+ 
+ctx.beginPath();
+ 
+ctx.arc(
+f.x,
+f.y,
+levels[f.level].r,
+0,
+Math.PI*2
+);
+ 
+ctx.fillStyle =
+levels[f.level].color;
+ 
+ctx.fill();
+ 
+ctx.strokeStyle =
+"#444";
+ 
+ctx.lineWidth = 2;
+ 
+ctx.stroke();
+}
+ 
+// カウントダウン
+if(overStart!==null){
+ 
+const remain =
+Math.max(
+0,
+3-(Date.now()-overStart)/1000
+);
+ 
+ctx.fillStyle="red";
+ctx.font="24px sans-serif";
+ 
+ctx.fillText(
+remain.toFixed(1),
+canvas.width-50,
+30
+);
+}
+
+nextCtx.clearRect(
+0,0,
+100,100
+);
+ 
+nextCtx.beginPath();
+ 
+nextCtx.arc(
+50,
+50,
+levels[nextLevel].r,
+0,
+Math.PI*2
+);
+ 
+nextCtx.fillStyle =
+levels[nextLevel].color;
+ 
+nextCtx.fill();
+ 
+nextCtx.strokeStyle =
+"#444";
+ 
+nextCtx.lineWidth = 2;
+ 
+nextCtx.stroke();
+ 
+}
+ 
+function restartGame(){
+ 
+fruits = [];
+ 
+score = 0;
+ 
+gameOver = false;
+ 
+overStart = null;
+ 
+nextLevel =
+Math.floor(Math.random()*3);
+ 
+scoreText.textContent =
+"スコア: 0";
+ 
+}
+ 
+updateRanking();
+ 
+function loop(){
+ 
+update();
+draw();
+ 
+requestAnimationFrame(loop);
+}
+ 
+loop();
+ 
+</script>
+ 
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>
+

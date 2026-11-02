@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10ステージ間違い探しゲーム</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    text-align:center;
+    background:#f0f8ff;
+    margin:20px;
+}
+
+h1{
+    color:#0066cc;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(8,55px);
+    gap:4px;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.cell{
+    width:55px;
+    height:55px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:white;
+    border:2px solid #ccc;
+    font-size:30px;
+}
+
+.clickable{
+    cursor:pointer;
+}
+
+.found{
+    background:#90ee90;
+    border-color:green;
+}
+
+button{
+    padding:10px 20px;
+    margin:5px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#hint{
+    color:#d35400;
+    font-weight:bold;
+    min-height:24px;
+}
+
+#info{
+    margin:15px;
+    font-size:18px;
+}
+</style>
+<link rel="stylesheet" href="arcade-game.css">
+</head>
+<body>
+
+<h1>🔍 間違い探しゲーム</h1>
+
+<div id="info">
+    <div id="stage">ステージ 1 / 10</div>
+    <div id="score">見つけた数: 0</div>
+</div>
+
+<button onclick="showHint()">💡 ヒント</button>
+
+<p id="hint"></p>
+
+<div class="container">
+    <div class="grid" id="leftGrid"></div>
+    <div class="grid" id="rightGrid"></div>
+</div>
+
+<script>
+
+const emojiPool = [
+"🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼",
+"🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔",
+"🐧","🐦","🐤","🦄","🐢","🐙","🦋","🐟",
+"🍎","🍌","🍓","🍇","🍉","🍋","🍒","🥝",
+"🍔","🍟","🍕","🌭","🍩","🍪","🎂","🍫",
+"⚽","🏀","⚾","🎾","🏐","🚗","🚲","🚀",
+"🏠","🌳","🌷","🌻","⭐","🌙","☁️","🌈",
+"🎈","🎁","🎵","💎","👑","🔥","❄️","🌞"
+];
+
+function shuffle(array){
+    return [...array].sort(() => Math.random() - 0.5);
+}
+
+function createStage(stageNumber){
+
+    const left = shuffle(emojiPool).slice(0,64);
+    const right = [...left];
+
+    const diffCount = Math.min(5 + stageNumber - 1, 10);
+
+    const diff = [];
+
+    while(diff.length < diffCount){
+
+        const pos = Math.floor(Math.random()*64);
+
+        if(!diff.includes(pos)){
+
+            diff.push(pos);
+
+            let replacement;
+
+            do{
+                replacement =
+                emojiPool[Math.floor(Math.random()*emojiPool.length)];
+            }
+            while(replacement === right[pos]);
+
+            right[pos] = replacement;
+        }
+    }
+
+    return {
+        left,
+        right,
+        diff,
+        diffCount
+    };
+}
+
+const stages = [];
+
+for(let i=1;i<=10;i++){
+    stages.push(createStage(i));
+}
+
+let currentStage = 0;
+let score = 0;
+let hintUsed = 0;
+
+function loadStage(index){
+
+    const stage = stages[index];
+
+    score = 0;
+    hintUsed = 0;
+
+    document.getElementById("hint").textContent = "";
+    document.getElementById("stage").textContent =
+    `ステージ ${index+1} / 10`;
+
+    document.getElementById("score").textContent =
+    `見つけた数: 0 / ${stage.diffCount}`;
+
+    const leftGrid = document.getElementById("leftGrid");
+    const rightGrid = document.getElementById("rightGrid");
+
+    leftGrid.innerHTML = "";
+    rightGrid.innerHTML = "";
+
+    stage.left.forEach(item=>{
+        const div = document.createElement("div");
+        div.className = "cell";
+        div.textContent = item;
+        leftGrid.appendChild(div);
+    });
+
+    stage.right.forEach((item,index)=>{
+
+        const div = document.createElement("div");
+
+        div.className = "cell clickable";
+        div.textContent = item;
+
+        div.addEventListener("click",()=>{
+
+            if(
+                stage.diff.includes(index) &&
+                !div.classList.contains("found")
+            ){
+
+                div.classList.add("found");
+
+                score++;
+
+                document.getElementById("score").textContent =
+                `見つけた数: ${score} / ${stage.diffCount}`;
+
+                if(score === stage.diffCount){
+
+                    setTimeout(()=>{
+
+                        currentStage++;
+
+                        if(currentStage < stages.length){
+
+                            alert("🎉 ステージクリア！");
+                            loadStage(currentStage);
+
+                        }else{
+
+                            document.body.innerHTML = `
+                            <h1>🏆 全ステージクリア！</h1>
+                            <h2>おめでとう！</h2>
+                            <p>10ステージすべてをクリアしました！</p>
+                            <button onclick="location.reload()">
+                            もう一度遊ぶ
+                            </button>
+                            `;
+                        }
+
+                    },300);
+                }
+            }
+        });
+
+        rightGrid.appendChild(div);
+    });
+}
+
+function showHint(){
+
+    const stage = stages[currentStage];
+
+    if(hintUsed >= stage.diff.length){
+
+        document.getElementById("hint").textContent =
+        "ヒントはもうありません";
+
+        return;
+    }
+
+    const pos = stage.diff[hintUsed];
+
+    const row = Math.floor(pos / 8) + 1;
+    const col = (pos % 8) + 1;
+
+    document.getElementById("hint").textContent =
+    `ヒント ${hintUsed+1}: ${row}行 ${col}列付近を探そう！`;
+
+    hintUsed++;
+}
+
+loadStage(0);
+
+</script>
+
+<script defer src="arcade-bridge.js"></script>
+</body>
+</html>
