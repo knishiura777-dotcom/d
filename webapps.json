@@ -1,490 +1,268 @@
 [
   {
-    "path": "Cal_99doujou_v1.5.0.html",
-    "title": "九九道場",
-    "category": "算数・学習",
-    "description": "九九の練習アプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/Cal_99doujou_v1.5.0.html",
-    "qr": "qr/app-000.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "10ステージ間違い探しゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/spot-difference.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "Cal_furuitsInvadors.html",
-    "title": "フルーツインベーダー",
-    "category": "ゲーム・クエスト",
-    "description": "フルーツを題材にしたゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/Cal_furuitsInvadors.html",
-    "qr": "qr/app-001.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "Cosmic Fruit Invaders | Formula Hero Edition",
+    "description": "",
+    "url": "Cal_furuitsInvadors.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "D_BusinessCard.html",
-    "title": "デジタル名刺",
-    "category": "ツール・その他",
-    "description": "名刺・プロフィール関連ツール",
-    "url": "https://knishiura777-dotcom.github.io/d/D_BusinessCard.html",
-    "qr": "qr/app-002.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "Fishing Adventure DX",
+    "description": "",
+    "url": "psycho-arcade-2026/games/fishing.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "Disease-Prone-Personality.html",
-    "title": "病気になりやすい性格",
-    "category": "心理学・ウェルビーイング",
-    "description": "性格と健康を扱う心理学教材",
-    "url": "https://knishiura777-dotcom.github.io/d/Disease-Prone-Personality.html",
-    "qr": "qr/app-003.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "MG 幼教クエスト '86 〜オープンキャンパス大作戦〜",
+    "description": "",
+    "url": "Jizou-bon-v3.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "Exp_NumberPlace.html",
-    "title": "ナンバープレース",
-    "category": "ゲーム・クエスト",
-    "description": "数字パズル",
-    "url": "https://knishiura777-dotcom.github.io/d/Exp_NumberPlace.html",
-    "qr": "qr/app-004.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "MG 幼教クエスト '86 〜童謡リトミック縁日〜",
+    "description": "",
+    "url": "mg_youji_quest.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "Index.html",
-    "title": "Index（旧入口）",
-    "category": "ツール・その他",
-    "description": "既存の入口ページ。内容は要確認",
-    "url": "https://knishiura777-dotcom.github.io/d/Index.html",
-    "qr": "qr/app-005.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "MIND QUEST | あなたの選択を読み解く",
+    "description": "",
+    "url": "MIND_QUEST_learning_v2.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "Jizou-bon-v3.html",
-    "title": "地蔵盆 v3",
-    "category": "教育・保育",
-    "description": "地蔵盆を題材にしたアプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/Jizou-bon-v3.html",
-    "qr": "qr/app-006.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "MONEY QUEST｜お金と心を育てるゲーム",
+    "description": "節約・複利・メンタル・損切りを楽しく体験する金融心理学ゲーム",
+    "url": "MONEY_QUEST_v03.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "Kakezan100.html",
-    "title": "かけ算100",
-    "category": "算数・学習",
-    "description": "かけ算の学習",
-    "url": "https://knishiura777-dotcom.github.io/d/Kakezan100.html",
-    "qr": "qr/app-007.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "Number Place - Final Fix",
+    "description": "",
+    "url": "Exp_NumberPlace.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "MGUwellbeing.html",
-    "title": "MGU Wellbeing",
-    "category": "心理学・ウェルビーイング",
-    "description": "ウェルビーイング関連アプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/MGUwellbeing.html",
-    "qr": "qr/app-008.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "PSYCHO ARCADE 2026 | 学生がつくった心理学ゲームセンター",
+    "description": "心理学基礎実験の授業で学生が制作した16種類のWebゲーム。遊びを通して、注意・記憶・判断・空間認知を体験しよう。",
+    "url": "psycho-arcade-2026/index.html",
+    "folder": "psycho-arcade-2026",
+    "tags": []
   },
   {
-    "path": "MIND_QUEST_learning_v2.html",
-    "title": "MIND QUEST v2",
-    "category": "心理学・ウェルビーイング",
-    "description": "心と思考を題材にした学習クエスト",
-    "url": "https://knishiura777-dotcom.github.io/d/MIND_QUEST_learning_v2.html",
-    "qr": "qr/app-009.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "ULTRA CAMPUS: LEGEND SIMULATOR",
+    "description": "",
+    "url": "UltraCampus.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "MONEY_QUEST_v03.html",
-    "title": "MONEY QUEST v0.3",
-    "category": "経済・社会シミュレーション",
-    "description": "お金と経済を題材にしたクエスト",
-    "url": "https://knishiura777-dotcom.github.io/d/MONEY_QUEST_v03.html",
-    "qr": "qr/app-010.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "【授業用・限定】健康リスク・パーソナリティ自己アセスメント",
+    "description": "",
+    "url": "Disease-Prone-Personality.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "My_Garden_v1.3.1-OC-free-MGU.html",
-    "title": "My Garden",
-    "category": "教育・保育",
-    "description": "庭を題材にした体験アプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/My_Garden_v1.3.1-OC-free-MGU.html",
-    "qr": "qr/app-011.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "お買い物チャレンジ",
+    "description": "",
+    "url": "psycho-arcade-2026/games/shopping.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "OC_youji.html",
-    "title": "幼児教育オープンキャンパス",
-    "category": "教育・保育",
-    "description": "幼児教育を紹介するアプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/OC_youji.html",
-    "qr": "qr/app-012.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "こころコンパス診断 v0.8 Student Explain",
+    "description": "",
+    "url": "kokoro_compass_v0_8_student_explain.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "Psychology_of_Resilience_and_Well-being.html",
-    "title": "レジリエンスとウェルビーイング",
-    "category": "心理学・ウェルビーイング",
-    "description": "心理学の学習教材",
-    "url": "https://knishiura777-dotcom.github.io/d/Psychology_of_Resilience_and_Well-being.html",
-    "qr": "qr/app-013.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "しなやかな心とすこやかな体をつくる心理診断",
+    "description": "",
+    "url": "Psychology_of_Resilience_and_Well-being.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "Psychology_of_Resilience_and_Well-being_v3.html",
-    "title": "レジリエンスとウェルビーイング v3",
-    "category": "心理学・ウェルビーイング",
-    "description": "心理学の学習教材・改訂版",
-    "url": "https://knishiura777-dotcom.github.io/d/Psychology_of_Resilience_and_Well-being_v3.html",
-    "qr": "qr/app-014.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "しなやかな心とすこやかな体をつくる心理診断",
+    "description": "",
+    "url": "Psychology_of_Resilience_and_Well-being_v3.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "UltraCampus.html",
-    "title": "Ultra Campus",
-    "category": "教育・保育",
-    "description": "大学・キャンパスを題材にしたアプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/UltraCampus.html",
-    "qr": "qr/app-015.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "もぐらたたきDX 完全版",
+    "description": "",
+    "url": "psycho-arcade-2026/games/whack-mole.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "daremo-hantai-shinai-mura-v3.html",
-    "title": "誰も反対しない村 v3",
-    "category": "経済・社会シミュレーション",
-    "description": "集団の同調と意思決定のシミュレーション",
-    "url": "https://knishiura777-dotcom.github.io/d/daremo-hantai-shinai-mura-v3.html",
-    "qr": "qr/app-016.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "わたし色のガーデン // 宮城学院女子大学 幼児教育専攻 OC体験版 v1.3.1",
+    "description": "",
+    "url": "My_Garden_v1.3.1-OC-free-MGU.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "jizou-bon-v15.html",
-    "title": "地蔵盆 v15",
-    "category": "教育・保育",
-    "description": "地蔵盆を題材にしたアプリ・新版",
-    "url": "https://knishiura777-dotcom.github.io/d/jizou-bon-v15.html",
-    "qr": "qr/app-017.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
+    "title": "フルーツキャッチゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/fruit-catch.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "kokoro_compass_v0_8_student_explain.html",
-    "title": "こころコンパス v0.8",
-    "category": "心理学・ウェルビーイング",
-    "description": "こころを理解するための学習アプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/kokoro_compass_v0_8_student_explain.html",
-    "qr": "qr/app-018.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
-  },
-  {
-    "path": "mahou_hoiku_app_shidoukeikaku_twilight_rose_gem_sparkle_v3.html",
-    "title": "魔法の保育・指導計画",
-    "category": "教育・保育",
-    "description": "保育指導計画に関するアプリ",
-    "url": "https://knishiura777-dotcom.github.io/d/mahou_hoiku_app_shidoukeikaku_twilight_rose_gem_sparkle_v3.html",
-    "qr": "qr/app-019.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
-  },
-  {
-    "path": "mg_youji_quest.html",
-    "title": "幼児教育クエスト",
-    "category": "教育・保育",
-    "description": "幼児教育の体験・学習クエスト",
-    "url": "https://knishiura777-dotcom.github.io/d/mg_youji_quest.html",
-    "qr": "qr/app-020.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/index.html",
-    "title": "Psycho Arcade 2026",
-    "category": "ゲーム・クエスト",
-    "description": "複数ゲームを収録したアーケードの入口",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/index.html",
-    "qr": "qr/app-021.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/block-shooter.html",
-    "title": "ブロックシューター",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/block-shooter.html",
-    "qr": "qr/app-022.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/brick-breaker.html",
     "title": "ブロック崩し",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/brick-breaker.html",
-    "qr": "qr/app-023.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "description": "",
+    "url": "psycho-arcade-2026/games/brick-breaker.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/dino.html",
-    "title": "恐竜ゲーム",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/dino.html",
-    "qr": "qr/app-024.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "title": "ブロック撃破ゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/block-shooter.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/falling-click.html",
-    "title": "落下クリック",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/falling-click.html",
-    "qr": "qr/app-025.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "title": "反射神経ゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/reaction.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/fishing.html",
-    "title": "釣りゲーム",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/fishing.html",
-    "qr": "qr/app-026.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "title": "名刺サイズ招待状（栞）デザイン",
+    "description": "",
+    "url": "D_BusinessCard.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/fruit-catch.html",
-    "title": "フルーツキャッチ",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/fruit-catch.html",
-    "qr": "qr/app-027.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "title": "夏祭りゲーム",
+    "description": "",
+    "url": "jizou-bon-v15.html",
+    "folder": "ルート",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/malatang.html",
+    "title": "宇宙大戦争",
+    "description": "",
+    "url": "psycho-arcade-2026/games/space-war.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
+  },
+  {
+    "title": "宮城学院女子大学 幼児教育専攻｜Open Campus Garden",
+    "description": "宮城学院女子大学 教育学科・幼児教育専攻 オープンキャンパス体験サイト。心理判定、MG幼教クエスト、夏祭りゲームから、子ども・遊び・地域文化の学びを体験できます。",
+    "url": "OC_youji.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "岩ジャンプゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/rock-jump.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
+  },
+  {
+    "title": "思考の迷宮 Ver.3.0｜2つのファンタジーデザインで学ぶ心理学RPG",
+    "description": "",
+    "url": "MindQuest_v3_GitHub.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "指導計画作成プログラム｜LOGOS Amulet UI整理版",
+    "description": "",
+    "url": "mahou_hoiku_app_shidoukeikaku_twilight_rose_gem_sparkle_v3.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "早押しゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/quick-arrow.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
+  },
+  {
+    "title": "未来のリーダーへの招待状 - ウェルビーイングを創造する「自立」の物語",
+    "description": "",
+    "url": "MGUwellbeing.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "爆笑かけ算100階層：本格RPGエディション",
+    "description": "",
+    "url": "Kakezan100.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "爆笑！九九お笑い道場 / Funny Multiplication Dojo",
+    "description": "",
+    "url": "Cal_99doujou_v1.5.0.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "落ちものパズル",
+    "description": "",
+    "url": "psycho-arcade-2026/games/tetris.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
+  },
+  {
+    "title": "落下物クリックゲーム",
+    "description": "",
+    "url": "psycho-arcade-2026/games/falling-click.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
+  },
+  {
+    "title": "誰も反対しない村 Ver.3.0｜学術モデル実験室",
+    "description": "",
+    "url": "daremo-hantai-shinai-mura-v3.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
     "title": "麻辣湯ゲーム",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/malatang.html",
-    "qr": "qr/app-028.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "description": "",
+    "url": "psycho-arcade-2026/games/malatang.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/marumaru.html",
-    "title": "まるまるゲーム",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/marumaru.html",
-    "qr": "qr/app-029.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "title": "🔴まるまる進化🔵",
+    "description": "",
+    "url": "psycho-arcade-2026/games/marumaru.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   },
   {
-    "path": "psycho-arcade-2026/games/quick-arrow.html",
-    "title": "クイックアロー",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/quick-arrow.html",
-    "qr": "qr/app-030.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/reaction.html",
-    "title": "反応速度ゲーム",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/reaction.html",
-    "qr": "qr/app-031.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/rock-jump.html",
-    "title": "ロックジャンプ",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/rock-jump.html",
-    "qr": "qr/app-032.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/shopping.html",
-    "title": "ショッピングゲーム",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/shopping.html",
-    "qr": "qr/app-033.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/space-war.html",
-    "title": "スペースウォー",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/space-war.html",
-    "qr": "qr/app-034.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/spot-difference.html",
-    "title": "間違い探し",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/spot-difference.html",
-    "qr": "qr/app-035.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/tetris.html",
-    "title": "テトリス",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/tetris.html",
-    "qr": "qr/app-036.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
-  },
-  {
-    "path": "psycho-arcade-2026/games/whack-mole.html",
-    "title": "もぐらたたき",
-    "category": "ゲーム・クエスト",
-    "description": "Psycho Arcade収録のミニゲーム",
-    "url": "https://knishiura777-dotcom.github.io/d/psycho-arcade-2026/games/whack-mole.html",
-    "qr": "qr/app-037.png",
-    "updated": "",
-    "date_source": "未取得（GitHubの最終コミット日時を確認）",
-    "tags": [
-      "ミニゲーム"
-    ],
-    "provisional": true
+    "title": "🦖 DINO ADVENTURE DX",
+    "description": "",
+    "url": "psycho-arcade-2026/games/dino.html",
+    "folder": "psycho-arcade-2026\\games",
+    "tags": []
   }
 ]
