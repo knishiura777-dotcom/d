@@ -21,6 +21,13 @@
     "tags": []
   },
   {
+    "title": "GROWTH QUEST｜明日の門 Ver.0.9.2 · Modern Fantasy",
+    "description": "",
+    "url": "Growth_Quest_Modern_Fantasy_v092.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
     "title": "MG 幼教クエスト '86 〜オープンキャンパス大作戦〜",
     "description": "",
     "url": "Jizou-bon-v3.html",
@@ -157,6 +164,13 @@
     "title": "夏祭りゲーム",
     "description": "",
     "url": "jizou-bon-v15.html",
+    "folder": "ルート",
+    "tags": []
+  },
+  {
+    "title": "学生作品ギャラリー | Web App Library",
+    "description": "学生が制作したWebアプリ作品の展示ページ。制作年度・テーマ・アプリを紹介します。",
+    "url": "students.html",
     "folder": "ルート",
     "tags": []
   },
