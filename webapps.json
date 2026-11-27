@@ -513,5 +513,16 @@
     "art": "arcade",
     "updated": "",
     "qrData": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhAQAAAAAWyO/XAAACtklEQVR4nO2ZsY7jNhCGvzENUKkoIA9AdXmKlXzNtXmCPMgC8kk+L5Bnus7yPkcAqrtuqY4CJE8KO9cEa6TxMcX+FaG/+AfD4fAfUZT3cdjcIeGD/WDvsJOIbDhUspv2lTQlMIhIkTcqOtUTLUn9dtRh3I6Iqj5e9z67SsFkQyGxRTZu8QWTVDmj2v6zeK4UXtDzVGIfr/sf2ZexONNSPPmj/pvNEJXRBF2YmxI/m3Ev4DTkjuogsmNt7DD22BOtR0UkZ1ToFfG2QnTB3j72OfvVXmTjFj9vWCt74gUGyXsGUY0t1HQKGNWLU9WL68mcK4ym18iog/YUr2M/AiZk7u1OhKcSXzDN1bRjbeZPsfUP170H1YhHIugQjdqTOwYkgs27g27BrmXr5QurULM2dvWq6dG696CqC4AJenJHTaIaABMy54o/NdVu31CzVjyVa3W1EA/Xvc+u4r7SBdlNOsC09fIprk3OM4hq7AKNLtiL67299asla7/agpMq/QJMu2kZk3kT0uepp0i5q92qLujJaYBrmo6as9pR1R4kdppqTNALJiSJ+Ow3TrAXJ5Ub4nNV4PaNu7hjeLzu+7g65FnAo2Xrw3ksSYL547eMdbUB1io1usBrNKGorza0/Qm6d3D1ercaXzwS8XaIbda6uvor1WhULxjVC53qxS3Zqx2KoQREe4rXeBBkPA65Z2cTqN1czbtpYfpC6+eN63+C7vvYAmuVzJtd+Oqk+v6tNH8VCNiMUf2YcbpAoz3UbsFqNCH3jCMiG9eDlkaRiOfMc5XdM6gON6Puk6jq/yFXrFKAGVJNN/BUHmSW8jmrv/rxT2at7LffpRlxXSfy9uuSewdb7BDx9oIJOmhPalSz+3ajCbeM6ewWZEfrC6Y+/zwIEvGpdsegQzQhSWyzzoPy8QrwwT6A/RsCpadpxwzfIAAAAABJRU5ErkJggg=="
+  },
+  {
+    "path": "workbook_adventure_v0.4_personas.html",
+    "url": "workbook_adventure_v0.4_personas.html",
+    "collection": "student",
+    "title": "子どもの未来を育む物語 | 入学前学習アドベンチャー",
+    "description": "ブラウザで体験するWebアプリ。",
+    "category": "学生制作ゲーム",
+    "art": "orbit",
+    "updated": "",
+    "qrData": ""
   }
 ]
